@@ -4,17 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="?colorPrimary"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
     android:padding="@dimen/padding_l">
 
-    <LinearLayout
-        android:id="@+id/root_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="?colorAccent" />
 
     <TextView
         style="@style/TextAppearance.AppCompat.Title.Inverse"
@@ -22,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="@dimen/padding_l"
+        android:layout_marginTop="?actionBarSize"
         android:text="马上使用新浪微博进行登录吧!" />
 
     <TextView
@@ -36,12 +31,13 @@
 
     <android.support.v4.widget.ContentLoadingProgressBar
         android:id="@+id/progress_bar"
-        android:indeterminate="true"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:indeterminateBehavior="repeat"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_marginBottom="@dimen/padding_l"
+        android:indeterminateBehavior="repeat"
+        android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_enter"
@@ -51,8 +47,4 @@
         android:src="@drawable/ic_arrow_forward"
         app:rippleColor="@color/material_pink_500" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
 </LinearLayout>

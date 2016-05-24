@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.util;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Build;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.View;
@@ -73,7 +74,6 @@ public class AnimatorUtil {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        v.setVisibility(View.GONE);
                         if (callback != null) {
                             callback.onAnimatorEnd();
                         }
@@ -101,8 +101,6 @@ public class AnimatorUtil {
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        v.setVisibility(View.VISIBLE);
-
                     }
 
                     @Override

@@ -33,8 +33,6 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     LoginPresenter presenter;
     @BindView(R.id.fab_enter)
     FloatingActionButton fabEnter;
-    @BindView(R.id.root_layout)
-    LinearLayout rootLayout;
     @BindView(R.id.progress_bar)
     ContentLoadingProgressBar progressBar;
 
@@ -95,8 +93,13 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     @Override
     public void showEnterFab() {
-        progressBar.hide();
-        AnimatorUtil.showFab(fabEnter, null);
+        fabEnter.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.hide();
+                AnimatorUtil.showFab(fabEnter, null);
+            }
+        }, 1000);
 
     }
 }
