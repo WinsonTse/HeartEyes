@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+
+import io.github.winsontse.hearteyes.R;
 
 /**
  * Created by hao.xie on 16/5/10.

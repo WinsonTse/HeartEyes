@@ -45,8 +45,9 @@ dependencies {
     // dagger2
     apt "com.google.dagger:dagger-compiler:${rootProject.ext.DAGGER2_VERSION}";
     // dagger2
-    compile 'com.jakewharton.timber:timber:4.1.1';
     compile "com.jakewharton:butterknife:${rootProject.ext.BUTTERKNIFE_VERSION}";
     apt "com.jakewharton:butterknife-compiler:${rootProject.ext.BUTTERKNIFE_VERSION}";
     provided 'org.glassfish:javax.annotation:10.0-b28';
+    compile 'com.jakewharton.timber:timber:4.1.1'
+    compile 'com.android.support:support-v4:23.4.0'
 }

@@ -9,6 +9,7 @@ import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.page.account.LoginActivity;
 import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
+import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.main.component.DaggerMainComponent;
 import io.github.winsontse.hearteyes.page.main.contract.MainContract;
@@ -24,7 +25,9 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        if (findFragmentByClass(HomeFragment.class)) {
+            addFragment(HomeFragment.newInstance());
+        }
         LoginActivity.goToLoginPage(this);
     }
 
@@ -41,5 +44,15 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     protected BasePresenter getPresenter() {
         return presenter;
     }
+
+
+    public void addFragment(BaseFragment baseFragment) {
+        addFragment(R.id.fragment_container, baseFragment);
+    }
+
+    public void replaceFragment(BaseFragment baseFragment) {
+        replaceFragment(R.id.fragment_container, baseFragment);
+    }
+
 
 }
