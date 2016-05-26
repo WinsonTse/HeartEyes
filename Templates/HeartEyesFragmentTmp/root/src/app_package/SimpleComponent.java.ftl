@@ -9,7 +9,7 @@ import dagger.Component;
 
 @FragmentScope
 @Component(dependencies = {ActivityComponent.class}, modules = {${pageName}Module.class})
-public interface ${pageName}Component {
+public interface ${pageName}Component extends ActivityComponent {
 
     void inject(${pageName}Fragment fragment);
 

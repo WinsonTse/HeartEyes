@@ -9,7 +9,7 @@ import dagger.Component;
 
 @FragmentScope
 @Component(dependencies = {ActivityComponent.class}, modules = {AccountModule.class})
-public interface AccountComponent {
+public interface AccountComponent extends ActivityComponent {
 
     void inject(AccountFragment fragment);
 

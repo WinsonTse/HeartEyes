@@ -9,7 +9,7 @@ import dagger.Component;
 
 @FragmentScope
 @Component(dependencies = {ActivityComponent.class}, modules = {TodoListModule.class})
-public interface TodoListComponent {
+public interface TodoListComponent extends ActivityComponent {
 
     void inject(TodoListFragment fragment);
 

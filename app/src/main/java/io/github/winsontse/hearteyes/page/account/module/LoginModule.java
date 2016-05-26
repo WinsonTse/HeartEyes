@@ -3,6 +3,7 @@ package io.github.winsontse.hearteyes.page.account.module;
 import dagger.Module;
 import dagger.Provides;
 import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
+import io.github.winsontse.hearteyes.util.scope.ActivityScope;
 import io.github.winsontse.hearteyes.util.scope.FragmentScope;
 
 

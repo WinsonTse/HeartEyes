@@ -6,15 +6,19 @@ import javax.inject.Qualifier;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.github.winsontse.hearteyes.data.remote.WeiboApi;
+import io.github.winsontse.hearteyes.util.scope.ApplicationScope;
 
 /**
  * Created by hao.xie on 16/5/9.
  */
 
-@Singleton
+@ApplicationScope
 @Component(modules = {AppModule.class})
 public interface AppComponent {
 
-    void inject(HeartEyesApplication appApplication);
     Context getApplicationContext();
+
+    WeiboApi getWeiboApi();
+
 }

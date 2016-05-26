@@ -3,6 +3,11 @@ package io.github.winsontse.hearteyes.app;
 import android.app.Application;
 import android.content.Context;
 
+import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVUser;
+
+import io.github.winsontse.hearteyes.util.constant.SecretConstant;
+
 /**
  * Created by hao.xie on 16/5/9.
  */
@@ -21,6 +26,12 @@ public class HeartEyesApplication extends Application {
                 .builder()
                 .appModule(new AppModule(this))
                 .build();
+
+        init();
+    }
+
+    private void init() {
+            AVOSCloud.initialize(this, SecretConstant.LEANCLOUD_APP_ID, SecretConstant.LEANCLOUD_APP_KEY);
     }
 
     public AppComponent getAppComponent() {

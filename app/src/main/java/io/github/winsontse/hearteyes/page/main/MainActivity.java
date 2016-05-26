@@ -1,12 +1,13 @@
 package io.github.winsontse.hearteyes.page.main;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.page.account.LoginActivity;
+import io.github.winsontse.hearteyes.page.account.LoginFragment;
 import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
@@ -25,10 +26,9 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        if (findFragmentByClass(HomeFragment.class)) {
-            addFragment(HomeFragment.newInstance());
-        }
-        LoginActivity.goToLoginPage(this);
+
+
+        presenter.init();
     }
 
     @Override
@@ -46,13 +46,46 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
 
-    public void addFragment(BaseFragment baseFragment) {
-        addFragment(R.id.fragment_container, baseFragment);
+    public void addFragment(BaseFragment baseFragment, boolean isAddToBackStack) {
+        addFragment(R.id.fragment_container, baseFragment, isAddToBackStack);
     }
 
-    public void replaceFragment(BaseFragment baseFragment) {
-        replaceFragment(R.id.fragment_container, baseFragment);
+    public void replaceFragment(BaseFragment baseFragment, boolean isAddToBackStack) {
+        replaceFragment(R.id.fragment_container, baseFragment, isAddToBackStack);
     }
 
 
+    /**
+     * Take care of calling onBackPressed() for pre-Eclair platforms.
+     *
+     * @param keyCode
+     * @param event
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+                moveTaskToBack(true);
+                return true;
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void goToHomePage() {
+        if (findFragmentByClass(HomeFragment.class)) {
+            replaceFragment(HomeFragment.newInstance(), false);
+        }
+
+    }
+
+    @Override
+    public void goToLoginPage() {
+        if (findFragmentByClass(LoginFragment.class)) {
+            replaceFragment(LoginFragment.newInstance(), false);
+        }
+    }
 }

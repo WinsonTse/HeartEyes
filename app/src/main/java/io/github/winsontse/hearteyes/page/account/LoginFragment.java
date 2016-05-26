@@ -1,13 +1,13 @@
 package io.github.winsontse.hearteyes.page.account;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
@@ -22,12 +22,12 @@ import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.account.module.LoginModule;
 import io.github.winsontse.hearteyes.page.account.presenter.LoginPresenter;
 import io.github.winsontse.hearteyes.page.base.ActivityComponent;
-import io.github.winsontse.hearteyes.page.base.BaseActivity;
+import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 
-public class LoginActivity extends BaseActivity implements LoginContract.View {
+public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Inject
     LoginPresenter presenter;
@@ -38,24 +38,27 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     private SsoHandler ssoHandler;
 
-    public static void goToLoginPage(Activity activity) {
-        Intent intent = new Intent(activity, LoginActivity.class);
-        activity.startActivity(intent);
+    public static LoginFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        LoginFragment fragment = new LoginFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
-
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
-
-        ssoHandler = new SsoHandler(this, new AuthInfo(this, SecretConstant.APP_KEY, SecretConstant.REDIRECT_URL, SecretConstant.SCOPE));
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        ButterKnife.bind(this, rootView);
+        ssoHandler = new SsoHandler(getActivity(), new AuthInfo(getActivity(), SecretConstant.WEIBO_APP_KEY, SecretConstant.WEIBO_REDIRECT_URL, SecretConstant.WEIBO_SCOPE));
         fabEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setLoadingState();
             }
         });
+        return rootView;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (ssoHandler != null) {
             ssoHandler.authorizeCallBack(requestCode, resultCode, data);

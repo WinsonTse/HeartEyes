@@ -48,6 +48,19 @@ dependencies {
     compile "com.jakewharton:butterknife:${rootProject.ext.BUTTERKNIFE_VERSION}";
     apt "com.jakewharton:butterknife-compiler:${rootProject.ext.BUTTERKNIFE_VERSION}";
     provided 'org.glassfish:javax.annotation:10.0-b28';
-    compile 'com.jakewharton.timber:timber:4.1.1'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.jakewharton.timber:timber:4.1.1';
+
+    // LeanCloud 基础包
+    compile ('cn.leancloud.android:avoscloud-sdk:v3.+');
+    // 推送与实时聊天需要的包
+    compile ('cn.leancloud.android:avoscloud-push:v3.+@aar'){transitive = true};
+
+    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.RETROFIT_VERSION}";
+    compile "com.squareup.retrofit2:converter-gson:${rootProject.ext.RETROFIT_VERSION}";
+    compile "com.squareup.retrofit2:adapter-rxjava:${rootProject.ext.RETROFIT_VERSION}";
+
+    compile "com.google.code.gson:gson:${rootProject.ext.GSON_VERSION}"
+
+
+
 }

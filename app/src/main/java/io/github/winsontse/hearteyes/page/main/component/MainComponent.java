@@ -9,7 +9,7 @@ import dagger.Component;
 
 @ActivityScope
 @Component(dependencies = {ActivityComponent.class}, modules = {MainModule.class})
-public interface MainComponent {
+public interface MainComponent extends ActivityComponent {
 
     void inject(MainActivity activity);
 

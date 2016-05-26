@@ -9,7 +9,7 @@ import dagger.Component;
 
 @FragmentScope
 @Component(dependencies = {ActivityComponent.class}, modules = {DateListModule.class})
-public interface DateListComponent {
+public interface DateListComponent extends ActivityComponent {
 
     void inject(DateListFragment fragment);
 
