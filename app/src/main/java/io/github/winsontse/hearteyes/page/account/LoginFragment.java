@@ -17,11 +17,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.app.AppComponent;
+import io.github.winsontse.hearteyes.app.HeartEyesApplication;
 import io.github.winsontse.hearteyes.page.account.component.DaggerLoginComponent;
 import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.account.module.LoginModule;
 import io.github.winsontse.hearteyes.page.account.presenter.LoginPresenter;
-import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
@@ -62,9 +63,9 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         DaggerLoginComponent.builder()
-                .activityComponent(activityComponent)
+                .appComponent(appComponent)
                 .loginModule(new LoginModule(this))
                 .build()
                 .inject(this);

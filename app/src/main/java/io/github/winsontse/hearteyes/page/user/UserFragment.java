@@ -1,4 +1,4 @@
-package io.github.winsontse.hearteyes.page.account;
+package io.github.winsontse.hearteyes.page.user;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,23 +8,23 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.page.user.component.DaggerUserComponent;
+import io.github.winsontse.hearteyes.page.user.contract.UserContract;
+import io.github.winsontse.hearteyes.page.user.module.UserModule;
+import io.github.winsontse.hearteyes.page.user.presenter.UserPresenter;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.page.account.component.DaggerAccountComponent;
-import io.github.winsontse.hearteyes.page.account.contract.AccountContract;
-import io.github.winsontse.hearteyes.page.account.module.AccountModule;
-import io.github.winsontse.hearteyes.page.account.presenter.AccountPresenter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.R;
 
-public class AccountFragment extends BaseFragment implements AccountContract.View {
+public class UserFragment extends BaseFragment implements UserContract.View {
 
     @Inject
-    AccountPresenter presenter;
+    UserPresenter presenter;
 
-    public static AccountFragment newInstance() {
+    public static UserFragment newInstance() {
         Bundle args = new Bundle();
-        AccountFragment fragment = new AccountFragment();
+        UserFragment fragment = new UserFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -32,15 +32,15 @@ public class AccountFragment extends BaseFragment implements AccountContract.Vie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_account, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_user, container, false);
         return rootView;
     }
 
     @Override
     protected void setupComponent(AppComponent appComponent) {
-        DaggerAccountComponent.builder()
+        DaggerUserComponent.builder()
                 .appComponent(appComponent)
-                .accountModule(new AccountModule(this))
+                .userModule(new UserModule(this))
                 .build()
                 .inject(this);
     }

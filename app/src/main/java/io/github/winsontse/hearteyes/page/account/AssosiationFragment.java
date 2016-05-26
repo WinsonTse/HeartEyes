@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.component.DaggerAssosiationComponent;
 import io.github.winsontse.hearteyes.page.account.contract.AssosiationContract;
 import io.github.winsontse.hearteyes.page.account.module.AssosiationModule;
 import io.github.winsontse.hearteyes.page.account.presenter.AssosiationPresenter;
-import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.R;
@@ -37,9 +37,9 @@ public class AssosiationFragment extends BaseFragment implements AssosiationCont
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         DaggerAssosiationComponent.builder()
-                .activityComponent(activityComponent)
+                .appComponent(appComponent)
                 .assosiationModule(new AssosiationModule(this))
                 .build()
                 .inject(this);

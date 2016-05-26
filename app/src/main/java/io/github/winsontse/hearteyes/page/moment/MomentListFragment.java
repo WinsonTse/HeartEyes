@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.moment.component.DaggerMomentListComponent;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
-import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.R;
 
@@ -37,9 +37,9 @@ public class MomentListFragment extends BaseFragment implements MomentListContra
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         DaggerMomentListComponent.builder()
-                .activityComponent(activityComponent)
+                .appComponent(appComponent)
                 .momentListModule(new MomentListModule(this))
                 .build()
                 .inject(this);

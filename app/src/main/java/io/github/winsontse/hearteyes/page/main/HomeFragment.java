@@ -2,7 +2,6 @@ package io.github.winsontse.hearteyes.page.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +12,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.adapter.MainPagerAdapter;
-import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.main.component.DaggerHomeComponent;
@@ -50,9 +49,9 @@ public class HomeFragment extends BaseFragment implements HomeContract.View {
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         DaggerHomeComponent.builder()
-                .activityComponent(activityComponent)
+                .appComponent(appComponent)
                 .homeModule(new HomeModule(this))
                 .build()
                 .inject(this);

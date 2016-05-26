@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.date.component.DaggerDateListComponent;
 import io.github.winsontse.hearteyes.page.date.contract.DateListContract;
 import io.github.winsontse.hearteyes.page.date.module.DateListModule;
 import io.github.winsontse.hearteyes.page.date.presenter.DateListPresenter;
-import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.R;
 
@@ -37,9 +37,9 @@ public class DateListFragment extends BaseFragment implements DateListContract.V
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         DaggerDateListComponent.builder()
-                .activityComponent(activityComponent)
+                .appComponent(appComponent)
                 .dateListModule(new DateListModule(this))
                 .build()
                 .inject(this);

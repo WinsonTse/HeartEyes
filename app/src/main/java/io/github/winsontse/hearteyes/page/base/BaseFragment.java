@@ -8,6 +8,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.app.AppComponent;
+import io.github.winsontse.hearteyes.app.HeartEyesApplication;
 
 /**
  * Created by hao.xie on 16/5/10.
@@ -27,10 +29,10 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupComponent(((BaseActivity) getActivity()).getActivityComponent());
+        setupComponent(HeartEyesApplication.get(getActivity()).getAppComponent());
     }
 
-    protected abstract void setupComponent(ActivityComponent activityComponent);
+    protected abstract void setupComponent(AppComponent appComponent);
 
     @Override
     public void onDestroy() {

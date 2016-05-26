@@ -7,8 +7,8 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.LoginFragment;
-import io.github.winsontse.hearteyes.page.base.ActivityComponent;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
@@ -32,9 +32,9 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         DaggerMainComponent.builder()
-                .activityComponent(getActivityComponent())
+                .appComponent(appComponent)
                 .mainModule(new MainModule(this))
                 .build()
                 .inject(this);

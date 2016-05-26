@@ -15,13 +15,13 @@ import android.widget.Toast;
 import javax.annotation.Resource;
 
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.app.HeartEyesApplication;
 
 /**
  * Created by hao.xie on 16/5/9.
  */
 public abstract class BaseActivity extends AppCompatActivity implements BaseView {
-    private ActivityComponent activityComponent;
     private ProgressDialog progressDialog;
     private Resources resources;
 
@@ -29,21 +29,10 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         resources = getResources();
-        setupComponent(getActivityComponent());
+        setupComponent(HeartEyesApplication.get(this).getAppComponent());
     }
 
-    protected ActivityComponent getActivityComponent() {
-        if (activityComponent == null) {
-            activityComponent = DaggerActivityComponent
-                    .builder()
-                    .appComponent(HeartEyesApplication.get(this).getAppComponent())
-                    .activityModule(new ActivityModule(this))
-                    .build();
-        }
-        return activityComponent;
-    }
-
-    protected abstract void setupComponent(ActivityComponent activityComponent);
+    protected abstract void setupComponent(AppComponent appComponent);
 
     protected abstract BasePresenter getPresenter();
 

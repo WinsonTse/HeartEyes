@@ -10,7 +10,7 @@ import ${packageName}.component.Dagger${pageName}Component;
 import ${packageName}.contract.${pageName}Contract;
 import ${packageName}.module.${pageName}Module;
 import ${packageName}.presenter.${pageName}Presenter;
-import ${applicationPackage}.page.base.ActivityComponent;
+import ${applicationPackage}.app.AppComponent;
 import ${applicationPackage}.page.base.BaseFragment;
 import ${applicationPackage}.page.base.BasePresenter;
 import ${applicationPackage}.R;
@@ -35,9 +35,9 @@ public class ${pageName}Fragment extends BaseFragment implements ${pageName}Cont
     }
 
     @Override
-    protected void setupComponent(ActivityComponent activityComponent) {
+    protected void setupComponent(AppComponent appComponent) {
         Dagger${pageName}Component.builder()
-                .activityComponent(activityComponent)
+                .appComponent(appComponent)
                 .${pageName?uncap_first}Module(new ${pageName}Module(this))
                 .build()
                 .inject(this);
