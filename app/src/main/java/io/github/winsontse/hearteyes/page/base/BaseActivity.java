@@ -3,8 +3,10 @@ package io.github.winsontse.hearteyes.page.base;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -30,6 +32,13 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         super.onCreate(savedInstanceState);
         resources = getResources();
         setupComponent(HeartEyesApplication.get(this).getAppComponent());
+        setNavigavitionColor();
+    }
+
+    private void setNavigavitionColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(resources.getColor(R.color.material_cyan_700));
+        }
     }
 
     protected abstract void setupComponent(AppComponent appComponent);
@@ -45,8 +54,8 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         }
     }
 
-    public boolean findFragmentByClass(Class cls) {
-        return getSupportFragmentManager().findFragmentByTag(cls.getSimpleName()) == null;
+    public Fragment findFragmentByClass(Class cls) {
+        return getSupportFragmentManager().findFragmentByTag(cls.getSimpleName());
     }
 
     protected void addFragment(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
@@ -62,7 +71,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
     protected void replaceFragment(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
         String tag = fragment.getClass().getSimpleName();
-        Log.d("winson", "tag:" + tag);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .replace(containerId, fragment, tag);
 
@@ -102,8 +110,13 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     }
 
     @Override
+    public void closePage() {
+        finish();
+    }
+
+    @Override
     public void showToast(String msg) {
-        if (!isFinishing()) {
+        if (!isFinishing() && !TextUtils.isEmpty(msg)) {
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         }
     }

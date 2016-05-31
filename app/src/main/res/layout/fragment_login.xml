@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:padding="@dimen/padding_l"
         android:layout_marginTop="?actionBarSize"
-        android:text="马上使用新浪微博进行登录吧!" />
+        android:text="@string/tips_weibo_login" />
 
     <TextView
         style="@style/TextAppearance.AppCompat.Body1"
@@ -26,7 +26,7 @@
         android:layout_marginBottom="@dimen/padding_xl"
         android:paddingLeft="@dimen/padding_l"
         android:paddingRight="@dimen/padding_l"
-        android:text="马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧!"
+        android:text="@string/tips_weibo_login_detail"
         android:textColor="?android:textColorSecondaryInverse" />
 
     <android.support.v4.widget.ContentLoadingProgressBar
@@ -44,7 +44,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/ic_arrow_forward"
-        app:rippleColor="@color/material_pink_500" />
+        android:src="@drawable/ic_arrow_forward"/>
 
 </LinearLayout>

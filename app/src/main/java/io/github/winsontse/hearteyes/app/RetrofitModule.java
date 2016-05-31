@@ -1,5 +1,6 @@
 package io.github.winsontse.hearteyes.app;
 
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -9,6 +10,7 @@ import dagger.Provides;
 import io.github.winsontse.hearteyes.data.remote.WeiboApi;
 import io.github.winsontse.hearteyes.util.scope.ApplicationScope;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -24,6 +26,9 @@ public class RetrofitModule {
     Retrofit provideRetrofit() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
         httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClientBuilder.addInterceptor(httpLoggingInterceptor);
 
         return new Retrofit.Builder()
                 .client(new OkHttpClient.Builder().build())
@@ -31,5 +36,10 @@ public class RetrofitModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+    }
+
+    @Provides
+    WeiboApi provideWeiboApi(Retrofit retrofit) {
+        return retrofit.create(WeiboApi.class);
     }
 }

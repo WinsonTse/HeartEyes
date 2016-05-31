@@ -1,23 +1,23 @@
 package io.github.winsontse.hearteyes.page.account.contract;
 
-import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import android.graphics.Bitmap;
 
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.BaseView;
-import io.github.winsontse.hearteyes.util.AnimatorUtil;
 
-public interface LoginContract {
+public interface AssociationContract {
 
     interface View extends BaseView {
-        void setLoadingState();
-        void showEnterFab();
+        void showQrcode(Bitmap bitmap);
+
         void replacePage();
     }
 
     interface Presenter extends BasePresenter {
 
-        void authirize(SsoHandler ssoHandler);
+        void generateQrcode(int width, int height, final int bgColor, final int fgColor);
 
+        void associate(String uid);
     }
 
 }

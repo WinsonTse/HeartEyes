@@ -7,4 +7,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_qrcode">二维码是无效的</string>
+    <string name="tips_let_him_scan">让Ta扫一扫你</string>
+    <string name="tips_scan_she">或者, 你扫一扫Ta</string>
+    <string name="tips_weibo_login">马上使用新浪微博进行登录吧!</string>
+    <string name="tips_weibo_login_detail">马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧马上使用新浪微博进行登录吧!</string>
+    <string name="tips_associating">正在与Ta连接...</string>
+    <string name="tips_getting_your_friend">正在查找你是不是已经有朋友了...</string>
+    <string name="error_cannot_associate_self">不能成为自己的男/女朋友</string>
+    <string name="error_you_has_friends">不要贪心!你已经有好朋友了!</string>
+    <string name="error_she_has_friends">Ta已经有对象了!不要乱来!</string>
+    <string name="error_have_no_friend">你还没有对象, 赶紧添加一个吧</string>
 </resources>

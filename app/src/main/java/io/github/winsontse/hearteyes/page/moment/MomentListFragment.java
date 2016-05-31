@@ -2,25 +2,40 @@ package io.github.winsontse.hearteyes.page.moment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.alibaba.fastjson.JSONObject;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
+import com.avos.avoscloud.AVPush;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.SendCallback;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
+import io.github.winsontse.hearteyes.data.model.leancloud.PushMessage;
+import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.moment.component.DaggerMomentListComponent;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
-import io.github.winsontse.hearteyes.page.base.BaseFragment;
-import io.github.winsontse.hearteyes.R;
 
 public class MomentListFragment extends BaseFragment implements MomentListContract.View {
 
     @Inject
     MomentListPresenter presenter;
+    @BindView(R.id.btn)
+    Button btn;
 
     public static MomentListFragment newInstance() {
         Bundle args = new Bundle();
@@ -33,6 +48,15 @@ public class MomentListFragment extends BaseFragment implements MomentListContra
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_moment_list, container, false);
+        ButterKnife.bind(this, rootView);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                presenter.sendPushMessage(AVUser.getCurrentUser(), new PushMessage(2333, "谢文森圈圈"));
+            }
+        });
         return rootView;
     }
 

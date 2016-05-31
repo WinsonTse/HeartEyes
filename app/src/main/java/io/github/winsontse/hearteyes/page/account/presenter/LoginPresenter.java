@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -11,15 +12,20 @@ import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.data.model.weibo.WeiboUser;
 import io.github.winsontse.hearteyes.data.remote.WeiboApi;
 import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
-import io.github.winsontse.hearteyes.util.AnimatorUtil;
+import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
+import io.github.winsontse.hearteyes.util.RxUtil;
+import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 
 public class LoginPresenter extends BasePresenterImpl implements LoginContract.Presenter {
     private LoginContract.View view;
@@ -62,30 +68,55 @@ public class LoginPresenter extends BasePresenterImpl implements LoginContract.P
         AVUser.AVThirdPartyUserAuth userAuth = new AVUser.AVThirdPartyUserAuth(token.getToken(), token.getExpiresTime() + "", "weibo", token.getUid());//此处snsType 可以是"qq","weibo"等字符串
         AVUser.loginWithAuthData(userAuth, new LogInCallback<AVUser>() {
             @Override
-            public void done(AVUser avUser, AVException e) {
+            public void done(final AVUser avUser, AVException e) {
                 if (e != null) {
                     view.showToast(e.getMessage());
                 } else {
-                    weiboApi.getUserByUid(token.getToken(), token.getUid())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<WeiboUser>() {
-                                @Override
-                                public void onCompleted() {
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-                                    Log.d("winson", "error:" + e.getMessage());
-                                }
-
-                                @Override
-                                public void onNext(WeiboUser weiboUser) {
-                                    Log.d("winson", weiboUser.toString());
-                                }
-                            });
+                    keepWeiboUserInfo(avUser, token);
                 }
             }
         });
+    }
+
+    private void keepWeiboUserInfo(final AVUser avUser, Oauth2AccessToken token) {
+        addSubscription(weiboApi.getUserByUid(token.getToken(), token.getUid())
+                .flatMap(new Func1<WeiboUser, Observable<AVUser>>() {
+                    @Override
+                    public Observable<AVUser> call(final WeiboUser weiboUser) {
+                        return Observable.create(new Observable.OnSubscribe<AVUser>() {
+                            @Override
+                            public void call(Subscriber<? super AVUser> subscriber) {
+                                AVFile avFile = new AVFile(weiboUser.getId() + "_" + System.currentTimeMillis() + ".jpg", weiboUser.getAvatar_large(), new HashMap<String, Object>());
+                                try {
+                                    avFile.save();
+                                    avUser.put(UserContract.NICKNAME, weiboUser.getName());
+                                    avUser.put(UserContract.AVATAR, avFile);
+                                    avUser.save();
+                                    subscriber.onNext(avUser);
+                                } catch (AVException e1) {
+                                    subscriber.onError(e1);
+                                }
+                            }
+                        });
+                    }
+                })
+                .compose(RxUtil.rxSchedulerHelper(AVUser.class))
+                .subscribe(new HeartEyesSubscriber<AVUser>(view) {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void handleError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(AVUser avUser) {
+                        Log.d("winson", avUser.getString(UserContract.NICKNAME) + "   " + avUser.getAVFile(UserContract.AVATAR).getName());
+                        view.replacePage();
+                    }
+                }));
     }
 }

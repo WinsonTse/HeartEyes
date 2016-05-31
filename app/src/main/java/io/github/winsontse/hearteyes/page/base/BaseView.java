@@ -8,6 +8,9 @@ import rx.Observable;
  * Created by hao.xie on 16/5/10.
  */
 public interface BaseView {
+
+    void closePage();
+
     void showProgressDialog(boolean cancelable, String msg);
 
     void hideProgressDialog();

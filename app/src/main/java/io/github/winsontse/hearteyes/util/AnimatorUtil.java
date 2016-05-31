@@ -17,20 +17,17 @@ public class AnimatorUtil {
      * @param v
      * @param callback
      */
-    public static void circularReveal(View v, final AnimatorCallback callback) {
+
+    public static void createCircularReveal(final View v, int centerX, int centerY, float startRadius, float finalRadius, final AnimatorCallback callback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            int centerX = (v.getLeft() + v.getRight()) / 2;
-            int centerY = (v.getTop() + v.getBottom()) / 2;
-            float finalRadius = (float) Math.hypot((double) centerX, (double) centerY);
-
             final Animator circularReveal;
-            circularReveal = ViewAnimationUtils.createCircularReveal(v, centerX, centerY, 0, finalRadius);
+            circularReveal = ViewAnimationUtils.createCircularReveal(v, centerX, centerY, startRadius, finalRadius);
 
             circularReveal.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-
+//                    v.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -57,6 +54,28 @@ public class AnimatorUtil {
             if (callback != null) {
                 callback.onAnimatorEnd();
             }
+        }
+    }
+
+    public static void showCircularReveal(final View v, final AnimatorCallback callback) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            v.setVisibility(View.VISIBLE);
+            int centerX = (v.getLeft() + v.getRight()) / 2;
+            int centerY = (v.getTop() + v.getBottom()) / 2;
+            float finalRadius = (float) Math.hypot((double) centerX, (double) centerY);
+//            float finalRadius = (float) Math.hypot((double) v.getWidth(), (double) v.getHeight());
+
+            createCircularReveal(v, centerX, centerY, 0, finalRadius, callback);
+        }
+    }
+
+    public static void hideCircularReveal(final View v, final AnimatorCallback callback) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            v.setVisibility(View.VISIBLE);
+            int centerX = (v.getLeft() + v.getRight()) / 2;
+            int centerY = (v.getTop() + v.getBottom()) / 2;
+            float finalRadius = (float) Math.hypot((double) centerX, (double) centerY);
+            createCircularReveal(v, centerX, centerY, finalRadius, 0, callback);
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import io.github.winsontse.hearteyes.page.account.module.LoginModule;
 import io.github.winsontse.hearteyes.page.account.presenter.LoginPresenter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
+import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 
@@ -40,13 +42,14 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     private SsoHandler ssoHandler;
 
     public static LoginFragment newInstance() {
-        
+
         Bundle args = new Bundle();
-        
+
         LoginFragment fragment = new LoginFragment();
         fragment.setArguments(args);
         return fragment;
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -105,5 +108,15 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             }
         }, 1000);
 
+    }
+
+    @Override
+    public void replacePage() {
+        FragmentActivity activity = getActivity();
+        if (activity != null && !activity.isFinishing()) {
+            MainActivity mainActivity = (MainActivity) activity;
+            mainActivity.initPage();
+        }
+//        replacePage(AssociationFragment.newInstance());
     }
 }

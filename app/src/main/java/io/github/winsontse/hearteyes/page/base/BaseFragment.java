@@ -4,25 +4,25 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.app.HeartEyesApplication;
+import io.github.winsontse.hearteyes.page.main.MainActivity;
 
 /**
  * Created by hao.xie on 16/5/10.
  */
 public abstract class BaseFragment extends Fragment implements BaseView {
 
-    private BaseActivity baseActivity;
+    private MainActivity mainActivity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof BaseActivity) {
-            baseActivity = (BaseActivity) context;
+            mainActivity = (MainActivity) context;
         }
     }
 
@@ -47,42 +47,57 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     @Override
     public void showProgressDialog(boolean cancelable, String msg) {
-        if (baseActivity != null && isVisible()) {
-            baseActivity.showProgressDialog(cancelable, msg);
+        if (mainActivity != null && isVisible()) {
+            mainActivity.showProgressDialog(cancelable, msg);
         }
     }
 
     @Override
     public void hideProgressDialog() {
-        if (baseActivity != null && isVisible()) {
-            baseActivity.hideProgressDialog();
+        if (mainActivity != null && isVisible()) {
+            mainActivity.hideProgressDialog();
+        }
+    }
+
+    @Override
+    public void closePage() {
+        if(mainActivity != null) {
+            getFragmentManager().popBackStack();
         }
     }
 
     @Override
     public void showToast(String msg) {
-        if (baseActivity != null && isVisible()) {
-            baseActivity.showToast(msg);
+        if (mainActivity != null && isVisible()) {
+            mainActivity.showToast(msg);
         }
+    }
+
+    protected void openPage(BaseFragment fragment) {
+        mainActivity.addFragment(fragment, true);
+    }
+
+    protected void replacePage(BaseFragment fragment) {
+        mainActivity.replaceFragment(fragment, false);
     }
 
     @Override
     public Drawable getDrawableById(int drawableId) {
-        return baseActivity.getDrawableById(drawableId);
+        return mainActivity.getDrawableById(drawableId);
     }
 
     @Override
     public String getStringById(int stringId) {
-        return baseActivity.getStringById(stringId);
+        return mainActivity.getStringById(stringId);
     }
 
     @Override
     public String[] getStringArrayById(int arrayId) {
-        return baseActivity.getStringArrayById(arrayId);
+        return mainActivity.getStringArrayById(arrayId);
     }
 
     @Override
     public int getColorById(int colorId) {
-        return baseActivity.getColorById(colorId);
+        return mainActivity.getColorById(colorId);
     }
 }
