@@ -3,50 +3,69 @@ package io.github.winsontse.hearteyes.page.main.presenter;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVPush;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.SaveCallback;
-import com.avos.avoscloud.SendCallback;
-import com.google.gson.Gson;
 
 import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.CircleMemberContract;
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
-import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.page.main.contract.MainContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.RxUtil;
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Action1;
 
 public class MainPresenter extends BasePresenterImpl implements MainContract.Presenter {
     private MainContract.View view;
 
     @Inject
-    public MainPresenter(MainContract.View view) {
+    public MainPresenter(final MainContract.View view) {
         this.view = view;
+
+        registerEventReceiver(PushEvent.class, new Action1<PushEvent>() {
+            @Override
+            public void call(PushEvent pushEvent) {
+
+                int type = pushEvent.getType();
+                if (type == PushEvent.RESTART_INIT_PAGE) {
+                    view.initPage();
+                } else if (type == PushEvent.RESTART_AND_NOTIFY_FRIEND) {
+                    view.initPage();
+                    sendPushMessageToFriend(new PushEvent(PushEvent.RESTART_INIT_PAGE, AVUser.getCurrentUser().getString(UserContract.NICKNAME), "", ""));
+                }
+            }
+        });
     }
 
-    public void init() {
+    public void validateUserStatus() {
+        Log.d("winson", "验证用户");
+
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser == null || TextUtils.isEmpty(currentUser.getString(UserContract.NICKNAME))) {
             view.goToLoginPage();
         } else if (currentUser.getAVUser(UserContract.FRIEND) != null && !TextUtils.isEmpty(currentUser.getString(UserContract.CIRCLE_ID))) {
-            view.goToHomePage();
+            view.goToMomentListPage();
         } else {
             getCircleAndFriend(currentUser);
+        }
+    }
+
+    @Override
+    public void handleNewPageEvent(int openType) {
+        switch (openType) {
+
+            default:
+                break;
         }
     }
 
@@ -114,7 +133,7 @@ public class MainPresenter extends BasePresenterImpl implements MainContract.Pre
                             public void onNext(Boolean isGoToHome) {
                                 view.hideProgressDialog();
                                 if (isGoToHome) {
-                                    view.goToHomePage();
+                                    view.goToMomentListPage();
                                 } else {
                                     view.showToast(view.getStringById(R.string.error_have_no_friend));
                                     view.goToAssosiationPage();

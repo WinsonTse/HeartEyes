@@ -15,49 +15,26 @@ public class AnimatorUtil {
      * 创建一个圆形动画
      *
      * @param v
-     * @param callback
+     * @param listener
      */
 
-    public static void createCircularReveal(final View v, int centerX, int centerY, float startRadius, float finalRadius, final AnimatorCallback callback) {
+    public static void createCircularReveal(final View v, int centerX, int centerY, float startRadius, float finalRadius, final Animator.AnimatorListener listener) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             final Animator circularReveal;
             circularReveal = ViewAnimationUtils.createCircularReveal(v, centerX, centerY, startRadius, finalRadius);
 
-            circularReveal.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-//                    v.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    circularReveal.removeListener(this);
-                    if (callback != null) {
-                        callback.onAnimatorEnd();
-                    }
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-            circularReveal.setDuration(1000);
+            circularReveal.addListener(listener);
+            circularReveal.setDuration(800);
             circularReveal.start();
         } else {
-            if (callback != null) {
-                callback.onAnimatorEnd();
+            if (listener != null) {
+                listener.onAnimationEnd(null);
             }
         }
     }
 
-    public static void showCircularReveal(final View v, final AnimatorCallback callback) {
+    public static void showCircularReveal(final View v, final Animator.AnimatorListener callback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             v.setVisibility(View.VISIBLE);
             int centerX = (v.getLeft() + v.getRight()) / 2;
@@ -69,7 +46,7 @@ public class AnimatorUtil {
         }
     }
 
-    public static void hideCircularReveal(final View v, final AnimatorCallback callback) {
+    public static void hideCircularReveal(final View v, final Animator.AnimatorListener callback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             v.setVisibility(View.VISIBLE);
             int centerX = (v.getLeft() + v.getRight()) / 2;

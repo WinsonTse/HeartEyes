@@ -27,4 +27,8 @@ public class GsonUtil {
     public <T> String toJson(T t) {
         return gson.toJson(t);
     }
+
+    public <T> T fromJson(String json, Class<T> cls) {
+        return gson.fromJson(json, cls);
+    }
 }

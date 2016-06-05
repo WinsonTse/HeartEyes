@@ -16,15 +16,16 @@ import javax.inject.Inject;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.CircleMemberContract;
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.account.contract.AssociationContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
-import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.HeartEyesException;
 import io.github.winsontse.hearteyes.util.RxUtil;
 import io.github.winsontse.hearteyes.util.ZxingUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
+import io.github.winsontse.hearteyes.util.rxbus.RxBus;
 import io.github.winsontse.hearteyes.util.rxbus.event.UidEvent;
 import rx.Observable;
 import rx.Subscriber;
@@ -175,7 +176,8 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
                                 view.hideProgressDialog();
                                 Log.d("winson", "执行");
                                 Log.d("winson", "正确:" + avObject.toString() + avObject.getString(UserContract.NICKNAME));
-                                view.replacePage();
+
+                                RxBus.getInstance().post(new PushEvent(PushEvent.RESTART_AND_NOTIFY_FRIEND));
                             }
                         })
         );

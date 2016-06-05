@@ -15,4 +15,9 @@
     <dimen name="text_display2">45sp</dimen>
     <dimen name="text_display3">56sp</dimen>
     <dimen name="text_display4">112sp</dimen>
+    <dimen name="text_active">14sp</dimen>
+    <dimen name="text_inactive">14sp</dimen>
+
+    <dimen name="icon_size">24dp</dimen>
+
 </resources>

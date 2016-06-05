@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import io.github.winsontse.hearteyes.page.account.AccountFragment;
-import io.github.winsontse.hearteyes.page.main.HomeFragment;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
 import io.github.winsontse.hearteyes.page.todo.TodoListFragment;
 
@@ -22,12 +21,12 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case HomeFragment.PAGE_MOMENT:
-                return MomentListFragment.newInstance();
-            case HomeFragment.PAGE_TODO:
-                return TodoListFragment.newInstance();
-            case HomeFragment.PAGE_ACCOUNT:
-                return AccountFragment.newInstance();
+//            case HomeFragment.PAGE_MOMENT:
+//                return MomentListFragment.newInstance();
+//            case HomeFragment.PAGE_TODO:
+//                return TodoListFragment.newInstance();
+//            case HomeFragment.PAGE_ACCOUNT:
+//                return AccountFragment.newInstance();
             default:
                 return null;
         }

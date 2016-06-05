@@ -58,7 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         return getSupportFragmentManager().findFragmentByTag(cls.getSimpleName());
     }
 
-    protected void addFragment(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
+    protected void addFragment(int containerId, Fragment fragment, boolean isAddToBackStack) {
         String tag = fragment.getClass().getSimpleName();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .add(containerId, fragment, tag);
@@ -69,7 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         transaction.commitAllowingStateLoss();
     }
 
-    protected void replaceFragment(int containerId, BaseFragment fragment, boolean isAddToBackStack) {
+    protected void replaceFragment(int containerId, Fragment fragment, boolean isAddToBackStack) {
         String tag = fragment.getClass().getSimpleName();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .replace(containerId, fragment, tag);

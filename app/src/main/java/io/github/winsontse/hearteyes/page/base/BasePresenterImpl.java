@@ -10,15 +10,12 @@ import com.avos.avoscloud.AVPush;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.SendCallback;
-import com.google.gson.Gson;
 
-import io.github.winsontse.hearteyes.data.model.leancloud.PushMessage;
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
-import io.github.winsontse.hearteyes.util.GsonUtil;
 import io.github.winsontse.hearteyes.util.RxUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.util.rxbus.RxBus;
-import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -61,7 +58,7 @@ public class BasePresenterImpl implements BasePresenter {
     }
 
     @Override
-    public void sendPushMessage(AVUser avUser, final PushMessage msg) {
+    public void sendPushMessage(AVUser avUser, final PushEvent msg) {
         if (avUser == null || msg == null) {
             return;
         }
@@ -70,9 +67,14 @@ public class BasePresenterImpl implements BasePresenter {
                             @Override
                             public String call(AVUser avUser) {
                                 try {
-                                    avUser.fetch();
-                                    return avUser.getString(UserContract.INSTALLATION_ID);
+                                    String installationId = avUser.getString(UserContract.INSTALLATION_ID);
+                                    if(TextUtils.isEmpty(installationId)) {
+                                        avUser.fetch();
+                                        installationId = avUser.getString(UserContract.INSTALLATION_ID);
+                                    }
+                                    return installationId;
                                 } catch (AVException e) {
+                                    Log.d("winson", "出错:" + e.getMessage());
                                     e.printStackTrace();
                                     return null;
                                 }
@@ -92,7 +94,18 @@ public class BasePresenterImpl implements BasePresenter {
                                 push.setChannel(SecretConstant.PUSH_CHANNEL_PRIVATE);
                                 JSONObject jsonObject = new JSONObject();
                                 jsonObject.put("action", SecretConstant.PUSH_ACTION);
-                                jsonObject.put("alert", GsonUtil.getInstance().toJson(msg));
+                                jsonObject.put("type", msg.getType());
+                                if (!TextUtils.isEmpty(msg.getAlert())) {
+                                    jsonObject.put("alert", msg.getAlert());
+                                }
+
+                                if (!TextUtils.isEmpty(msg.getFrom())) {
+                                    jsonObject.put("from", msg.getFrom());
+                                }
+
+                                if (!TextUtils.isEmpty(msg.getContent())) {
+                                    jsonObject.put("content", msg.getContent());
+                                }
                                 push.setData(jsonObject);
                                 return push;
                             }
@@ -128,7 +141,38 @@ public class BasePresenterImpl implements BasePresenter {
     }
 
     @Override
-    public <T extends BaseEvent> void registerEventReceiver(Class<T> cls, Action1<T> action1) {
+    public void sendPushMessageToFriend(final PushEvent msg) {
+        getMyFriend(new Subscriber<AVUser>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(AVUser avUser) {
+                sendPushMessage(avUser, msg);
+            }
+        });
+    }
+
+    @Override
+    public void getMyFriend(Subscriber<AVUser> subscriber) {
+        addSubscription(Observable.create(new Observable.OnSubscribe<AVUser>() {
+            @Override
+            public void call(Subscriber<? super AVUser> subscriber) {
+                subscriber.onNext(AVUser.getCurrentUser().getAVUser(UserContract.FRIEND));
+            }
+        }), subscriber);
+
+    }
+
+    @Override
+    public <T> void registerEventReceiver(Class<T> cls, Action1<T> action1) {
         addSubscription(RxBus.getInstance().toObserverable(cls).compose(RxUtil.rxSchedulerHelper(cls)).subscribe(action1));
     }
 

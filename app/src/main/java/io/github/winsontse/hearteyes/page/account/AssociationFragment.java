@@ -1,5 +1,7 @@
 package io.github.winsontse.hearteyes.page.account;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -118,9 +120,15 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
         vCover.setVisibility(View.VISIBLE);
         AnimatorUtil.createCircularReveal(vCover, centerX, centerY, fabSwipe.getWidth() / 2,
                 (float) Math.hypot((double) centerX, (double) centerY)
-                , new AnimatorUtil.AnimatorCallback() {
+                , new AnimatorListenerAdapter() {
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @param animation
+                     */
                     @Override
-                    public void onAnimatorEnd() {
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
                         openPage(ScannerFragment.newInstance());
                     }
                 });
@@ -133,20 +141,11 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
         AnimatorUtil.createCircularReveal(vCover, centerX, centerY,
                 (float) Math.hypot((double) centerX, (double) centerY),
                 fabSwipe.getWidth() / 2,
-                new AnimatorUtil.AnimatorCallback() {
+                new AnimatorListenerAdapter() {
                     @Override
-                    public void onAnimatorEnd() {
+                    public void onAnimationEnd(Animator animation) {
                         vCover.setVisibility(View.INVISIBLE);
                     }
                 });
-    }
-
-    @Override
-    public void replacePage() {
-        FragmentActivity activity = getActivity();
-        if (activity != null && !activity.isFinishing()) {
-            MainActivity mainActivity = (MainActivity) activity;
-            mainActivity.initPage();
-        }
     }
 }

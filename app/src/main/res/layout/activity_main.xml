@@ -3,12 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="?selectableItemBackgroundBorderless"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
+    <io.github.winsontse.hearteyes.widget.BottomBar
+        android:id="@+id/bottom_bar"
+        app:tabBackground="?selectableItemBackgroundBorderless"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="?colorPrimary"
+        app:tabIndicatorHeight="0dp"
+        app:tabSelectedTextColor="?colorPrimary"
+        app:tabTextColor="?android:textColorHint" />
 
 </FrameLayout>

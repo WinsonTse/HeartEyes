@@ -1,10 +1,8 @@
 package io.github.winsontse.hearteyes.page.base;
 
-import com.avos.avoscloud.AVPush;
 import com.avos.avoscloud.AVUser;
 
-import io.github.winsontse.hearteyes.data.model.leancloud.PushMessage;
-import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -21,7 +19,11 @@ public interface BasePresenter {
 
     void unsubscribe();
 
-    void sendPushMessage(AVUser avUser, PushMessage msg);
+    void sendPushMessage(AVUser avUser, PushEvent msg);
 
-    <T extends BaseEvent> void registerEventReceiver(Class<T> cls, Action1<T> action1);
+    void sendPushMessageToFriend(PushEvent msg);
+
+    void getMyFriend(Subscriber<AVUser> subscriber);
+
+    <T> void registerEventReceiver(Class<T> cls, Action1<T> action1);
 }

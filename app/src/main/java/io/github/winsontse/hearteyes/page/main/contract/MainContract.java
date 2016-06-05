@@ -10,15 +10,19 @@ import io.github.winsontse.hearteyes.page.base.BaseView;
 public interface MainContract {
 
     interface View extends BaseView {
-        void goToHomePage();
+        void goToMomentListPage();
 
         void goToLoginPage();
 
         void goToAssosiationPage();
+
+        void initPage();
     }
 
     interface Presenter extends BasePresenter {
-        void init();
+        void validateUserStatus();
+
+        void handleNewPageEvent(int openType);
 
         void handleActivityResult(int requestCode, int resultCode, Intent data);
 

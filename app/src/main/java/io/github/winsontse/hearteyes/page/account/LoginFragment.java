@@ -109,14 +109,4 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         }, 1000);
 
     }
-
-    @Override
-    public void replacePage() {
-        FragmentActivity activity = getActivity();
-        if (activity != null && !activity.isFinishing()) {
-            MainActivity mainActivity = (MainActivity) activity;
-            mainActivity.initPage();
-        }
-//        replacePage(AssociationFragment.newInstance());
-    }
 }

@@ -2,28 +2,42 @@ package io.github.winsontse.hearteyes.page.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.avos.avoscloud.PushService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.AssociationFragment;
 import io.github.winsontse.hearteyes.page.account.LoginFragment;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
-import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.main.component.DaggerMainComponent;
 import io.github.winsontse.hearteyes.page.main.contract.MainContract;
 import io.github.winsontse.hearteyes.page.main.module.MainModule;
 import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
+import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
+import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
+import io.github.winsontse.hearteyes.widget.BottomBar;
 
 public class MainActivity extends BaseActivity implements MainContract.View {
     @Inject
     MainPresenter presenter;
+    @BindView(R.id.fragment_container)
+    FrameLayout fragmentContainer;
+    @BindView(R.id.bottom_bar)
+    BottomBar bottomBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +45,44 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        initBottomBar();
         initPage();
-
+        openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
 
     }
 
+    private void initBottomBar() {
+        List<String> titles = new ArrayList<>();
+        titles.add("动态");
+        titles.add("备忘");
+        titles.add("我");
+
+        List<Integer> icons = new ArrayList<>();
+        icons.add(R.drawable.ic_moment);
+        icons.add(R.drawable.ic_av_timer);
+        icons.add(R.drawable.ic_face);
+
+        bottomBar.setTitlesAndIcons(titles, icons);
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        openNewPage(intent.getIntExtra(Extra.TYPE_NEW_PAGE, 0));
+    }
+
     public void initPage() {
-        presenter.init();
+        presenter.validateUserStatus();
         PushService.setDefaultPushCallback(this, MainActivity.class);
         PushService.subscribe(this, SecretConstant.PUSH_CHANNEL_PRIVATE, MainActivity.class);
         presenter.updateInstallationId();
 
+    }
+
+    private void openNewPage(int intExtra) {
+        presenter.handleNewPageEvent(intExtra);
     }
 
     @Override
@@ -59,46 +100,36 @@ public class MainActivity extends BaseActivity implements MainContract.View {
     }
 
 
-    public void addFragment(BaseFragment baseFragment, boolean isAddToBackStack) {
-        addFragment(R.id.fragment_container, baseFragment, isAddToBackStack);
+    public void addFragment(Fragment ragment, boolean isAddToBackStack) {
+        addFragment(R.id.fragment_container, ragment, isAddToBackStack);
     }
 
-    public void replaceFragment(BaseFragment baseFragment, boolean isAddToBackStack) {
-        replaceFragment(R.id.fragment_container, baseFragment, isAddToBackStack);
+    public void replaceFragment(Fragment fragment, boolean isAddToBackStack) {
+        replaceFragment(R.id.fragment_container, fragment, isAddToBackStack);
     }
 
-
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-//                moveTaskToBack(true);
-//                return true;
-//            } else {
-//                getSupportFragmentManager().popBackStack();
-//            }
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
 
     @Override
-    public void goToHomePage() {
-        if (findFragmentByClass(HomeFragment.class) == null) {
-            replaceFragment(HomeFragment.newInstance(), false);
+    public void goToMomentListPage() {
+        Fragment fragment = findFragmentByClass(MomentListFragment.class);
+        if (fragment == null) {
+            replaceFragment(MomentListFragment.newInstance(), false);
         }
-
+        bottomBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void goToLoginPage() {
-        if (findFragmentByClass(LoginFragment.class) == null) {
+        Fragment fragment = findFragmentByClass(LoginFragment.class);
+        if (fragment == null) {
             replaceFragment(LoginFragment.newInstance(), false);
         }
     }
 
     @Override
     public void goToAssosiationPage() {
-        if (findFragmentByClass(AssociationFragment.class) == null) {
+        Fragment fragment = findFragmentByClass(AssociationFragment.class);
+        if (fragment == null) {
             replaceFragment(AssociationFragment.newInstance(), false);
         }
     }

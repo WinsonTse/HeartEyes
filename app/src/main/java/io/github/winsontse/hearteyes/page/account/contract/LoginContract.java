@@ -11,7 +11,6 @@ public interface LoginContract {
     interface View extends BaseView {
         void setLoadingState();
         void showEnterFab();
-        void replacePage();
     }
 
     interface Presenter extends BasePresenter {

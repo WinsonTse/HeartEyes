@@ -5,14 +5,20 @@ package io.github.winsontse.hearteyes.util.rxbus.event.base;
  */
 public class BaseEvent {
     private int type;
-    private String msg;
+    private String content;
+
+    public BaseEvent(int type) {
+        this.type = type;
+    }
+
+
 
     public BaseEvent() {
     }
 
     public BaseEvent(int type, String msg) {
         this.type = type;
-        this.msg = msg;
+        this.content = msg;
     }
 
     public int getType() {
@@ -23,11 +29,11 @@ public class BaseEvent {
         this.type = type;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getContent() {
+        return content;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

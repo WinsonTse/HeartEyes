@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.data.model.weibo.WeiboUser;
 import io.github.winsontse.hearteyes.data.remote.WeiboApi;
@@ -23,6 +24,7 @@ import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.RxUtil;
+import io.github.winsontse.hearteyes.util.rxbus.RxBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
@@ -115,7 +117,7 @@ public class LoginPresenter extends BasePresenterImpl implements LoginContract.P
                     @Override
                     public void onNext(AVUser avUser) {
                         Log.d("winson", avUser.getString(UserContract.NICKNAME) + "   " + avUser.getAVFile(UserContract.AVATAR).getName());
-                        view.replacePage();
+                        RxBus.getInstance().post(new PushEvent(PushEvent.RESTART_INIT_PAGE));
                     }
                 }));
     }
