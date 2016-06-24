@@ -50,7 +50,7 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_association, container, false);
         ButterKnife.bind(this, rootView);
         presenter.generateQrcode(500, 500, Color.WHITE, Color.BLACK);

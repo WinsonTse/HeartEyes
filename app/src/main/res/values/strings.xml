@@ -18,4 +18,14 @@
     <string name="error_you_has_friends">不要贪心!你已经有好朋友了!</string>
     <string name="error_she_has_friends">Ta已经有对象了!不要乱来!</string>
     <string name="error_have_no_friend">你还没有对象, 赶紧添加一个吧</string>
+    <string name="tips_selected_images_count">选中 %s/</string>
+    <string name="tips_selected_images_max">已达到最大选择</string>
+    <string name="ok">确认</string>
+
+
+    <string name="create_moment">创建动态</string>
+    <string name="pick_image">选择图片</string>
+    <string name="tips_moment_content_not_empty">动态内容不可以是空的</string>
+    <string name="publishing_moment">正在发动态...</string>
+
 </resources>

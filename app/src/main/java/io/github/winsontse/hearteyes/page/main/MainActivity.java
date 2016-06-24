@@ -3,7 +3,8 @@ package io.github.winsontse.hearteyes.page.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.View;
+import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.widget.FrameLayout;
 
 import com.avos.avoscloud.PushService;
@@ -17,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
+import io.github.winsontse.hearteyes.page.account.AccountFragment;
 import io.github.winsontse.hearteyes.page.account.AssociationFragment;
 import io.github.winsontse.hearteyes.page.account.LoginFragment;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
@@ -26,11 +28,14 @@ import io.github.winsontse.hearteyes.page.main.contract.MainContract;
 import io.github.winsontse.hearteyes.page.main.module.MainModule;
 import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
+import io.github.winsontse.hearteyes.util.AnimatorUtil;
+import io.github.winsontse.hearteyes.util.UIUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.widget.BottomBar;
 
-public class MainActivity extends BaseActivity implements MainContract.View {
+public class MainActivity extends BaseActivity implements MainContract.View, FragmentManager.OnBackStackChangedListener {
     @Inject
     MainPresenter presenter;
     @BindView(R.id.fragment_container)
@@ -49,6 +54,36 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         initPage();
         openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
 
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+    }
+
+    /**
+     * Called whenever the contents of the back stack change.
+     */
+    @Override
+    public void onBackStackChanged() {
+        List<Fragment> backStackFragments = getSupportFragmentManager().getFragments();
+        List<Fragment> fragments = new ArrayList<>();
+        for (Fragment fragment : backStackFragments) {
+            if (fragment != null) {
+                fragments.add(fragment);
+            }
+        }
+        if (fragments.size() == 1 && TextUtils.equals(fragments.get(0).getTag(), MomentListFragment.class.getSimpleName())) {
+            showBottomBar();
+        } else {
+            AnimatorUtil.translationToHideBottomBar(bottomBar).start();
+        }
+    }
+
+    private void showBottomBar() {
+        AnimatorUtil.translationToCorrect(bottomBar).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getSupportFragmentManager().removeOnBackStackChangedListener(this);
     }
 
     private void initBottomBar() {
@@ -115,7 +150,22 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         if (fragment == null) {
             replaceFragment(MomentListFragment.newInstance(), false);
         }
-        bottomBar.setVisibility(View.VISIBLE);
+
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            showBottomBar();
+        }
+
+
+//        Fragment loginFragment = findFragmentByClass(LoginFragment.class);
+//        if(loginFragment != null) {
+//            getSupportFragmentManager().beginTransaction().remove(loginFragment).commitAllowingStateLoss();
+//        }
+//
+//        Fragment assosiationFragment = findFragmentByClass(AssociationFragment.class);
+//        if(assosiationFragment != null) {
+//            getSupportFragmentManager().beginTransaction().remove(assosiationFragment).commitAllowingStateLoss();
+//        }
+//        bottomBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -149,4 +199,6 @@ public class MainActivity extends BaseActivity implements MainContract.View {
         }
         presenter.handleActivityResult(requestCode, resultCode, data);
     }
+
+
 }

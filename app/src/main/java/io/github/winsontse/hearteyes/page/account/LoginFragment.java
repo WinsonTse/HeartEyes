@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +18,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.app.HeartEyesApplication;
 import io.github.winsontse.hearteyes.page.account.component.DaggerLoginComponent;
 import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.account.module.LoginModule;
 import io.github.winsontse.hearteyes.page.account.presenter.LoginPresenter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
-import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 
@@ -52,7 +49,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, rootView);
         ssoHandler = new SsoHandler(getActivity(), new AuthInfo(getActivity(), SecretConstant.WEIBO_APP_KEY, SecretConstant.WEIBO_REDIRECT_URL, SecretConstant.WEIBO_SCOPE));
@@ -62,6 +59,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
                 setLoadingState();
             }
         });
+        showEnterFab();
         return rootView;
     }
 
@@ -90,10 +88,18 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     @Override
     public void setLoadingState() {
         progressBar.show();
-        AnimatorUtil.hideFab(fabEnter, new AnimatorUtil.AnimatorCallback() {
+        fabEnter.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+            /**
+             * Called when a FloatingActionButton has been
+             * {@link #hide(OnVisibilityChangedListener) hidden}.
+             *
+             * @param fab the FloatingActionButton that was hidden.
+             */
             @Override
-            public void onAnimatorEnd() {
+            public void onHidden(FloatingActionButton fab) {
+                super.onHidden(fab);
                 presenter.authirize(ssoHandler);
+
             }
         });
     }
@@ -104,9 +110,9 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             @Override
             public void run() {
                 progressBar.hide();
-                AnimatorUtil.showFab(fabEnter, null);
+                fabEnter.show();
             }
-        }, 1000);
+        }, AnimatorUtil.ANIMATOR_TIME);
 
     }
 }

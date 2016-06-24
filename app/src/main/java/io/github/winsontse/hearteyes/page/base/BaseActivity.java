@@ -1,5 +1,6 @@
 package io.github.winsontse.hearteyes.page.base;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import javax.annotation.Resource;
@@ -78,7 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
             transaction.addToBackStack(tag);
 
         }
-        transaction.commitAllowingStateLoss();
+        transaction.commitNow();
     }
 
 
@@ -97,9 +100,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         }
         progressDialog.setCancelable(cancelable);
         progressDialog.setCanceledOnTouchOutside(cancelable);
-        if (!progressDialog.isShowing()) {
-            progressDialog.show();
-        }
+        progressDialog.show();
     }
 
     @Override
@@ -139,5 +140,20 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     @Override
     public int getColorById(int colorId) {
         return resources.getColor(colorId);
+    }
+
+    @Override
+    public void showKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(view, 0);
+    }
+
+    @Override
+    public void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            inputMethodManager.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+        }
     }
 }

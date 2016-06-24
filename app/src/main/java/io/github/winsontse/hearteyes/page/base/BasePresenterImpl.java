@@ -68,7 +68,7 @@ public class BasePresenterImpl implements BasePresenter {
                             public String call(AVUser avUser) {
                                 try {
                                     String installationId = avUser.getString(UserContract.INSTALLATION_ID);
-                                    if(TextUtils.isEmpty(installationId)) {
+                                    if (TextUtils.isEmpty(installationId)) {
                                         avUser.fetch();
                                         installationId = avUser.getString(UserContract.INSTALLATION_ID);
                                     }
@@ -169,6 +169,11 @@ public class BasePresenterImpl implements BasePresenter {
             }
         }), subscriber);
 
+    }
+
+    @Override
+    public AVUser getCurrentUser() {
+        return AVUser.getCurrentUser();
     }
 
     @Override

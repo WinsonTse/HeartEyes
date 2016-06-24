@@ -37,7 +37,7 @@ public class ScannerFragment extends BaseFragment implements ScannerContract.Vie
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        View rootView = inflater.inflate(R.layout.fragment_scanner, container, false);
 //        return rootView;
         scannerView = new ZXingScannerView(getActivity());

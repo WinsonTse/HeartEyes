@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.page.base;
 
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 import rx.Observable;
 
@@ -16,6 +17,10 @@ public interface BaseView {
     void hideProgressDialog();
 
     void showToast(String msg);
+
+    void showKeyboard(View view);
+
+    void hideKeyboard();
 
     String getStringById(int stringId);
 

@@ -5,6 +5,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
@@ -31,6 +38,40 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         super.onCreate(savedInstanceState);
         setupComponent(HeartEyesApplication.get(getActivity()).getAppComponent());
     }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View rootView = initView(inflater, container, savedInstanceState);
+        View v = rootView.findViewById(R.id.toolbar);
+        initToolbar(v);
+        return rootView;
+    }
+
+    private void initToolbar(View v) {
+        if (v != null && v instanceof Toolbar) {
+            Toolbar toolbar = (Toolbar) v;
+            FragmentActivity activity = getActivity();
+            if (activity != null && activity instanceof AppCompatActivity) {
+                AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
+                appCompatActivity.setSupportActionBar(toolbar);
+                ActionBar supportActionBar = appCompatActivity.getSupportActionBar();
+                if (supportActionBar != null) {
+                    supportActionBar.setDisplayShowHomeEnabled(true);
+                    supportActionBar.setDisplayHomeAsUpEnabled(true);
+                    supportActionBar.setHomeButtonEnabled(true);
+                }
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        closePage();
+                    }
+                });
+            }
+        }
+    }
+
+    protected abstract View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
     protected abstract void setupComponent(AppComponent appComponent);
 
@@ -61,7 +102,8 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     @Override
     public void closePage() {
-        if(mainActivity != null) {
+        hideKeyboard();
+        if (mainActivity != null) {
             getFragmentManager().popBackStack();
         }
     }
@@ -99,5 +141,15 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     @Override
     public int getColorById(int colorId) {
         return mainActivity.getColorById(colorId);
+    }
+
+    @Override
+    public void showKeyboard(View view) {
+        mainActivity.showKeyboard(view);
+    }
+
+    @Override
+    public void hideKeyboard() {
+        mainActivity.hideKeyboard();
     }
 }

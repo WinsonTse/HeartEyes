@@ -6,11 +6,15 @@ import android.os.Build;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewPropertyAnimator;
 
 /**
  * Created by winson on 16/5/24.
  */
 public class AnimatorUtil {
+
+    public static final int ANIMATOR_TIME = 800;
+
     /**
      * 创建一个圆形动画
      *
@@ -25,7 +29,7 @@ public class AnimatorUtil {
             circularReveal = ViewAnimationUtils.createCircularReveal(v, centerX, centerY, startRadius, finalRadius);
 
             circularReveal.addListener(listener);
-            circularReveal.setDuration(800);
+            circularReveal.setDuration(ANIMATOR_TIME);
             circularReveal.start();
         } else {
             if (listener != null) {
@@ -56,71 +60,12 @@ public class AnimatorUtil {
         }
     }
 
-    public static void hideFab(final View v, final AnimatorCallback callback) {
-        v.animate().cancel();
-        v.animate()
-                .scaleX(0f)
-                .scaleY(0f)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (callback != null) {
-                            callback.onAnimatorEnd();
-                        }
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                })
-                .start();
+    public static ViewPropertyAnimator translationToCorrect(View v) {
+        return v.animate().translationY(0).setDuration(ANIMATOR_TIME).setInterpolator(new FastOutSlowInInterpolator());
     }
 
-    public static void showFab(final View v, final AnimatorCallback callback) {
-        v.animate().cancel();
-        v.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        if (callback != null) {
-                            callback.onAnimatorEnd();
-                        }
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                })
-                .start();
+    public static ViewPropertyAnimator translationToHideBottomBar(View v) {
+        return v.animate().translationY(v.getHeight()).setDuration(ANIMATOR_TIME).setInterpolator(new FastOutSlowInInterpolator());
     }
 
-
-    public interface AnimatorCallback {
-        void onAnimatorEnd();
-    }
 }

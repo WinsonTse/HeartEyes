@@ -4,32 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?pageBackground"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
-        android:translationY="-56dp"
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <include layout="@layout/toolbar" />
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
+        android:padding="@dimen/padding_s"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_edit"
-        android:src="@drawable/ic_edit"
-        android:clickable="true"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="?actionBarSize"
-        app:layout_anchor="@id/recyclerView"
-        app:layout_anchorGravity="right|bottom"
-        app:useCompatPadding="true" />
+
 </android.support.design.widget.CoordinatorLayout>

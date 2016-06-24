@@ -4,15 +4,10 @@
 
     </style>
 
-    <style name="EditTextStyle" parent="Base.V7.Widget.AppCompat.EditText"></style>
+    <style name="BaseEditTextStyle" parent="Base.V7.Widget.AppCompat.EditText"></style>
 
     <style name="BaseButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:stateListAnimator">@null</item>
-    </style>
-
-    <style name="EditTextStyle.SingleLine">
-        <item name="android:maxLines">1</item>
-        <item name="android:ellipsize">end</item>
     </style>
 
 </resources>

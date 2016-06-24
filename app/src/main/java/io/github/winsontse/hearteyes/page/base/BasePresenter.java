@@ -25,5 +25,7 @@ public interface BasePresenter {
 
     void getMyFriend(Subscriber<AVUser> subscriber);
 
+    AVUser getCurrentUser();
+
     <T> void registerEventReceiver(Class<T> cls, Action1<T> action1);
 }

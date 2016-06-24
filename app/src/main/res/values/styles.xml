@@ -17,11 +17,15 @@
         <item name="pageBackground">@color/material_white</item>
         <item name="android:textColorPrimary">@color/material_textBlack_text</item>
         <item name="android:textColorPrimaryInverse">@color/material_textWhite_text</item>
-
+        <item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 
     <!--edittext style-->
-    <style name="EditTextStyle" parent="Base.V7.Widget.AppCompat.EditText" />
+    <style name="BaseEditTextStyle" parent="Base.V7.Widget.AppCompat.EditText" />
+
+    <style name="EditTextStyle" parent="BaseEditTextStyle">
+        <item name="backgroundTint">?colorAccent</item>
+    </style>
 
     <style name="EditTextStyle.SingleLine">
         <item name="android:maxLines">1</item>

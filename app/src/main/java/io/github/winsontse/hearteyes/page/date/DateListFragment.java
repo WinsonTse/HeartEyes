@@ -31,7 +31,7 @@ public class DateListFragment extends BaseFragment implements DateListContract.V
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_date_list, container, false);
         return rootView;
     }
