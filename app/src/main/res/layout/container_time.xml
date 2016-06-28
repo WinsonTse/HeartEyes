@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_time"
+    android:background="@color/material_white"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="@dimen/padding_l"
+        android:layout_marginBottom="@dimen/padding_l"
+        android:layout_marginLeft="@dimen/padding_l"
+        android:layout_marginRight="@dimen/padding_l"
+        android:gravity="center"
+        android:text=""
+        android:textSize="28dp" />
+</LinearLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+
+    <include layout="@layout/container_time" />
+
+    <io.github.winsontse.hearteyes.widget.CircleImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="right"
+        android:layout_marginTop="@dimen/padding_l"
+        android:layout_marginLeft="@dimen/padding_l"
+        android:layout_marginRight="@dimen/padding_l"
+        android:clickable="true"
+        android:src="?colorPrimary"
+        app:civ_border_color="@color/material_grey_300"
+        app:civ_border_width="0.5dp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="32dp"
+        android:layout_toLeftOf="@id/iv_avatar"
+        android:layout_toRightOf="@+id/ll_time"
+        android:background="@color/material_grey_300" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="@dimen/padding_l"
+        android:layout_marginTop="@dimen/padding_l"
+        android:layout_toRightOf="@id/ll_time"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/padding_m">
+
+        <TextView
+            android:id="@+id/tv_content"
+            style="@style/Base.TextAppearance.AppCompat.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="这是一条动态的样子。这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_m" />
+    </LinearLayout>
+
+
+</RelativeLayout>

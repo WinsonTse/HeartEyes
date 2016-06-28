@@ -33,6 +33,10 @@ public class ImageLoader {
         return instance;
     }
 
+    public void displayAvatar(Context context, String url,  ImageView iv) {
+        getRequestManager(context).load(url).placeholder(R.color.colorPrimary).dontAnimate().into(iv);
+    }
+
     public void displayImage(Context context, String url, int placeHolder, ImageView iv) {
         getRequestManager(context).load(url).placeholder(placeHolder).into(iv);
     }

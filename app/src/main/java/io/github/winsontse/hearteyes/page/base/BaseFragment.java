@@ -5,9 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,26 +46,20 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     }
 
     private void initToolbar(View v) {
-        if (v != null && v instanceof Toolbar) {
+        if (isSupportBackNavigation() && v != null && v instanceof Toolbar) {
             Toolbar toolbar = (Toolbar) v;
-            FragmentActivity activity = getActivity();
-            if (activity != null && activity instanceof AppCompatActivity) {
-                AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
-                appCompatActivity.setSupportActionBar(toolbar);
-                ActionBar supportActionBar = appCompatActivity.getSupportActionBar();
-                if (supportActionBar != null) {
-                    supportActionBar.setDisplayShowHomeEnabled(true);
-                    supportActionBar.setDisplayHomeAsUpEnabled(true);
-                    supportActionBar.setHomeButtonEnabled(true);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    closePage();
                 }
-                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        closePage();
-                    }
-                });
-            }
+            });
         }
+    }
+
+    protected boolean isSupportBackNavigation() {
+        return true;
     }
 
     protected abstract View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);

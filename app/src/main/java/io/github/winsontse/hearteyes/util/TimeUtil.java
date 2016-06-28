@@ -1,12 +1,27 @@
 package io.github.winsontse.hearteyes.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by hao.xie on 16/5/10.
  */
 public class TimeUtil {
+
+    private static Calendar calendar;
+
+    public static Calendar getCalendar() {
+        if (calendar == null) {
+            synchronized (TimeUtil.class) {
+                if (calendar == null) {
+                    calendar = Calendar.getInstance();
+                }
+            }
+        }
+        return calendar;
+    }
+
     /**
      * 转换为多少时间前
      *
@@ -23,7 +38,7 @@ public class TimeUtil {
 
         long nowLongTime = System.currentTimeMillis();
         try {
-            timeStr = new SimpleDateFormat("yyyy-MM-dd").format(createTime * 1000);
+            timeStr = new SimpleDateFormat("yyyy-MM-dd").format(createTime);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,7 +46,7 @@ public class TimeUtil {
         } finally {
         }
 
-        long distanceSeconds = (nowLongTime - createTime * 1000) / 1000;
+        long distanceSeconds = (nowLongTime - createTime) / 1000;
 
         if (distanceSeconds <= 60) {
             result = "刚刚";
@@ -46,4 +61,12 @@ public class TimeUtil {
         }
         return result;
     }
+
+    public static int getDay(long time) {
+        Calendar calendar = getCalendar();
+        calendar.setTimeInMillis(time);
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+
 }
