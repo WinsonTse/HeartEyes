@@ -22,5 +22,4 @@
         app:tabIndicatorHeight="0dp"
         app:tabSelectedTextColor="?colorPrimary"
         app:tabTextColor="?android:textColorHint" />
-
 </FrameLayout>

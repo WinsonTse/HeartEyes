@@ -13,12 +13,14 @@ import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
 import io.github.winsontse.hearteyes.util.ImageLoader;
+import io.github.winsontse.hearteyes.util.UIUtil;
 
 /**
  * Created by winson on 16/6/28.
  */
 
 public class ThumbnailListAdapter extends BaseRecyclerAdapter<AVFile> {
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -30,18 +32,22 @@ public class ThumbnailListAdapter extends BaseRecyclerAdapter<AVFile> {
         ((ItemViewHolder) (holder)).bind(data.get(position));
     }
 
-    static class ItemViewHolder extends BaseViewHolder<AVFile> {
 
+
+    static class ItemViewHolder extends BaseViewHolder<AVFile> {
+        private int width;
         @BindView(R.id.iv)
         ImageView iv;
 
         public ItemViewHolder(List<AVFile> data, OnItemClickListener onItemClickListener, ViewGroup parent) {
             super(data, onItemClickListener, parent, R.layout.list_item_thumbnail);
+            width = UIUtil.dpToPx(context, 100);
         }
 
         @Override
         public void bind(AVFile avFile) {
-            ImageLoader.getInstance().displayImage(context, avFile.getUrl(), iv);
+//            ImageLoader.getInstance().displayImage(context, avFile.getUrl(), iv);
+            ImageLoader.getInstance().displayImage(context, avFile.getThumbnailUrl(true, width, width), iv);
         }
     }
 }

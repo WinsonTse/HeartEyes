@@ -46,6 +46,11 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
         return data.size() + getHeaderCount();
     }
 
+    public void clearItems() {
+        data.clear();
+        notifyDataSetChanged();
+    }
+
 
     public interface OnItemClickListener {
         void onItemClickListener(int position);

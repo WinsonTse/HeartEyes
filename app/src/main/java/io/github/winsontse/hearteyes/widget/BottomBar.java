@@ -62,7 +62,7 @@ public class BottomBar extends TabLayout {
 
             addTab(tab);
         }
-        setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 setTabAppearance(tab, true);

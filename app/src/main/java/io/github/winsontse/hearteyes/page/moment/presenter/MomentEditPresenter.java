@@ -21,6 +21,7 @@ import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentEditContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
+import io.github.winsontse.hearteyes.util.ImageUtil;
 import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.RxUtil;
 import rx.Observable;
@@ -48,7 +49,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
                 try {
                     List<AVFile> avFiles = new ArrayList<>();
                     for (ImageEntity entity : images) {
-                        AVFile avFile = AVFile.withFile(System.currentTimeMillis() + "_" + entity.getTitle(), new File(entity.getData()));
+                        AVFile avFile = AVFile.withFile(System.currentTimeMillis() + "_" + entity.getTitle() + ImageUtil.getNameSuffix(entity.getMineType()), new File(entity.getData()));
                         avFile.save();
                         avFiles.add(avFile);
                     }
@@ -58,6 +59,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
                     moment.put(MomentContract.CIRCLE_ID, currentUser.getString(UserContract.CIRCLE_ID));
                     moment.put(MomentContract.CONTENT, content);
                     moment.put(MomentContract.IMAGES, avFiles);
+                    moment.put(MomentContract.CREATEAD_TIME, System.currentTimeMillis());
                     moment.setFetchWhenSave(true);
                     moment.save();
                     subscriber.onNext(moment);

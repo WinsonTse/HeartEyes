@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.widget.FrameLayout;
 
 import com.avos.avoscloud.PushService;
+import com.bumptech.glide.manager.SupportRequestManagerFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.page.account.AccountFragment;
 import io.github.winsontse.hearteyes.page.account.AssociationFragment;
 import io.github.winsontse.hearteyes.page.account.LoginFragment;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
@@ -29,10 +29,8 @@ import io.github.winsontse.hearteyes.page.main.module.MainModule;
 import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
-import io.github.winsontse.hearteyes.util.UIUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
-import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.widget.BottomBar;
 
 public class MainActivity extends BaseActivity implements MainContract.View, FragmentManager.OnBackStackChangedListener {
@@ -65,7 +63,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
         List<Fragment> backStackFragments = getSupportFragmentManager().getFragments();
         List<Fragment> fragments = new ArrayList<>();
         for (Fragment fragment : backStackFragments) {
-            if (fragment != null) {
+            if (fragment != null && !(fragment instanceof SupportRequestManagerFragment)) {
                 fragments.add(fragment);
             }
         }
@@ -186,7 +184,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
 
     @Override
     public void finish() {
-        moveTaskToBack(true);
+        super.finish();
     }
 
     @Override
@@ -199,6 +197,4 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
         }
         presenter.handleActivityResult(requestCode, resultCode, data);
     }
-
-
 }

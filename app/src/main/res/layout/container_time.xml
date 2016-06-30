@@ -10,11 +10,19 @@
         android:id="@+id/tv_date"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_marginTop="@dimen/padding_l"
+        android:layout_marginTop="@dimen/padding_m"
+        android:layout_marginLeft="@dimen/padding_l"
+        android:layout_marginRight="@dimen/padding_l"
+        android:gravity="center_vertical"
+        android:textSize="28dp" />
+
+    <TextView
+        android:id="@+id/tv_week"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/padding_l"
         android:layout_marginLeft="@dimen/padding_l"
         android:layout_marginRight="@dimen/padding_l"
         android:gravity="center"
-        android:text=""
-        android:textSize="28dp" />
+        android:textSize="14dp" />
 </LinearLayout>

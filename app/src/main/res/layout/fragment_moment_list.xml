@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/material_white"
@@ -17,6 +17,54 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="?actionBarSize" />
+
+            <include layout="@layout/container_time" />
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/v_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/material_white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/empty_item_moment" />
+
+                    <include layout="@layout/empty_item_moment" />
+
+                    <include layout="@layout/empty_item_moment" />
+
+                    <include layout="@layout/empty_item_moment" />
+
+                    <include layout="@layout/empty_item_moment" />
+
+                    <include layout="@layout/empty_item_moment" />
+
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </FrameLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_edit"
         android:layout_width="wrap_content"
@@ -25,24 +73,18 @@
         android:clickable="true"
         android:src="@drawable/ic_edit"
         android:visibility="gone"
-        app:layout_anchor="@id/recyclerView"
+        app:layout_anchor="@id/rv"
         app:layout_anchorGravity="right|bottom"
+        app:layout_behavior="io.github.winsontse.hearteyes.behavior.ScrollAwareFABBehavior"
         app:useCompatPadding="true" />
 
-    <FrameLayout
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="?actionBarSize" />
-
-
-        <include layout="@layout/container_time" />
-
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:indeterminate="true"
+        android:indeterminateBehavior="repeat"
+        android:visibility="invisible" />
 </android.support.design.widget.CoordinatorLayout>

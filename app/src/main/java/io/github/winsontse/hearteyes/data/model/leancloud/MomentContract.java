@@ -12,4 +12,5 @@ public interface MomentContract {
     String IMAGES = "images";
     String RECORDING = "recording";
     String CIRCLE_ID = "circleId";
+    String CREATEAD_TIME = "createdTime";
 }

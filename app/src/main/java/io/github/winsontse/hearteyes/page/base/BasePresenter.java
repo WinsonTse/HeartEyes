@@ -19,6 +19,8 @@ public interface BasePresenter {
 
     void unsubscribe();
 
+    void clearSubscribe();
+
     void sendPushMessage(AVUser avUser, PushEvent msg);
 
     void sendPushMessageToFriend(PushEvent msg);

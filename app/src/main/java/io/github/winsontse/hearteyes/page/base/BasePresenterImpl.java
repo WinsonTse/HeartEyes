@@ -58,6 +58,13 @@ public class BasePresenterImpl implements BasePresenter {
     }
 
     @Override
+    public void clearSubscribe() {
+        if(compositeSubscription != null) {
+            compositeSubscription.clear();
+        }
+    }
+
+    @Override
     public void sendPushMessage(AVUser avUser, final PushEvent msg) {
         if (avUser == null || msg == null) {
             return;

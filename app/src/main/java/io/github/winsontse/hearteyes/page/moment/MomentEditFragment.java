@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,6 +57,8 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     TextView tvRecordCount;
     @BindView(R.id.ll_bottom)
     LinearLayout llBottom;
+
+    public static final int MAX_IMAGES_COUNT = 30;
     private SelectedImagesAdapter selectedImagesAdapter;
 
     public static MomentEditFragment newInstance() {
@@ -118,7 +121,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
         tvImageCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImagePickerActivity.startImagePicker(MomentEditFragment.this, 8, selectedImagesAdapter.getData());
+                ImagePickerActivity.startImagePicker(MomentEditFragment.this, MAX_IMAGES_COUNT, selectedImagesAdapter.getData());
             }
         });
 

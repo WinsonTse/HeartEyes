@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/padding_m">
 
 
     <include layout="@layout/container_time" />
@@ -15,19 +16,19 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_gravity="right"
-        android:layout_marginTop="@dimen/padding_l"
         android:layout_marginLeft="@dimen/padding_l"
         android:layout_marginRight="@dimen/padding_l"
+        android:layout_marginTop="@dimen/padding_m"
         android:clickable="true"
         android:src="?colorPrimary"
         app:civ_border_color="@color/material_grey_300"
-        app:civ_border_width="0.5dp" />
+        app:civ_border_width="@dimen/divider_s" />
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="32dp"
+        android:layout_height="@dimen/divider_s"
+        android:layout_marginTop="24dp"
         android:layout_toLeftOf="@id/iv_avatar"
         android:layout_toRightOf="@+id/ll_time"
         android:background="@color/material_grey_300" />
@@ -39,18 +40,23 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="@dimen/padding_l"
+        android:layout_marginRight="48dp"
         android:layout_marginTop="@dimen/padding_l"
+
         android:layout_toRightOf="@id/ll_time"
         android:orientation="vertical"
         android:paddingTop="@dimen/padding_m">
 
-        <TextView
+        <io.github.winsontse.hearteyes.widget.MoreTextLayout
             android:id="@+id/tv_content"
-            style="@style/Base.TextAppearance.AppCompat.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="这是一条动态的样子。这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子这是一条动态的样子" />
+            app:mtl_max_lines="5"
+            app:mtl_collasping_text="@string/expanding_content"
+            app:mtl_expanding_text="@string/collasp"
+            app:mtl_text_color="?android:textColorPrimary"
+            app:mtl_click_text_color="?colorAccent"
+            app:mtl_text_size="14sp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_image"

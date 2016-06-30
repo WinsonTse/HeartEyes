@@ -6,15 +6,16 @@ import java.util.List;
 
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.BaseView;
+import io.github.winsontse.hearteyes.page.base.TimelinePresenter;
+import io.github.winsontse.hearteyes.page.base.TimelineView;
 
 public interface MomentListContract {
 
-    interface View extends BaseView {
+    interface View extends TimelineView<AVObject> {
 
-        void addItems(List<AVObject> avObjects);
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter extends TimelinePresenter<AVObject> {
 
     }
 
