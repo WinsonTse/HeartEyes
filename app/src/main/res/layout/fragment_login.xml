@@ -10,7 +10,7 @@
 
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Title.Inverse"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -19,7 +19,7 @@
         android:text="@string/tips_weibo_login" />
 
     <TextView
-        style="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/padding_xl"

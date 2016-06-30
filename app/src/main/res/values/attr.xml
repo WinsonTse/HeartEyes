@@ -7,11 +7,11 @@
         <attr name="civ_fill_color" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="MoreTextLayout">
+    <declare-styleable name="MoreTextView">
         <attr name="mtl_text_size" format="dimension" />
         <attr name="mtl_text_color" format="color" />
         <attr name="mtl_click_text_color" format="color" />
-        <attr name="mtl_max_lines" format="integer" />
+        <attr name="mtl_max_length" format="integer" />
         <attr name="mtl_collasping_text" format="string" />
         <attr name="mtl_expanding_text" format="string" />
 

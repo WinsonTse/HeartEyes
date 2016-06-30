@@ -23,7 +23,7 @@ import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
 import io.github.winsontse.hearteyes.util.ImageLoader;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.widget.CircleImageView;
-import io.github.winsontse.hearteyes.widget.MoreTextLayout;
+import io.github.winsontse.hearteyes.widget.MoreTextView;
 
 /**
  * Created by winson on 16/6/25.
@@ -48,7 +48,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
         @BindView(R.id.tv_date)
         TextView tvDate;
         @BindView(R.id.tv_content)
-        MoreTextLayout tvContent;
+        MoreTextView tvContent;
         @BindView(R.id.iv_avatar)
         CircleImageView ivAvatar;
         @BindView(R.id.rv_image)
@@ -89,7 +89,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
             int currentPos = getAdapterPosition();
             int lastPos = currentPos - 1;
             String content = avObject.getString(MomentContract.CONTENT);
-            tvContent.setText(content);
+            tvContent.setContent(content);
             String avatar = avObject.getAVUser(MomentContract.AUTHOR).getAVFile(UserContract.AVATAR).getUrl();
             ImageLoader.getInstance().displayAvatar(context, avatar, ivAvatar);
 
