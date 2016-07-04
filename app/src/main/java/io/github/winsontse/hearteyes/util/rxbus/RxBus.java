@@ -1,5 +1,6 @@
 package io.github.winsontse.hearteyes.util.rxbus;
 
+import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
@@ -10,7 +11,7 @@ import rx.subjects.Subject;
  */
 public class RxBus {
     private static volatile RxBus defaultInstance;
-    private final Subject bus;
+    private final Subject<Object, Object> bus;
 
     public RxBus() {
         bus = new SerializedSubject<>(PublishSubject.create());
@@ -36,7 +37,7 @@ public class RxBus {
         }
     }
 
-    public <T> Observable<T> toObserverable(Class<T> eventType) {
+    public <T extends BaseEvent> Observable<T> toObserverable(Class<T> eventType) {
         return bus.ofType(eventType);
     }
 }

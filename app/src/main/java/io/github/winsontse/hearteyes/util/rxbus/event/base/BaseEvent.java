@@ -4,11 +4,11 @@ package io.github.winsontse.hearteyes.util.rxbus.event.base;
  * Created by winson on 16/5/28.
  */
 public class BaseEvent {
-    private int type;
+    private int code;
     private String content;
 
     public BaseEvent(int type) {
-        this.type = type;
+        this.code = type;
     }
 
 
@@ -17,16 +17,16 @@ public class BaseEvent {
     }
 
     public BaseEvent(int type, String msg) {
-        this.type = type;
+        this.code = type;
         this.content = msg;
     }
 
-    public int getType() {
-        return type;
+    public int getCode() {
+        return code;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getContent() {

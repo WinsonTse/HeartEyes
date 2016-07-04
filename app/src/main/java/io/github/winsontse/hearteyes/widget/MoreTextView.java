@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import io.github.winsontse.hearteyes.R;
@@ -19,17 +23,20 @@ import io.github.winsontse.hearteyes.util.LogUtil;
 
 public class MoreTextView extends TextView {
 
-    private boolean isShowMore = false;
+    private boolean isShowingMoreText = false;
+    private boolean hasMoreText = false;
 
     private int clickTextColor = Color.BLUE;
-    private int maxLength = 150;
+    private int maxLines = 5;
+    private int currentLines = 0;
     private String expandingStr = "";
     private String collaspingStr = "";
 
     private String correctContent = "";
-    private ClickableSpan clickableSpan;
     private SuperSpannable shortContent;
     private SuperSpannable longContent;
+    private ClickableSpan clickableSpan;
+    private int measuredHeight;
 
     public MoreTextView(Context context) {
         super(context);
@@ -50,7 +57,7 @@ public class MoreTextView extends TextView {
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MoreTextView);
             clickTextColor = a.getColor(R.styleable.MoreTextView_mtl_click_text_color, clickTextColor);
-            maxLength = a.getInt(R.styleable.MoreTextView_mtl_max_length, maxLength);
+            maxLines = a.getInt(R.styleable.MoreTextView_mtl_max_lines, maxLines) + 1;
             expandingStr = a.getString(R.styleable.MoreTextView_mtl_expanding_text);
             collaspingStr = a.getString(R.styleable.MoreTextView_mtl_collasping_text);
             a.recycle();
@@ -63,8 +70,8 @@ public class MoreTextView extends TextView {
         if (TextUtils.isEmpty(collaspingStr)) {
             collaspingStr = context.getString(R.string.expanding_content);
         }
-        final Resources resources = getContext().getResources();
-        clickableSpan = new ClickableURLSpan("", resources.getColor(R.color.material_pink_500)) {
+        setMaxLines(maxLines);
+        clickableSpan = new ClickableURLSpan("", clickTextColor) {
             @Override
             public void onLongClick(View widget) {
 
@@ -72,61 +79,87 @@ public class MoreTextView extends TextView {
 
             @Override
             public void onClick(View view) {
-                LogUtil.d("点击事件");
-                if (isShowMore) {
+                if (isShowingMoreText) {
+                    if (measuredHeight == 0) {
+                        measuredHeight = getMeasuredHeight();
+                    }
+                    getLayoutParams().height = measuredHeight;
+                    requestLayout();
                     setText(shortContent);
+
                 } else {
-                    if(longContent == null) {
+                    setMaxLines(Integer.MAX_VALUE);
+                    if (longContent == null) {
                         longContent = new SuperSpannable();
                     }
-                    if(longContent.length() == 0) {
+                    if (longContent.length() == 0) {
                         longContent.append(correctContent);
                         longContent.append("\n");
                         longContent.append(expandingStr, clickableSpan);
                     }
+                    getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    requestLayout();
                     setText(longContent);
-
                 }
-                isShowMore = !isShowMore;
+                isShowingMoreText = !isShowingMoreText;
+
             }
         };
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-        setOnTouchListener(new ClickableTextOnTouchListener(resources.getColor(R.color.material_pink_200)));
+        setOnTouchListener(new ClickableTextOnTouchListener(Color.TRANSPARENT));
+
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        LogUtil.e("当前:" + getMeasuredHeight() + "\n" + correctContent);
     }
 
     public void setContent(final String content) {
-        isShowMore = false;
+        isShowingMoreText = false;
+        hasMoreText = false;
+        getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        requestLayout();
         this.correctContent = content;
         if (shortContent != null) {
             shortContent.clear();
         }
-        if(longContent != null) {
+        if (longContent != null) {
             longContent.clear();
         }
-        if (correctContent.length() <= maxLength) {
-            setText(correctContent);
-        } else {
-            if (shortContent == null) {
-                shortContent = new SuperSpannable();
+        setMaxLines(maxLines);
+        setText(correctContent);
+
+        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                currentLines = getLineCount();
+                if (currentLines > maxLines) {
+                    Layout layout = getLayout();
+                    int end = layout.getLineEnd(maxLines - 2);
+                    String subString = correctContent.substring(0, end);
+                    if (shortContent == null) {
+                        shortContent = new SuperSpannable();
+                    }
+                    //行距可能会不同,所以限定一下
+                    if (measuredHeight == 0) {
+                        measuredHeight = getMeasuredHeight();
+                    }
+                    getLayoutParams().height = measuredHeight;
+                    requestLayout();
+                    shortContent.append(subString);
+                    if (!subString.endsWith("\n")) {
+                        shortContent.append("\n");
+                    }
+                    shortContent.append(collaspingStr, clickableSpan);
+                    setText(shortContent);
+                    hasMoreText = true;
+                } else {
+                    hasMoreText = false;
+                }
+                getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
             }
-            shortContent.append(correctContent.subSequence(0, maxLength));
-            shortContent.append("…");
-            shortContent.append("\n");
-            shortContent.append(collaspingStr, clickableSpan);
-            LogUtil.e("最后length:" + shortContent.length());
-
-            setText(shortContent);
-        }
-
-
+        });
     }
 }

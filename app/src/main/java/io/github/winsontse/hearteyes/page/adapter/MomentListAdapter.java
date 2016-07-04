@@ -20,6 +20,7 @@ import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
+import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.util.ImageLoader;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.widget.CircleImageView;
@@ -33,9 +34,15 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     public static final int TAG_HEADER_INVISIBLE = 2;
     public static final int TAG_HEADER_FIRST_POSITION = 3;
 
+    private MomentListContract.View view;
+
+    public MomentListAdapter(MomentListContract.View view) {
+        this.view = view;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemViewHolder(data, onItemClickListener, parent);
+        return new ItemViewHolder(data, onItemClickListener, parent).view(view);
     }
 
     @Override
@@ -61,10 +68,13 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
         LinearLayout llContent;
         @BindView(R.id.tv_week)
         TextView tvWeek;
+        @BindView(R.id.tv_time)
+        TextView tvTime;
 
         private ThumbnailListAdapter thumbnailListAdapter;
+        private MomentListContract.View view;
 
-        public ItemViewHolder(List<AVObject> data, OnItemClickListener onItemClickListener, ViewGroup parent) {
+        public ItemViewHolder(final List<AVObject> data, OnItemClickListener onItemClickListener, ViewGroup parent) {
             super(data, onItemClickListener, parent, R.layout.list_item_moment);
             thumbnailListAdapter = new ThumbnailListAdapter();
             rvImage.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
@@ -82,6 +92,18 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                     }
                 }
             });
+            tvContent.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    view.goToEditPage(data.get(getAdapterPosition()));
+                    return true;
+                }
+            });
+        }
+
+        public ItemViewHolder view(MomentListContract.View view) {
+            this.view = view;
+            return this;
         }
 
         @Override
@@ -109,6 +131,8 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
             if (currentPos == 0) {
                 itemView.setTag(R.id.tag_type, TAG_HEADER_VISIBLE);
             }
+            tvTime.setText(TimeUtil.getFormatTime(currentTime, "HH:mm"));
+
             tvDate.setText(String.valueOf(currentDay));
             tvWeek.setText(TimeUtil.getWeek(currentTime));
 

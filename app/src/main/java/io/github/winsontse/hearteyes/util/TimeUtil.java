@@ -1,5 +1,7 @@
 package io.github.winsontse.hearteyes.util;
 
+import android.annotation.SuppressLint;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +30,7 @@ public class TimeUtil {
      * @param createTime
      * @return
      */
+    @SuppressLint("SimpleDateFormat")
     public static String parseTime(long createTime) {
 
         if (createTime == -1) {
@@ -37,14 +40,7 @@ public class TimeUtil {
         String timeStr = "";
 
         long nowLongTime = System.currentTimeMillis();
-        try {
-            timeStr = new SimpleDateFormat("yyyy-MM-dd").format(createTime);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-        }
 
         long distanceSeconds = (nowLongTime - createTime) / 1000;
 
@@ -57,9 +53,23 @@ public class TimeUtil {
         } else if (distanceSeconds <= 7 * 24 * 60 * 60) {
             result = distanceSeconds / 60 / 60 / 24 + "天前";
         } else {
+            timeStr = getFormatTime(createTime, "yyyy-MM-dd");
             result = timeStr;
         }
         return result;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static String getFormatTime(long time, String format) {
+        String result = "";
+        try {
+            result = new SimpleDateFormat(format).format(time);
+        } catch (Exception e) {
+            result = "";
+            LogUtil.e("时间转换错误:" + e.getMessage());
+        } finally {
+            return result;
+        }
     }
 
     public static int getDay(long time) {

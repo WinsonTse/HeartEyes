@@ -3,10 +3,12 @@ package io.github.winsontse.hearteyes.util.rxbus.event;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
+
 /**
  * Created by winson on 16/5/31.
  */
-public class PushEvent implements Parcelable {
+public class PushEvent extends BaseEvent implements Parcelable {
 
     /**
      * 重启刷新main

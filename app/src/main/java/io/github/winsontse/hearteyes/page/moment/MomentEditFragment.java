@@ -13,10 +13,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.avos.avoscloud.AVObject;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.data.model.ImageEntity;
+import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.SelectedImagesAdapter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
@@ -60,12 +62,25 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
 
     public static final int MAX_IMAGES_COUNT = 30;
     private SelectedImagesAdapter selectedImagesAdapter;
+    private AVObject currentMoment;
 
-    public static MomentEditFragment newInstance() {
-        Bundle args = new Bundle();
+    public static MomentEditFragment newInstance(AVObject avObject) {
         MomentEditFragment fragment = new MomentEditFragment();
-        fragment.setArguments(args);
+        if (avObject != null) {
+            Bundle args = new Bundle();
+            args.putParcelable(MomentContract.KEY, avObject);
+            fragment.setArguments(args);
+        }
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        if (bundle != null && bundle.containsKey(MomentContract.KEY)) {
+            currentMoment = bundle.getParcelable(MomentContract.KEY);
+        }
     }
 
     @Nullable
@@ -73,8 +88,12 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_moment_edit, container, false);
         ButterKnife.bind(this, rootView);
-
-        toolbar.setTitle(R.string.create_moment);
+        presenter.init(currentMoment);
+        if (currentMoment == null) {
+            toolbar.setTitle(R.string.create_moment);
+        } else {
+            toolbar.setTitle(R.string.edit_moment);
+        }
         initRecyclerView();
         bindListener();
         AnimatorUtil.translationToCorrect(llBottom).setStartDelay(AnimatorUtil.ANIMATOR_TIME).start();
@@ -168,5 +187,19 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     @Override
     public void showFab() {
         fabSend.show();
+    }
+
+    @Override
+    public void updateEditContent(String content) {
+        if (content != null && content.length() > 0) {
+            etContent.setText(content);
+            fabSend.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    fabSend.show();
+                }
+            }, AnimatorUtil.ANIMATOR_TIME);
+        }
+
     }
 }

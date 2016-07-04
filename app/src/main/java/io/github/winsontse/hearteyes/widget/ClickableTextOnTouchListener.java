@@ -26,8 +26,7 @@ public class ClickableTextOnTouchListener implements View.OnTouchListener {
     private int color;
 
     public ClickableTextOnTouchListener(int color) {
-//        this.color = color;
-        this.color = Color.TRANSPARENT;
+        this.color = color;
     }
 
     @Override

@@ -122,6 +122,7 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     public void onRefreshCompleted(List<T> data) {
         if (adapter != null) {
             adapter.setItems(data);
+            rv.scrollToPosition(0);
         }
         setLoadingCompleted();
 

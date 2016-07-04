@@ -15,6 +15,8 @@ import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.data.model.leancloud.CircleMemberContract;
+import io.github.winsontse.hearteyes.util.LogUtil;
+import io.github.winsontse.hearteyes.util.rxbus.event.MomentEvent;
 import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.main.contract.MainContract;
@@ -99,7 +101,7 @@ public class MainPresenter extends BasePresenterImpl implements MainContract.Pre
         addSubscription(Observable.create(new Observable.OnSubscribe<Boolean>() {
                     @Override
                     public void call(Subscriber<? super Boolean> subscriber) {
-                        AVQuery<AVObject> memberQuery = new AVQuery<>(CircleMemberContract.TABLE);
+                        AVQuery<AVObject> memberQuery = new AVQuery<>(CircleMemberContract.KEY);
                         memberQuery.whereEqualTo(CircleMemberContract.MEMBER, currentUser);
                         try {
                             AVObject circleMember = memberQuery.getFirst();

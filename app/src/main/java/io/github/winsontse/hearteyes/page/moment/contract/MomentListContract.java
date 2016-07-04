@@ -12,7 +12,7 @@ import io.github.winsontse.hearteyes.page.base.TimelineView;
 public interface MomentListContract {
 
     interface View extends TimelineView<AVObject> {
-
+        void goToEditPage(AVObject avObject);
     }
 
     interface Presenter extends TimelinePresenter<AVObject> {

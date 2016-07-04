@@ -18,12 +18,12 @@
         constraints="class|nonempty|unique"
         default=""
         help="将创建的页面的名字"
-        type="string" />
+        code="string" />
 
     <parameter
         id="fragmentName"
         name="Fragment Name"
-        type="string"
+        code="string"
         constraints="class|nonempty|unique"
         default="Fragment"
         suggest="${pageName}Fragment"
@@ -32,7 +32,7 @@
     <parameter
         id="layoutName"
         name="Fragment Layout Name"
-        type="string"
+        code="string"
         constraints="layout|nonempty|unique"
         default="fragment_"
         suggest="fragment_${classToResource(fragmentName)}"

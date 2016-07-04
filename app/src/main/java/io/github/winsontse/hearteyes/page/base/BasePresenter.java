@@ -3,6 +3,7 @@ package io.github.winsontse.hearteyes.page.base;
 import com.avos.avoscloud.AVUser;
 
 import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
+import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -29,5 +30,5 @@ public interface BasePresenter {
 
     AVUser getCurrentUser();
 
-    <T> void registerEventReceiver(Class<T> cls, Action1<T> action1);
+    <T extends BaseEvent> void registerEventReceiver(Class<T> cls, Action1<T> action1);
 }

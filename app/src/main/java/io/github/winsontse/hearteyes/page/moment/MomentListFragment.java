@@ -108,7 +108,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                     @Override
                     public void onHidden(FloatingActionButton fab) {
                         super.onHidden(fab);
-                        openPage(MomentEditFragment.newInstance());
+                        goToEditPage(null);
                     }
                 });
             }
@@ -121,7 +121,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     }
 
     private void initRecyclerView() {
-        momentListAdapter = new MomentListAdapter();
+        momentListAdapter = new MomentListAdapter(this);
         rv.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(layoutManager);
@@ -142,12 +142,6 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                 llTime.setVisibility((layoutManager.findFirstCompletelyVisibleItemPosition() == 0) ? View.INVISIBLE : View.VISIBLE);
                 tvWeek.setText(TimeUtil.getWeek(time));
 
-                int lastPos = layoutManager.findLastCompletelyVisibleItemPosition();
-                if (lastPos == RecyclerView.NO_POSITION) {
-                    lastPos = layoutManager.findLastVisibleItemPosition();
-                }
-                time = momentListAdapter.getData().get(lastPos).getLong(MomentContract.CREATEAD_TIME);
-                calendar.setTimeInMillis(time);
                 toolbar.setTitle(calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
 
                 View itemView = recyclerView.findChildViewUnder(llTime.getMeasuredWidth(), llTime.getMeasuredHeight());
@@ -215,5 +209,11 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     @Override
     protected View getEmptyView() {
         return vEmpty;
+    }
+
+    @Override
+    public void goToEditPage(AVObject avObject) {
+        openPage(MomentEditFragment.newInstance(avObject));
+
     }
 }

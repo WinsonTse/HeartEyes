@@ -24,10 +24,12 @@
 
 
     <string name="create_moment">创建动态</string>
+    <string name="edit_moment">编辑动态</string>
     <string name="pick_image">选择图片</string>
     <string name="tips_moment_content_not_empty">动态内容不可以是空的</string>
     <string name="publishing_moment">正在发动态...</string>
-    <string name="collasp">折叠</string>
-    <string name="expanding_content">展开</string>
+    <string name="updating_moment">正在修改动态...</string>
+    <string name="collasp">收起</string>
+    <string name="expanding_content">展开全文</string>
 
 </resources>

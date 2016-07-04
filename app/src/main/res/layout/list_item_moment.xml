@@ -9,27 +9,46 @@
 
     <include layout="@layout/container_time" />
 
-    <io.github.winsontse.hearteyes.widget.CircleImageView
-        android:id="@+id/iv_avatar"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+    <LinearLayout
+        android:id="@+id/ll_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_gravity="right"
-        android:layout_marginLeft="@dimen/padding_l"
-        android:layout_marginRight="@dimen/padding_l"
-        android:layout_marginTop="@dimen/padding_m"
-        android:clickable="true"
-        android:src="?colorPrimary"
-        app:civ_border_color="@color/material_grey_300"
-        app:civ_border_width="@dimen/divider_s" />
+        android:orientation="vertical">
+
+        <io.github.winsontse.hearteyes.widget.CircleImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="@dimen/padding_l"
+            android:layout_marginRight="@dimen/padding_l"
+            android:layout_marginTop="@dimen/padding_m"
+            android:clickable="true"
+            android:src="?colorPrimary"
+            app:civ_border_color="@color/material_grey_300"
+            app:civ_border_width="@dimen/divider_s" />
+
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/padding_s"
+            android:text="11:11"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+    </LinearLayout>
+
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_s"
-        android:layout_marginTop="24dp"
-        android:layout_toLeftOf="@id/iv_avatar"
+        android:layout_marginTop="26dp"
+        android:layout_toLeftOf="@id/ll_avatar"
         android:layout_toRightOf="@+id/ll_time"
         android:background="@color/material_grey_300" />
 
@@ -40,9 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="48dp"
-        android:layout_marginTop="@dimen/padding_l"
-
+        android:layout_marginRight="@dimen/padding_l"
         android:layout_toRightOf="@id/ll_time"
         android:orientation="vertical"
         android:paddingTop="@dimen/padding_m">
@@ -51,18 +68,22 @@
             android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:mtl_max_length="150"
+            android:layout_marginRight="52dp"
+            android:clickable="true"
+            android:background="?selectableItemBackground"
+            app:mtl_click_text_color="?colorAccent"
             app:mtl_collasping_text="@string/expanding_content"
             app:mtl_expanding_text="@string/collasp"
+            app:mtl_max_lines="5"
             app:mtl_text_color="?android:textColorPrimary"
-            app:mtl_click_text_color="?colorAccent"
             app:mtl_text_size="14sp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_image"
-            android:layout_marginTop="@dimen/padding_m"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_m" />
+
     </LinearLayout>
 
 

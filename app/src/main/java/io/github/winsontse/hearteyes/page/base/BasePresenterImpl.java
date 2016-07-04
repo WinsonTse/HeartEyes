@@ -16,6 +16,7 @@ import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.util.RxUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.util.rxbus.RxBus;
+import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -184,7 +185,7 @@ public class BasePresenterImpl implements BasePresenter {
     }
 
     @Override
-    public <T> void registerEventReceiver(Class<T> cls, Action1<T> action1) {
+    public <T extends BaseEvent> void registerEventReceiver(Class<T> cls, Action1<T> action1) {
         addSubscription(RxBus.getInstance().toObserverable(cls).compose(RxUtil.rxSchedulerHelper(cls)).subscribe(action1));
     }
 

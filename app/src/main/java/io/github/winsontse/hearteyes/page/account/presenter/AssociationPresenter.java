@@ -115,7 +115,7 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
 
                                             //创建圈子
                                             String cid = Base64Encoder.encode(System.currentTimeMillis() + me.getObjectId() + other.getObjectId());
-                                            AVObject circle = new AVObject(CircleContract.TABLE);
+                                            AVObject circle = new AVObject(CircleContract.KEY);
                                             circle.put(CircleContract.NAME, me.getString(UserContract.NICKNAME) + "和" + other.getString(UserContract.NICKNAME) + "的圈子");
                                             circle.put(CircleContract.CREATOR, me);
                                             circle.put(CircleContract.INVITEE, other);
@@ -132,14 +132,14 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
 
 
                                             //把我加到圈子成员表
-                                            AVObject circleMemberMe = new AVObject(CircleMemberContract.TABLE);
+                                            AVObject circleMemberMe = new AVObject(CircleMemberContract.KEY);
                                             circleMemberMe.put(CircleMemberContract.CIRCLE_ID, cid);
                                             circleMemberMe.put(CircleMemberContract.MEMBER, me);
                                             circleMemberMe.put(CircleMemberContract.CREATOR, me);
                                             circleMemberMe.put(CircleMemberContract.INVITEE, other);
 
                                             //把我加到圈子成员表
-                                            AVObject circleMemberOther = new AVObject(CircleMemberContract.TABLE);
+                                            AVObject circleMemberOther = new AVObject(CircleMemberContract.KEY);
                                             circleMemberOther.put(CircleMemberContract.CIRCLE_ID, cid);
                                             circleMemberOther.put(CircleMemberContract.MEMBER, other);
                                             circleMemberOther.put(CircleMemberContract.CREATOR, me);

@@ -4,7 +4,7 @@ package io.github.winsontse.hearteyes.data.model.leancloud;
  * Created by winson on 16/6/23.
  */
 public interface MomentContract {
-    String TABLE = "Moment";
+    String KEY = "Moment";
 
     String AUTHOR = "author";
     String LOCATION = "location";
