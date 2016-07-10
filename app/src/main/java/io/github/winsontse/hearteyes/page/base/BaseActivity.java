@@ -2,6 +2,7 @@ package io.github.winsontse.hearteyes.page.base;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
     private void setNavigavitionColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(resources.getColor(R.color.material_cyan_700));
+            getWindow().setNavigationBarColor(resources.getColor(R.color.md_cyan_700));
         }
     }
 
@@ -108,6 +110,34 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         if (!isFinishing() && progressDialog != null && progressDialog.isShowing()) {
             progressDialog.hide();
         }
+    }
+
+    @Override
+    public void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener) {
+        showDialog(title, msg, okTitle, onOkClickListener, null, null);
+    }
+
+    @Override
+    public void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener, String cancelTitle, DialogInterface.OnClickListener onCancelClickListener) {
+        if (isFinishing()) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (!TextUtils.isEmpty(title)) {
+            builder.setTitle(title);
+        }
+        if (!TextUtils.isEmpty(msg)) {
+            builder.setMessage(msg);
+        }
+
+        if (!TextUtils.isEmpty(okTitle)) {
+            builder.setPositiveButton(okTitle, onOkClickListener);
+        }
+
+        if (!TextUtils.isEmpty(cancelTitle)) {
+            builder.setNegativeButton(cancelTitle, onCancelClickListener);
+        }
+        builder.create().show();
     }
 
     @Override

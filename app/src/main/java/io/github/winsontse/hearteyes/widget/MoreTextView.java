@@ -112,7 +112,6 @@ public class MoreTextView extends TextView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        LogUtil.e("当前:" + getMeasuredHeight() + "\n" + correctContent);
     }
 
     public void setContent(final String content) {

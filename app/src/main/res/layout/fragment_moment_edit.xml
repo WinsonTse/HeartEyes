@@ -86,7 +86,7 @@
             android:minWidth="?actionBarSize"
             android:padding="@dimen/padding_m"
             android:text="0"
-            android:textColor="@color/material_white" />
+            android:textColor="@color/md_white" />
 
         <TextView
             android:id="@+id/tv_record_count"
@@ -100,7 +100,7 @@
             android:minWidth="?actionBarSize"
             android:padding="@dimen/padding_m"
             android:text="0"
-            android:textColor="@color/material_white" />
+            android:textColor="@color/md_white" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

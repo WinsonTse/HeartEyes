@@ -1,8 +1,6 @@
 package io.github.winsontse.hearteyes.page.adapter;
 
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -20,7 +18,6 @@ import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
 import io.github.winsontse.hearteyes.page.image.ImagePickerActivity;
 import io.github.winsontse.hearteyes.util.ImageLoader;
-import io.github.winsontse.hearteyes.util.LogUtil;
 
 /**
  * Created by winson on 16/6/20.
@@ -90,7 +87,7 @@ public class ImagePickerAdaper extends BaseRecyclerAdapter<ImageEntity> {
                         }
                     }
                     if (onItemClickListener != null) {
-                        onItemClickListener.onItemClickListener(getAdapterPosition());
+                        onItemClickListener.onItemClick(getAdapterPosition());
                     }
                 }
             });

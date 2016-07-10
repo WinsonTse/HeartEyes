@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HeartEyes</string>
+    <string name="app_name">心眼</string>
     <string name="account">登录名</string>
     <string name="password">密码</string>
     <string name="nickname">昵称</string>
@@ -31,5 +31,9 @@
     <string name="updating_moment">正在修改动态...</string>
     <string name="collasp">收起</string>
     <string name="expanding_content">展开全文</string>
+    <string name="delete">删除</string>
+    <string name="tips_delete_image">是否要删掉这张照片,不可恢复</string>
+    <string name="cancel">取消</string>
+    <string name="deleting">删除中...</string>
 
 </resources>

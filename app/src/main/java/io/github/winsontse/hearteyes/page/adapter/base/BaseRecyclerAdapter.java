@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.page.adapter.base;
 
 import android.support.v7.widget.RecyclerView;
+import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
     protected OnItemClickListener onItemClickListener;
+    protected OnItemLongClickListener onItemLongClickListener;
     protected List<T> data = new ArrayList<>();
 
     public BaseRecyclerAdapter() {
@@ -37,7 +39,7 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    protected int getHeaderCount() {
+    public int getHeaderCount() {
         return 0;
     }
 
@@ -51,9 +53,23 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
+    public void replaceItem(int position, T t) {
+        data.remove(position);
+        data.add(position, t);
+        notifyItemChanged(position);
+    }
+
 
     public interface OnItemClickListener {
-        void onItemClickListener(int position);
+        void onItemClick(int position);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(int position);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

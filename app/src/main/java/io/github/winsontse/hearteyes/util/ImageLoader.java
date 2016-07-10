@@ -42,7 +42,7 @@ public class ImageLoader {
     }
 
     public void displayImage(Context context, String url, ImageView iv) {
-        displayImage(context, url, R.color.material_pink_200, iv);
+        displayImage(context, url, R.color.md_pink_200, iv);
     }
 
     public void displayImage(Context context, File file, int placeHolder, ImageView iv) {
@@ -50,7 +50,7 @@ public class ImageLoader {
     }
 
     public void displayImage(Context context, File file, ImageView iv) {
-        displayImage(context, file, R.color.material_pink_200, iv);
+        displayImage(context, file, R.color.md_pink_200, iv);
     }
 
     private RequestManager getRequestManager(Context context) {

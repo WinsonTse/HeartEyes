@@ -108,8 +108,8 @@ public class ImagePickerActivity extends AppCompatActivity {
         selectedList = intent.getParcelableArrayListExtra(EXTRA_SELECTED_IMAGE_LIST);
 
         resources = getResources();
-        colorPink = resources.getColor(R.color.material_pink_100);
-        colorWhite = resources.getColor(R.color.material_white);
+        colorPink = resources.getColor(R.color.md_pink_100);
+        colorWhite = resources.getColor(R.color.md_white);
         initToolbar();
         initAdapter();
         requestPermission();
@@ -154,7 +154,7 @@ public class ImagePickerActivity extends AppCompatActivity {
         adaper.setMaxCount(maxCount);
         adaper.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClickListener(int position) {
+            public void onItemClick(int position) {
                 int size = adaper.getSelectedList().size();
                 updateTitle(size);
                 okMenu.setVisible(size > 0);

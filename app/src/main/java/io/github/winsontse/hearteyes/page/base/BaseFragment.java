@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.page.base;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -112,6 +113,16 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     protected void replacePage(BaseFragment fragment) {
         mainActivity.replaceFragment(fragment, false);
+    }
+
+    @Override
+    public void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener) {
+        mainActivity.showDialog(title, msg, okTitle, onOkClickListener);
+    }
+
+    @Override
+    public void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener, String cancelTitle, DialogInterface.OnClickListener onCancelClickListener) {
+        mainActivity.showDialog(title, msg, okTitle, onOkClickListener, cancelTitle, onCancelClickListener);
     }
 
     @Override

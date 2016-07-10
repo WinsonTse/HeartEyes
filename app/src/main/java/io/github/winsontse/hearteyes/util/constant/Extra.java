@@ -5,4 +5,5 @@ package io.github.winsontse.hearteyes.util.constant;
  */
 public class Extra {
     public static final String TYPE_NEW_PAGE = "type_open_page";
+    public static final String ITEM_POSITION = "item_position";
 }

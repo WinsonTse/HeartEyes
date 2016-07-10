@@ -1,5 +1,7 @@
 package io.github.winsontse.hearteyes.page.moment;
 
+import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -8,12 +10,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -74,10 +78,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     private Calendar calendar;
 
     public static MomentListFragment newInstance() {
-        Bundle args = new Bundle();
-        MomentListFragment fragment = new MomentListFragment();
-        fragment.setArguments(args);
-        return fragment;
+        return new MomentListFragment();
     }
 
     @Nullable
@@ -108,7 +109,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                     @Override
                     public void onHidden(FloatingActionButton fab) {
                         super.onHidden(fab);
-                        goToEditPage(null);
+                        goToEditPage();
                     }
                 });
             }
@@ -136,11 +137,15 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 int currentPos = layoutManager.findFirstVisibleItemPosition();
-                time = momentListAdapter.getData().get(currentPos).getLong(MomentContract.CREATEAD_TIME);
+                AVObject currentAvObject = momentListAdapter.getData().get(currentPos);
+                time = currentAvObject.getLong(MomentContract.CREATEAD_TIME);
                 calendar.setTimeInMillis(time);
                 tvDate.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
                 llTime.setVisibility((layoutManager.findFirstCompletelyVisibleItemPosition() == 0) ? View.INVISIBLE : View.VISIBLE);
                 tvWeek.setText(TimeUtil.getWeek(time));
+
+                llTime.setTag(R.id.tag_position, currentPos);
+                llTime.setTag(R.id.tag_data, currentAvObject);
 
                 toolbar.setTitle(calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
 
@@ -160,6 +165,46 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                 }
             }
         });
+        MomentListAdapter.OnDateLongClickListener onDateLongClickListener = new MomentListAdapter.OnDateLongClickListener() {
+            @Override
+            public void onDateLongClick(int position, AVObject avObject) {
+                long time = avObject.getLong(MomentContract.CREATEAD_TIME);
+                showDatePickerDialog(position, time, time, avObject);
+            }
+        };
+        momentListAdapter.setOnDateLongClickListener(onDateLongClickListener);
+
+        llTime.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Object posTag = v.getTag(R.id.tag_position);
+                Object dataTag = v.getTag(R.id.tag_data);
+                if (posTag != null && dataTag != null) {
+                    int pos = (int) posTag;
+                    AVObject avObject = (AVObject) dataTag;
+                    long time = avObject.getLong(MomentContract.CREATEAD_TIME);
+
+                    showDatePickerDialog(pos, time, time, avObject);
+                }
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void showDatePickerDialog(final int position, final long originalTime, long time, final AVObject avObject) {
+        final Calendar calendar = TimeUtil.getCalendar();
+        calendar.setTimeInMillis(time);
+
+        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                presenter.updateCreateTime(position, originalTime, calendar.getTimeInMillis(), avObject);
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     @Override
@@ -212,8 +257,22 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     }
 
     @Override
-    public void goToEditPage(AVObject avObject) {
-        openPage(MomentEditFragment.newInstance(avObject));
+    public void goToEditPage() {
+        openPage(MomentEditFragment.newInstance(0, null));
+    }
 
+    @Override
+    public void goToEditPage(int position, AVObject avObject) {
+        openPage(MomentEditFragment.newInstance(position, avObject));
+    }
+
+    @Override
+    public void showDeleteImageDialog(final int position, final AVObject avObject, final int imagePosition) {
+        showDialog(getString(R.string.delete), getString(R.string.tips_delete_image), getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                presenter.deleteImage(position, avObject, imagePosition);
+            }
+        }, getString(R.string.cancel), null);
     }
 }

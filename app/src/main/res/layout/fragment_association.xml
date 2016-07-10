@@ -29,7 +29,7 @@
         android:layout_marginBottom="@dimen/padding_l"
         android:layout_marginTop="@dimen/padding_l"
         android:scaleType="centerCrop"
-        android:src="@color/material_white" />
+        android:src="@color/md_white" />
 
     <TextView
         android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
@@ -49,7 +49,7 @@
     <View
         android:visibility="invisible"
         android:id="@+id/v_cover"
-        android:background="@color/material_black"
+        android:background="@color/md_black"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

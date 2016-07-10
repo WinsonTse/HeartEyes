@@ -58,7 +58,7 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
         vEmpty = getEmptyView();
 
         if (srl != null) {
-            srl.setColorSchemeColors(getColorById(R.color.material_pink_500));
+            srl.setColorSchemeColors(getColorById(R.color.md_pink_500));
             srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -167,6 +167,16 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     }
 
     @Override
+    public void updateItem(int position) {
+        adapter.notifyItemChanged(position + adapter.getHeaderCount());
+    }
+
+    @Override
+    public void replaceItem(int position, T t) {
+        adapter.replaceItem(position, t);
+    }
+
+    @Override
     public void setLoadMoreEnable(boolean enable) {
         loadMoreEnable = enable;
     }
@@ -183,11 +193,22 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
 
     @Override
     public void showLoadingView() {
-        vLoading.setVisibility(View.VISIBLE);
+        if (vLoading != null) {
+            vLoading.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoadingView() {
-        vLoading.setVisibility(View.INVISIBLE);
+        if (vLoading != null) {
+            vLoading.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void showRefreshView() {
+        if (srl != null && (vEmpty == null || vEmpty.getVisibility() == View.GONE)) {
+            srl.setRefreshing(true);
+        }
     }
 }

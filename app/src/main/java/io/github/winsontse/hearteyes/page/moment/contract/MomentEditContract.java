@@ -18,7 +18,7 @@ public interface MomentEditContract {
 
     interface Presenter extends BasePresenter {
 
-        void init(AVObject currentMoment);
+        void init(AVObject currentMoment, int itemPosition);
 
         void publishMoment(String content, List<ImageEntity> images);
     }

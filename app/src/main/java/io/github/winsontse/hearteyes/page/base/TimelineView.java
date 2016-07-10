@@ -4,6 +4,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.avos.avoscloud.AVObject;
+
 import java.util.List;
 
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
@@ -25,4 +27,10 @@ public interface TimelineView<T> extends BaseView {
     void showLoadingView();
 
     void hideLoadingView();
+
+    void replaceItem(int position, T t);
+
+    void updateItem(int position);
+
+    void showRefreshView();
 }

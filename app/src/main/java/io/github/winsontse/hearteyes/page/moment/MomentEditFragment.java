@@ -38,6 +38,7 @@ import io.github.winsontse.hearteyes.page.moment.contract.MomentEditContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentEditModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentEditPresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
+import io.github.winsontse.hearteyes.util.constant.Extra;
 
 public class MomentEditFragment extends BaseFragment implements MomentEditContract.View {
 
@@ -63,12 +64,14 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     public static final int MAX_IMAGES_COUNT = 30;
     private SelectedImagesAdapter selectedImagesAdapter;
     private AVObject currentMoment;
+    private int itemPosition;
 
-    public static MomentEditFragment newInstance(AVObject avObject) {
+    public static MomentEditFragment newInstance(int itemPosition, AVObject avObject) {
         MomentEditFragment fragment = new MomentEditFragment();
         if (avObject != null) {
             Bundle args = new Bundle();
             args.putParcelable(MomentContract.KEY, avObject);
+            args.putInt(Extra.ITEM_POSITION, itemPosition);
             fragment.setArguments(args);
         }
         return fragment;
@@ -80,6 +83,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
         Bundle bundle = getArguments();
         if (bundle != null && bundle.containsKey(MomentContract.KEY)) {
             currentMoment = bundle.getParcelable(MomentContract.KEY);
+            itemPosition = bundle.getInt(Extra.ITEM_POSITION);
         }
     }
 
@@ -88,7 +92,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_moment_edit, container, false);
         ButterKnife.bind(this, rootView);
-        presenter.init(currentMoment);
+        presenter.init(currentMoment, itemPosition);
         if (currentMoment == null) {
             toolbar.setTitle(R.string.create_moment);
         } else {

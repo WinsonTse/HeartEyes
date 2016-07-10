@@ -22,6 +22,7 @@ import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.util.ImageLoader;
+import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.widget.CircleImageView;
 import io.github.winsontse.hearteyes.widget.MoreTextView;
@@ -35,6 +36,11 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     public static final int TAG_HEADER_FIRST_POSITION = 3;
 
     private MomentListContract.View view;
+    private OnDateLongClickListener onDateLongClickListener;
+
+    public void setOnDateLongClickListener(OnDateLongClickListener onDateLongClickListener) {
+        this.onDateLongClickListener = onDateLongClickListener;
+    }
 
     public MomentListAdapter(MomentListContract.View view) {
         this.view = view;
@@ -42,7 +48,9 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemViewHolder(data, onItemClickListener, parent).view(view);
+        ItemViewHolder itemViewHolder = new ItemViewHolder(data, parent).view(this.view);
+        itemViewHolder.setOnDateLongClickListener(onDateLongClickListener);
+        return itemViewHolder;
     }
 
     @Override
@@ -73,9 +81,10 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
 
         private ThumbnailListAdapter thumbnailListAdapter;
         private MomentListContract.View view;
+        private OnDateLongClickListener onDateLongClickListener;
 
-        public ItemViewHolder(final List<AVObject> data, OnItemClickListener onItemClickListener, ViewGroup parent) {
-            super(data, onItemClickListener, parent, R.layout.list_item_moment);
+        public ItemViewHolder(final List<AVObject> data, ViewGroup parent) {
+            super(data, parent, R.layout.list_item_moment);
             thumbnailListAdapter = new ThumbnailListAdapter();
             rvImage.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
             rvImage.setAdapter(thumbnailListAdapter);
@@ -95,7 +104,26 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
             tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    view.goToEditPage(data.get(getAdapterPosition()));
+                    int position = getAdapterPosition();
+                    view.goToEditPage(position, data.get(position));
+                    return true;
+                }
+            });
+            thumbnailListAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public void onItemLongClick(int imagePosition) {
+                    int position = getAdapterPosition();
+                    view.showDeleteImageDialog(position, data.get(position), imagePosition);
+
+                }
+            });
+            llTime.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onDateLongClickListener != null) {
+                        int position = getAdapterPosition();
+                        onDateLongClickListener.onDateLongClick(position, data.get(position));
+                    }
                     return true;
                 }
             });
@@ -146,5 +174,13 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 thumbnailListAdapter.setItems(avFiles);
             }
         }
+
+        public void setOnDateLongClickListener(OnDateLongClickListener onDateLongClickListener) {
+            this.onDateLongClickListener = onDateLongClickListener;
+        }
+    }
+
+    public interface OnDateLongClickListener {
+        void onDateLongClick(int position, AVObject avObject);
     }
 }

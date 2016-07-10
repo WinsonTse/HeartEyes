@@ -1,16 +1,21 @@
 package io.github.winsontse.hearteyes.page.moment.presenter;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.base.TimelinePresenterImpl;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
+import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.rxbus.event.MomentEvent;
 import rx.Observable;
@@ -21,18 +26,21 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
     private MomentListContract.View view;
 
     @Inject
-    public MomentListPresenter(MomentListContract.View view) {
+    public MomentListPresenter(final MomentListContract.View view) {
         super(view);
         this.view = view;
 
         registerEventReceiver(MomentEvent.class, new Action1<MomentEvent>() {
             @Override
             public void call(MomentEvent momentEvent) {
-                LogUtil.e("老子还是收到消息了");
 
                 switch (momentEvent.getCode()) {
                     case MomentEvent.REFRESH_MOMENT_LIST:
                         refresh();
+                        break;
+
+                    case MomentEvent.UPDATE_MOMENT_LIST_ITEM:
+                        view.replaceItem(momentEvent.getPostion(), momentEvent.getAvObject());
                         break;
                 }
             }
@@ -61,6 +69,72 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
             }
         });
 
+    }
+
+    public void deleteImage(final int position, final AVObject avObject, final int imagePosition) {
+        final List list = avObject.getList(MomentContract.IMAGES);
+        addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
+            @Override
+            public void call(Subscriber<? super AVObject> subscriber) {
+                List<AVFile> fileList = new ArrayList<AVFile>();
+                fileList.addAll(list);
+                fileList.remove(imagePosition);
+                try {
+                    avObject.put(MomentContract.IMAGES, fileList);
+                    avObject.save();
+                    subscriber.onNext(avObject);
+                } catch (AVException e) {
+                    avObject.put(MomentContract.IMAGES, list);
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+
+            }
+        }), new HeartEyesSubscriber<AVObject>() {
+            @Override
+            public void handleError(Throwable e) {
+                view.hideProgressDialog();
+            }
+
+            @Override
+            public void onNext(AVObject avObject) {
+                view.hideProgressDialog();
+                view.updateItem(position);
+            }
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                view.showProgressDialog(false, view.getStringById(R.string.deleting));
+            }
+        });
+    }
+
+    @Override
+    public void updateCreateTime(final int position, final long originalTime, final long timeInMillis, final AVObject avObject) {
+        addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
+            @Override
+            public void call(Subscriber<? super AVObject> subscriber) {
+                avObject.put(MomentContract.CREATEAD_TIME, timeInMillis);
+                try {
+                    avObject.save();
+                    subscriber.onNext(avObject);
+                } catch (AVException e) {
+                    avObject.put(MomentContract.CREATEAD_TIME, originalTime);
+                    subscriber.onError(e);
+                }
+            }
+        }), new HeartEyesSubscriber<AVObject>(view) {
+            @Override
+            public void handleError(Throwable e) {
+                view.showDatePickerDialog(position, originalTime, timeInMillis, avObject);
+            }
+
+            @Override
+            public void onNext(AVObject avObject) {
+                refresh();
+            }
+        });
     }
 
 

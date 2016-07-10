@@ -24,7 +24,7 @@ public class ThumbnailListAdapter extends BaseRecyclerAdapter<AVFile> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemViewHolder(data, onItemClickListener, parent);
+        return new ItemViewHolder(data, onItemClickListener, onItemLongClickListener, parent);
     }
 
     @Override
@@ -33,14 +33,13 @@ public class ThumbnailListAdapter extends BaseRecyclerAdapter<AVFile> {
     }
 
 
-
     static class ItemViewHolder extends BaseViewHolder<AVFile> {
         private int width;
         @BindView(R.id.iv)
         ImageView iv;
 
-        public ItemViewHolder(List<AVFile> data, OnItemClickListener onItemClickListener, ViewGroup parent) {
-            super(data, onItemClickListener, parent, R.layout.list_item_thumbnail);
+        public ItemViewHolder(List<AVFile> data, OnItemClickListener onItemClickListener, OnItemLongClickListener onItemLongClickListener, ViewGroup parent) {
+            super(data, onItemClickListener, onItemLongClickListener, parent, R.layout.list_item_thumbnail);
             width = UIUtil.dpToPx(context, 100);
         }
 

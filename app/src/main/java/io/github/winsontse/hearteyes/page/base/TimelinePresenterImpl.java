@@ -1,5 +1,7 @@
 package io.github.winsontse.hearteyes.page.base;
 
+import com.avos.avoscloud.AVObject;
+
 import java.util.List;
 
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
@@ -94,6 +96,7 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             @Override
                             public void onStart() {
                                 super.onStart();
+                                timelineView.showRefreshView();
                                 LogUtil.e("开始请求");
                             }
                         });

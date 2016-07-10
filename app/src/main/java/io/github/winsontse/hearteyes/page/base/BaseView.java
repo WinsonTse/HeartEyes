@@ -1,6 +1,8 @@
 package io.github.winsontse.hearteyes.page.base;
 
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.DialogTitle;
 import android.view.View;
 
 import rx.Observable;
@@ -21,6 +23,10 @@ public interface BaseView {
     void showKeyboard(View view);
 
     void hideKeyboard();
+
+    void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener);
+
+    void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener, String cancelTitle, DialogInterface.OnClickListener onCancelClickListener);
 
     String getStringById(int stringId);
 

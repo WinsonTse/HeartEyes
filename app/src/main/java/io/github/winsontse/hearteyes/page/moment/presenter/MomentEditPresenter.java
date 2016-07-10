@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 
 import java.io.File;
@@ -29,15 +30,19 @@ import rx.Subscriber;
 public class MomentEditPresenter extends BasePresenterImpl implements MomentEditContract.Presenter {
     private MomentEditContract.View view;
     private AVObject currentMoment;
+    private boolean isCreateMoment = true;
+    private int itemPosition;
 
     @Inject
     public MomentEditPresenter(MomentEditContract.View view) {
         this.view = view;
     }
 
-    public void init(AVObject currentMoment) {
+    public void init(AVObject currentMoment, int itemPosition) {
         if (currentMoment != null) {
+            isCreateMoment = false;
             this.currentMoment = currentMoment;
+            this.itemPosition = itemPosition;
             view.updateEditContent(currentMoment.getString(MomentContract.CONTENT));
         }
     }
@@ -79,15 +84,14 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
                         if (avFiles.size() > 0) {
                             List list = currentMoment.getList(MomentContract.IMAGES);
                             List<AVFile> updateFiles = new ArrayList<AVFile>();
-                            if (list.size() > 0) {
+                            if (list != null && list.size() > 0) {
                                 updateFiles.addAll(list);
                             }
                             updateFiles.addAll(avFiles);
                             currentMoment.put(MomentContract.IMAGES, updateFiles);
                         }
                     }
-
-                    currentMoment.setFetchWhenSave(true);
+                    currentMoment.setFetchWhenSave(isCreateMoment);
                     currentMoment.save();
                     subscriber.onNext(currentMoment);
                 } catch (Exception e) {
@@ -99,7 +103,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
             @Override
             public void onStart() {
                 super.onStart();
-                if (currentMoment == null) {
+                if (isCreateMoment) {
                     view.showProgressDialog(false, view.getStringById(R.string.publishing_moment));
                 } else {
                     view.showProgressDialog(false, view.getStringById(R.string.updating_moment));
@@ -115,7 +119,11 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
 
             @Override
             public void onNext(AVObject avObject) {
-                RxBus.getInstance().post(new MomentEvent(MomentEvent.REFRESH_MOMENT_LIST));
+                if (isCreateMoment) {
+                    RxBus.getInstance().post(new MomentEvent(MomentEvent.REFRESH_MOMENT_LIST));
+                } else {
+                    RxBus.getInstance().post(new MomentEvent(MomentEvent.UPDATE_MOMENT_LIST_ITEM, itemPosition, avObject));
+                }
                 view.hideProgressDialog();
                 view.closePage();
                 LogUtil.i("发送动态成功:" + avObject.toString());

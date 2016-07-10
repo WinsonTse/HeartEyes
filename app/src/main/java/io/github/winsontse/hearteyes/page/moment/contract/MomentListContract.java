@@ -12,10 +12,18 @@ import io.github.winsontse.hearteyes.page.base.TimelineView;
 public interface MomentListContract {
 
     interface View extends TimelineView<AVObject> {
-        void goToEditPage(AVObject avObject);
+        void goToEditPage();
+
+        void goToEditPage(int position, AVObject avObject);
+
+        void showDeleteImageDialog(int position, AVObject avObject, int imagePosition);
+
+        void showDatePickerDialog(int position, long originalTime, long time, final AVObject avObject);
+
     }
 
     interface Presenter extends TimelinePresenter<AVObject> {
+        void updateCreateTime(int position, long originalTime, long timeInMillis, AVObject avObject);
 
     }
 
