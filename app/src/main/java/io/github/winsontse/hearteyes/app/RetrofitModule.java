@@ -3,8 +3,6 @@ package io.github.winsontse.hearteyes.app;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import io.github.winsontse.hearteyes.data.remote.WeiboApi;
@@ -22,6 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitModule {
     public static final int DEFAULT_TIMEOUT = 60;
 
+    @ApplicationScope
     @Provides
     Retrofit provideRetrofit() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
@@ -38,6 +37,7 @@ public class RetrofitModule {
                 .build();
     }
 
+    @ApplicationScope
     @Provides
     WeiboApi provideWeiboApi(Retrofit retrofit) {
         return retrofit.create(WeiboApi.class);

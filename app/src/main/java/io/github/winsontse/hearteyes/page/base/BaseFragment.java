@@ -2,6 +2,7 @@ package io.github.winsontse.hearteyes.page.base;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,10 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.app.HeartEyesApplication;
 import io.github.winsontse.hearteyes.page.main.MainActivity;
+import io.github.winsontse.hearteyes.util.LogUtil;
 
 /**
  * Created by hao.xie on 16/5/10.
@@ -22,6 +25,7 @@ import io.github.winsontse.hearteyes.page.main.MainActivity;
 public abstract class BaseFragment extends Fragment implements BaseView {
 
     private MainActivity mainActivity;
+    private View rootView;
 
     @Override
     public void onAttach(Context context) {
@@ -40,13 +44,19 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = initView(inflater, container, savedInstanceState);
-        View v = rootView.findViewById(R.id.toolbar);
-        initToolbar(v);
+        rootView = inflater.inflate(getLayoutId(), container, false);
+        ButterKnife.bind(this, rootView);
+        initToolbar();
+        initView(container, savedInstanceState);
+
         return rootView;
     }
 
-    private void initToolbar(View v) {
+    private void initToolbar() {
+        if (rootView == null) {
+            return;
+        }
+        View v = rootView.findViewById(R.id.toolbar);
         if (isSupportBackNavigation() && v != null && v instanceof Toolbar) {
             Toolbar toolbar = (Toolbar) v;
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -63,7 +73,9 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         return true;
     }
 
-    protected abstract View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+    protected abstract void initView(ViewGroup container, Bundle savedInstanceState);
+
+    protected abstract int getLayoutId();
 
     protected abstract void setupComponent(AppComponent appComponent);
 
@@ -107,12 +119,12 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         }
     }
 
-    protected void openPage(BaseFragment fragment) {
-        mainActivity.addFragment(fragment, true);
+    protected void openPage(BaseFragment oldFragment, BaseFragment newFragment) {
+        mainActivity.openPage(oldFragment, newFragment, true);
     }
 
     protected void replacePage(BaseFragment fragment) {
-        mainActivity.replaceFragment(fragment, false);
+        mainActivity.replacePage(fragment, false);
     }
 
     @Override
@@ -142,6 +154,7 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     @Override
     public int getColorById(int colorId) {
+        LogUtil.e("当前activity:" + getActivity() + "  " + mainActivity);
         return mainActivity.getColorById(colorId);
     }
 

@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.avos.avoscloud.AVOSCloud;
 
+import io.github.winsontse.hearteyes.util.LogUtil;
+import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 
 /**
@@ -19,6 +21,7 @@ public class HeartEyesApplication extends Application {
 
     @Override
     public void onCreate() {
+        LogUtil.e("进入application");
         super.onCreate();
 
         appComponent = DaggerAppComponent
@@ -29,7 +32,8 @@ public class HeartEyesApplication extends Application {
     }
 
     private void init() {
-        AVOSCloud.initialize(this, SecretConstant.LEANCLOUD_APP_ID, SecretConstant.LEANCLOUD_APP_KEY);
+        appComponent.getLeanCloudManager().init();
+        ScreenUtil.init(this);
 
     }
 

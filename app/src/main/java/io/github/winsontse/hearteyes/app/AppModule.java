@@ -1,8 +1,7 @@
 package io.github.winsontse.hearteyes.app;
 
 import android.content.Context;
-
-import com.avos.avoscloud.AVPush;
+import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
@@ -23,5 +22,12 @@ public class AppModule {
     @ApplicationScope
     public Context provideContext() {
         return context;
+    }
+
+
+    @Provides
+    @ApplicationScope
+    public Resources provideResources() {
+        return context.getResources();
     }
 }

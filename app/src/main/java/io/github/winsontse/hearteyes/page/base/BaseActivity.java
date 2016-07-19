@@ -8,18 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-
-import javax.annotation.Resource;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
@@ -30,19 +24,29 @@ import io.github.winsontse.hearteyes.app.HeartEyesApplication;
  */
 public abstract class BaseActivity extends AppCompatActivity implements BaseView {
     private ProgressDialog progressDialog;
-    private Resources resources;
+    private AppComponent appComponent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        resources = getResources();
-        setupComponent(HeartEyesApplication.get(this).getAppComponent());
+        setupComponent(getAppComponent());
         setNavigavitionColor();
+    }
+
+    private AppComponent getAppComponent() {
+        if (appComponent == null) {
+            appComponent = HeartEyesApplication.get(this).getAppComponent();
+        }
+        return appComponent;
+    }
+
+    private Resources getResourcesInstance() {
+        return getAppComponent().getResources();
     }
 
     private void setNavigavitionColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(resources.getColor(R.color.md_cyan_700));
+            getWindow().setNavigationBarColor(getResourcesInstance().getColor(R.color.md_cyan_700));
         }
     }
 
@@ -58,34 +62,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
             presenter.unsubscribe();
         }
     }
-
-    public Fragment findFragmentByClass(Class cls) {
-        return getSupportFragmentManager().findFragmentByTag(cls.getSimpleName());
-    }
-
-    protected void addFragment(int containerId, Fragment fragment, boolean isAddToBackStack) {
-        String tag = fragment.getClass().getSimpleName();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .add(containerId, fragment, tag);
-        if (isAddToBackStack) {
-            transaction.addToBackStack(tag);
-
-        }
-        transaction.commitAllowingStateLoss();
-    }
-
-    protected void replaceFragment(int containerId, Fragment fragment, boolean isAddToBackStack) {
-        String tag = fragment.getClass().getSimpleName();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .replace(containerId, fragment, tag);
-
-        if (isAddToBackStack) {
-            transaction.addToBackStack(tag);
-
-        }
-        transaction.commitNow();
-    }
-
 
     @Override
     public void showProgressDialog(boolean cancelable, String msg) {
@@ -154,22 +130,22 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
     @Override
     public String getStringById(int strId) {
-        return resources.getString(strId);
+        return getResourcesInstance().getString(strId);
     }
 
     @Override
     public String[] getStringArrayById(int arrayId) {
-        return resources.getStringArray(arrayId);
+        return getResourcesInstance().getStringArray(arrayId);
     }
 
     @Override
     public Drawable getDrawableById(int drawableId) {
-        return resources.getDrawable(drawableId);
+        return getResourcesInstance().getDrawable(drawableId);
     }
 
     @Override
     public int getColorById(int colorId) {
-        return resources.getColor(colorId);
+        return getResourcesInstance().getColor(colorId);
     }
 
     @Override

@@ -1,23 +1,22 @@
 package io.github.winsontse.hearteyes.page.image;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Rect;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +25,7 @@ import android.widget.Toast;
 
 import com.tbruyelle.rxpermissions.RxPermissions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +35,9 @@ import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.data.model.ImageEntity;
 import io.github.winsontse.hearteyes.page.adapter.ImagePickerAdaper;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
+import io.github.winsontse.hearteyes.util.FileUtil;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
-import io.github.winsontse.hearteyes.util.LogUtil;
+import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.util.UIUtil;
 import rx.Observable;
 import rx.Subscriber;
@@ -47,6 +48,9 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
+/**
+ * 打算以后项目也可以使用,所以使用activity实现,且未实现MVP
+ */
 public class ImagePickerActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
@@ -56,14 +60,16 @@ public class ImagePickerActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     private ImagePickerAdaper adaper;
-    public static final String ORDER = "DESC";
-    public static final int PADDING = 4;
+    private static final String ORDER = "DESC";
+    private static final int PADDING = 4;
     public static final int DEFUALT_MAX_COUNT = 15;
-    public static final int REQUEST_PICKER_IMAGE = 1034;
+    private static final int REQUEST_PICKER_IMAGE = 1034;
+    private static final int REQUEST_CAMERA = 1035;
+    private File currentTempImageFile;
 
-    public static final String EXTRA_MAX_COUNT = "max_count";
 
-    public static final String EXTRA_SELECTED_IMAGE_LIST = "selected_image_list";
+    private static final String EXTRA_MAX_COUNT = "max_count";
+    private static final String EXTRA_SELECTED_IMAGE_LIST = "selected_image_list";
 
     private CompositeSubscription compositeSubscription;
     private Resources resources;
@@ -165,7 +171,6 @@ public class ImagePickerActivity extends AppCompatActivity {
             updateTitle(selectedList.size());
             adaper.getSelectedList().addAll(selectedList);
         }
-
     }
 
     private void updateTitle(int size) {
@@ -193,7 +198,7 @@ public class ImagePickerActivity extends AppCompatActivity {
                         if (granted) {
                             loadImages();
                         } else {
-                            showToast("没取到权限呢");
+                            showToast(getString(R.string.not_permission));
                         }
                     }
                 });
@@ -202,12 +207,56 @@ public class ImagePickerActivity extends AppCompatActivity {
 
     private void loadImages() {
 
-        Subscription subscribe = Observable
+        Subscription subscribe = getCursorObservable(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                .map(new Func1<Cursor, List<ImageEntity>>() {
+                    @Override
+                    public List<ImageEntity> call(Cursor cursor) {
+                        List<ImageEntity> result = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            result.add(cursorToImageEntity(cursor));
+                        }
+                        cursor.close();
+                        return result;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new HeartEyesSubscriber<List<ImageEntity>>() {
+                    @Override
+                    public void onNext(List<ImageEntity> imageList) {
+                        adaper.addItems(imageList);
+                    }
+
+                    @Override
+                    public void handleError(Throwable e) {
+                        showToast(getString(R.string.cannot_load_local_images));
+                    }
+                });
+        addSubscription(subscribe);
+    }
+
+    @NonNull
+    private ImageEntity cursorToImageEntity(Cursor cursor) {
+        ImageEntity entity = new ImageEntity();
+        entity.setDateAdded(cursor.getLong(cursor.getColumnIndex(PROJECTIONS[0])));
+        entity.setDateModified(cursor.getLong(cursor.getColumnIndex(PROJECTIONS[1])));
+        entity.setData(cursor.getString(cursor.getColumnIndex(PROJECTIONS[2])));
+        entity.setSize(cursor.getLong(cursor.getColumnIndex(PROJECTIONS[3])));
+        entity.setDisplayName(cursor.getString(cursor.getColumnIndex(PROJECTIONS[4])));
+        entity.setTitle(cursor.getString(cursor.getColumnIndex(PROJECTIONS[5])));
+        entity.setMineType(cursor.getString(cursor.getColumnIndex(PROJECTIONS[6])));
+        entity.setWidth(cursor.getInt(cursor.getColumnIndex(PROJECTIONS[7])));
+        entity.setHeight(cursor.getInt(cursor.getColumnIndex(PROJECTIONS[8])));
+        return entity;
+    }
+
+    private Observable<Cursor> getCursorObservable(final Uri mediaUri) {
+        return Observable
                 .create(new Observable.OnSubscribe<Cursor>() {
                     @Override
                     public void call(Subscriber<? super Cursor> subscriber) {
                         Cursor cursor = getContentResolver().query(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                mediaUri,
                                 new String[]{
                                         PROJECTIONS[0],
                                         PROJECTIONS[1],
@@ -224,42 +273,7 @@ public class ImagePickerActivity extends AppCompatActivity {
                                 PROJECTIONS[1] + " " + ORDER);
                         subscriber.onNext(cursor);
                     }
-                })
-                .map(new Func1<Cursor, List<ImageEntity>>() {
-                    @Override
-                    public List<ImageEntity> call(Cursor cursor) {
-                        List<ImageEntity> result = new ArrayList<>();
-                        while (cursor.moveToNext()) {
-                            ImageEntity entity = new ImageEntity();
-                            entity.setDateAdded(cursor.getLong(cursor.getColumnIndex(PROJECTIONS[0])));
-                            entity.setDateModified(cursor.getLong(cursor.getColumnIndex(PROJECTIONS[1])));
-                            entity.setData(cursor.getString(cursor.getColumnIndex(PROJECTIONS[2])));
-                            entity.setSize(cursor.getLong(cursor.getColumnIndex(PROJECTIONS[3])));
-                            entity.setDisplayName(cursor.getString(cursor.getColumnIndex(PROJECTIONS[4])));
-                            entity.setTitle(cursor.getString(cursor.getColumnIndex(PROJECTIONS[5])));
-                            entity.setMineType(cursor.getString(cursor.getColumnIndex(PROJECTIONS[6])));
-                            entity.setWidth(cursor.getInt(cursor.getColumnIndex(PROJECTIONS[7])));
-                            entity.setHeight(cursor.getInt(cursor.getColumnIndex(PROJECTIONS[8])));
-                            result.add(entity);
-                        }
-                        cursor.close();
-                        return result;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new HeartEyesSubscriber<List<ImageEntity>>() {
-                    @Override
-                    public void onNext(List<ImageEntity> imageList) {
-                        adaper.addItems(imageList);
-                    }
-
-                    @Override
-                    public void handleError(Throwable e) {
-                        showToast("没加载出来呢");
-                    }
                 });
-        addSubscription(subscribe);
     }
 
     private void showToast(String msg) {
@@ -294,8 +308,86 @@ public class ImagePickerActivity extends AppCompatActivity {
                 }
                 finishAfterTransition();
                 break;
+
+            case R.id.action_camera:
+
+                openCamera();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openCamera() {
+        RxPermissions
+                .getInstance(this)
+                .request(Manifest.permission.CAMERA)
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean granted) {
+                        if (granted) {
+                            if (currentTempImageFile == null) {
+                                currentTempImageFile = FileUtil.createTempImageFile(ImagePickerActivity.this, "hearteyes_" + TimeUtil.getFormatTime(System.currentTimeMillis(), "yyyyMMdd_HH_mm_ss_SSS") + ".jpg");
+                            }
+                            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentTempImageFile));
+                            cameraIntent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
+                            startActivityForResult(cameraIntent, REQUEST_CAMERA);
+
+                        } else {
+                            showToast(getString(R.string.not_permission));
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CAMERA:
+                    handleCameraResult();
+                    break;
+            }
+        }
+    }
+
+    private void handleCameraResult() {
+        String tmpPath = currentTempImageFile.getAbsolutePath();
+        currentTempImageFile = null;
+        MediaScannerConnection.scanFile(this, new String[]{tmpPath}, null, new MediaScannerConnection.OnScanCompletedListener() {
+            @Override
+            public void onScanCompleted(String path, Uri uri) {
+                Subscription subscribe = getCursorObservable(uri)
+                        .map(new Func1<Cursor, ImageEntity>() {
+                            @Override
+                            public ImageEntity call(Cursor cursor) {
+                                cursor.moveToFirst();
+                                ImageEntity imageEntity = cursorToImageEntity(cursor);
+                                cursor.close();
+                                return imageEntity;
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new HeartEyesSubscriber<ImageEntity>() {
+                            @Override
+                            public void onNext(ImageEntity imageEntity) {
+                                adaper.getSelectedList().add(imageEntity);
+                                adaper.getData().add(0, imageEntity);
+                                adaper.notifyDataSetChanged();
+                                okMenu.setVisible(true);
+
+                            }
+
+                            @Override
+                            public void handleError(Throwable e) {
+                                showToast(getString(R.string.cannot_load_local_images));
+                            }
+                        });
+                addSubscription(subscribe);
+            }
+        });
     }
 
     public static List<ImageEntity> handleSelectedImageResult(int resultCode, Intent data) {

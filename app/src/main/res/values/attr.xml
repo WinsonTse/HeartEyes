@@ -8,7 +8,6 @@
     </declare-styleable>
 
     <declare-styleable name="MoreTextView">
-        <attr name="mtl_text_size" format="dimension" />
         <attr name="mtl_text_color" format="color" />
         <attr name="mtl_click_text_color" format="color" />
         <attr name="mtl_max_lines" format="integer" />

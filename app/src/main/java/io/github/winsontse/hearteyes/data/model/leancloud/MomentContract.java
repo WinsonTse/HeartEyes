@@ -7,10 +7,13 @@ public interface MomentContract {
     String KEY = "Moment";
 
     String AUTHOR = "author";
-    String LOCATION = "location";
     String CONTENT = "content";
     String IMAGES = "images";
     String RECORDING = "recording";
     String CIRCLE_ID = "circleId";
     String CREATEAD_TIME = "createdTime";
+
+    String ADDRESS = "address";
+    String LATITUDE = "latitude";
+    String LONGITUDE = "longitude";
 }

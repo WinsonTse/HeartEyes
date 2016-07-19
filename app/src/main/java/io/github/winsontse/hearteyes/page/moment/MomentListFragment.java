@@ -7,14 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
@@ -29,7 +26,6 @@ import java.util.Calendar;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
@@ -38,6 +34,8 @@ import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.TimelineFragment;
+import io.github.winsontse.hearteyes.page.image.GalleryFragment;
+import io.github.winsontse.hearteyes.page.map.AddressFragment;
 import io.github.winsontse.hearteyes.page.moment.component.DaggerMomentListComponent;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
@@ -45,7 +43,7 @@ import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 
-public class MomentListFragment extends TimelineFragment<AVObject> implements MomentListContract.View, FragmentManager.OnBackStackChangedListener {
+public class MomentListFragment extends TimelineFragment<AVObject> implements MomentListContract.View, MomentListAdapter.OnMomentClickListener {
 
     @Inject
     MomentListPresenter presenter;
@@ -81,11 +79,8 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
         return new MomentListFragment();
     }
 
-    @Nullable
     @Override
-    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_moment_list, container, false);
-        ButterKnife.bind(this, rootView);
+    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         AnimatorUtil.translationToCorrect(appBar).start();
         calendar = TimeUtil.getCalendar();
         fabEdit.postDelayed(new Runnable() {
@@ -95,10 +90,12 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
             }
         }, AnimatorUtil.ANIMATOR_TIME);
         bindListener();
-        getFragmentManager().addOnBackStackChangedListener(this);
-
         initRecyclerView();
-        return rootView;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_moment_list;
     }
 
     private void bindListener() {
@@ -121,8 +118,16 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
         return false;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            fabEdit.show();
+        }
+    }
+
     private void initRecyclerView() {
-        momentListAdapter = new MomentListAdapter(this);
+        momentListAdapter = new MomentListAdapter();
         rv.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(layoutManager);
@@ -165,14 +170,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                 }
             }
         });
-        MomentListAdapter.OnDateLongClickListener onDateLongClickListener = new MomentListAdapter.OnDateLongClickListener() {
-            @Override
-            public void onDateLongClick(int position, AVObject avObject) {
-                long time = avObject.getLong(MomentContract.CREATEAD_TIME);
-                showDatePickerDialog(position, time, time, avObject);
-            }
-        };
-        momentListAdapter.setOnDateLongClickListener(onDateLongClickListener);
+        momentListAdapter.setOnMomentClickListener(this);
 
         llTime.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -221,16 +219,6 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
         return presenter;
     }
 
-    /**
-     * Called whenever the contents of the back stack change.
-     */
-    @Override
-    public void onBackStackChanged() {
-        if (getFragmentManager().getBackStackEntryCount() == 0 && fabEdit != null && !fabEdit.isShown()) {
-            fabEdit.show();
-        }
-    }
-
     @Override
     public SwipeRefreshLayout getSwipeRefreshLayout() {
         return srl;
@@ -258,12 +246,17 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
 
     @Override
     public void goToEditPage() {
-        openPage(MomentEditFragment.newInstance(0, null));
+        openPage(this, MomentEditFragment.newInstance(0, null));
+    }
+
+    @Override
+    public void goToShowLocationPage(AVObject avObject) {
+        openPage(this, AddressFragment.newInstance(avObject));
     }
 
     @Override
     public void goToEditPage(int position, AVObject avObject) {
-        openPage(MomentEditFragment.newInstance(position, avObject));
+        openPage(this, MomentEditFragment.newInstance(position, avObject));
     }
 
     @Override
@@ -274,5 +267,33 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                 presenter.deleteImage(position, avObject, imagePosition);
             }
         }, getString(R.string.cancel), null);
+    }
+
+    @Override
+    public void onDateLongClick(int position, AVObject avObject) {
+        long time = avObject.getLong(MomentContract.CREATEAD_TIME);
+        showDatePickerDialog(position, time, time, avObject);
+    }
+
+    @Override
+    public void onContentLongClick(int position, AVObject avObject) {
+        goToEditPage(position, avObject);
+
+    }
+
+    @Override
+    public void onThumbnailClick(int position, AVObject avObject, int imagePosition) {
+        openPage(this, GalleryFragment.newInstance(avObject, imagePosition));
+    }
+
+    @Override
+    public void onThumbnailLongClick(int position, AVObject avObject, int imagePosition) {
+        showDeleteImageDialog(position, avObject, imagePosition);
+
+    }
+
+    @Override
+    public void onAddressClick(int position, AVObject avObject) {
+        goToShowLocationPage(avObject);
     }
 }

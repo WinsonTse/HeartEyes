@@ -1,9 +1,7 @@
 package io.github.winsontse.hearteyes.app;
 
 import android.content.Context;
-
-import javax.inject.Qualifier;
-import javax.inject.Singleton;
+import android.content.res.Resources;
 
 import dagger.Component;
 import io.github.winsontse.hearteyes.data.remote.WeiboApi;
@@ -20,5 +18,9 @@ public interface AppComponent {
     Context getApplicationContext();
 
     WeiboApi getWeiboApi();
+
+    LeanCloudManager getLeanCloudManager();
+
+    Resources getResources();
 
 }

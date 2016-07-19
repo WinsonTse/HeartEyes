@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.ContentLoadingProgressBar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,7 +14,6 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.component.DaggerLoginComponent;
@@ -47,11 +45,8 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
-        ButterKnife.bind(this, rootView);
+    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ssoHandler = new SsoHandler(getActivity(), new AuthInfo(getActivity(), SecretConstant.WEIBO_APP_KEY, SecretConstant.WEIBO_REDIRECT_URL, SecretConstant.WEIBO_SCOPE));
         fabEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +55,11 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             }
         });
         showEnterFab();
-        return rootView;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_login;
     }
 
     @Override

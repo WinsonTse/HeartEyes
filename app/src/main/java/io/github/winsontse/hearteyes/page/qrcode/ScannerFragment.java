@@ -1,24 +1,22 @@
 package io.github.winsontse.hearteyes.page.qrcode;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.zxing.Result;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.app.AppComponent;
+import io.github.winsontse.hearteyes.page.base.BaseFragment;
+import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.qrcode.component.DaggerScannerComponent;
 import io.github.winsontse.hearteyes.page.qrcode.contract.ScannerContract;
 import io.github.winsontse.hearteyes.page.qrcode.module.ScannerModule;
 import io.github.winsontse.hearteyes.page.qrcode.presenter.ScannerPresenter;
-import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.page.base.BaseFragment;
-import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class ScannerFragment extends BaseFragment implements ScannerContract.View, ZXingScannerView.ResultHandler {
@@ -35,13 +33,21 @@ public class ScannerFragment extends BaseFragment implements ScannerContract.Vie
         return fragment;
     }
 
+    @Override
+    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+    }
+
     @Nullable
     @Override
-    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View rootView = inflater.inflate(R.layout.fragment_scanner, container, false);
-//        return rootView;
-        scannerView = new ZXingScannerView(getActivity());
-        return scannerView;
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return scannerView = new ZXingScannerView(getActivity());
+
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return 0;
     }
 
     @Override

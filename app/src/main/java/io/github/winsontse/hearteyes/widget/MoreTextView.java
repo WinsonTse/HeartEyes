@@ -40,6 +40,7 @@ public class MoreTextView extends TextView {
 
     public MoreTextView(Context context) {
         super(context);
+
         init(context, null);
     }
 
@@ -132,8 +133,8 @@ public class MoreTextView extends TextView {
         getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                currentLines = getLineCount();
-                if (currentLines > maxLines) {
+                    currentLines = getLineCount();
+                if (currentLines >= maxLines) {
                     Layout layout = getLayout();
                     int end = layout.getLineEnd(maxLines - 2);
                     String subString = correctContent.substring(0, end);

@@ -1,5 +1,6 @@
 package io.github.winsontse.hearteyes.page.moment.contract;
 
+import com.amap.api.location.AMapLocationClient;
 import com.avos.avoscloud.AVObject;
 
 import java.util.List;
@@ -21,6 +22,8 @@ public interface MomentEditContract {
         void init(AVObject currentMoment, int itemPosition);
 
         void publishMoment(String content, List<ImageEntity> images);
+
+        void initLocationClient(AMapLocationClient mLocationClient);
     }
 
 }

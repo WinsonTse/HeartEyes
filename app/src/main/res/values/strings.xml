@@ -35,5 +35,9 @@
     <string name="tips_delete_image">是否要删掉这张照片,不可恢复</string>
     <string name="cancel">取消</string>
     <string name="deleting">删除中...</string>
+    <string name="not_permission">没取到权限呢</string>
+    <string name="cannot_load_local_images">没加载出来呢</string>
+    <string name="cannot_create_tmp_image">出了一点问题,再试试</string>
+    <string name="retry">重试</string>
 
 </resources>

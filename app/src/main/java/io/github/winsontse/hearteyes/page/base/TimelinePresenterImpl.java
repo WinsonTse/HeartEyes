@@ -37,7 +37,7 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             @Override
                             public void handleError(Throwable e) {
                                 timelineView.setLoadingCompleted();
-                                LogUtil.e("请求出错");
+                                LogUtil.e("请求出错:" + e.getMessage());
                             }
 
                             @Override

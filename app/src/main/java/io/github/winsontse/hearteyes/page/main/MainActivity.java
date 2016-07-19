@@ -1,9 +1,11 @@
 package io.github.winsontse.hearteyes.page.main;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.widget.FrameLayout;
 
@@ -22,6 +24,7 @@ import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.AssociationFragment;
 import io.github.winsontse.hearteyes.page.account.LoginFragment;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
+import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.main.component.DaggerMainComponent;
 import io.github.winsontse.hearteyes.page.main.contract.MainContract;
@@ -40,7 +43,6 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
     FrameLayout fragmentContainer;
     @BindView(R.id.bottom_bar)
     BottomBar bottomBar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
                 fragments.add(fragment);
             }
         }
-        if (fragments.size() == 1 && TextUtils.equals(fragments.get(0).getTag(), MomentListFragment.class.getSimpleName())) {
+        if (fragments.size() == 1 && TextUtils.equals(fragments.get(0).getTag(), MomentListFragment.class.getName())) {
             showBottomBar();
         } else {
             AnimatorUtil.translationToHideBottomBar(bottomBar).start();
@@ -133,12 +135,32 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
     }
 
 
-    public void addFragment(Fragment ragment, boolean isAddToBackStack) {
-        addFragment(R.id.fragment_container, ragment, isAddToBackStack);
+    public void openPage(BaseFragment oldFragment, BaseFragment newFragment, boolean isAddToBackStack) {
+        String tag = newFragment.getClass().getName();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .hide(oldFragment)
+                .add(R.id.fragment_container, newFragment, tag);
+        if (isAddToBackStack) {
+            transaction.addToBackStack(null);
+
+        }
+        transaction.commitAllowingStateLoss();
     }
 
-    public void replaceFragment(Fragment fragment, boolean isAddToBackStack) {
-        replaceFragment(R.id.fragment_container, fragment, isAddToBackStack);
+    public void replacePage(Fragment fragment, boolean isAddToBackStack) {
+        String tag = fragment.getClass().getName();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment, tag);
+
+        if (isAddToBackStack) {
+            transaction.addToBackStack(tag);
+
+        }
+        transaction.commitAllowingStateLoss();
+    }
+
+    public Fragment findFragmentByClass(Class cls) {
+        return getSupportFragmentManager().findFragmentByTag(cls.getName());
     }
 
 
@@ -146,7 +168,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
     public void goToMomentListPage() {
         Fragment fragment = findFragmentByClass(MomentListFragment.class);
         if (fragment == null) {
-            replaceFragment(MomentListFragment.newInstance(), false);
+            replacePage(MomentListFragment.newInstance(), false);
         }
 
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -170,7 +192,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
     public void goToLoginPage() {
         Fragment fragment = findFragmentByClass(LoginFragment.class);
         if (fragment == null) {
-            replaceFragment(LoginFragment.newInstance(), false);
+            replacePage(LoginFragment.newInstance(), false);
         }
     }
 
@@ -178,7 +200,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
     public void goToAssosiationPage() {
         Fragment fragment = findFragmentByClass(AssociationFragment.class);
         if (fragment == null) {
-            replaceFragment(AssociationFragment.newInstance(), false);
+            replacePage(AssociationFragment.newInstance(), false);
         }
     }
 

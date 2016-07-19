@@ -7,9 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,7 +15,6 @@ import android.widget.ImageView;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.component.DaggerAssociationComponent;
@@ -26,7 +23,6 @@ import io.github.winsontse.hearteyes.page.account.module.AssociationModule;
 import io.github.winsontse.hearteyes.page.account.presenter.AssociationPresenter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
-import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.page.qrcode.ScannerFragment;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 
@@ -50,9 +46,7 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
 
     @Nullable
     @Override
-    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_association, container, false);
-        ButterKnife.bind(this, rootView);
+    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         presenter.generateQrcode(500, 500, Color.WHITE, Color.BLACK);
         fabSwipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,11 +54,13 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
                 showCoverAndOpenScanner();
             }
         });
-
         getFragmentManager().addOnBackStackChangedListener(this);
-        return rootView;
     }
 
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_association;
+    }
 
 
     @Override
@@ -129,7 +125,7 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        openPage(ScannerFragment.newInstance());
+                        openPage(AssociationFragment.this, ScannerFragment.newInstance());
                     }
                 });
     }

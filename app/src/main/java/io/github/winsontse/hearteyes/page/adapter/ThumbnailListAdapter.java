@@ -45,7 +45,6 @@ public class ThumbnailListAdapter extends BaseRecyclerAdapter<AVFile> {
 
         @Override
         public void bind(AVFile avFile) {
-//            ImageLoader.getInstance().displayImage(context, avFile.getUrl(), iv);
             ImageLoader.getInstance().displayImage(context, avFile.getThumbnailUrl(true, width, width), iv);
         }
     }

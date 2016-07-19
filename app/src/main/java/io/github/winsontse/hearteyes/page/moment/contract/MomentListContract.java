@@ -14,6 +14,8 @@ public interface MomentListContract {
     interface View extends TimelineView<AVObject> {
         void goToEditPage();
 
+        void goToShowLocationPage(AVObject avObject);
+
         void goToEditPage(int position, AVObject avObject);
 
         void showDeleteImageDialog(int position, AVObject avObject, int imagePosition);

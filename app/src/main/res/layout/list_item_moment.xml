@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/padding_m">
+    android:orientation="horizontal">
 
     <include layout="@layout/container_time" />
 
@@ -58,7 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="@dimen/padding_l"
         android:layout_toRightOf="@id/ll_time"
         android:orientation="vertical"
         android:paddingTop="@dimen/padding_l">
@@ -67,20 +65,52 @@
             android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="52dp"
+            android:layout_marginRight="68dp"
             android:clickable="true"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
             app:mtl_click_text_color="?colorAccent"
             app:mtl_collasping_text="@string/expanding_content"
             app:mtl_expanding_text="@string/collasp"
             app:mtl_max_lines="5"
-            app:mtl_text_color="?android:textColorPrimary"
-            app:mtl_text_size="14sp" />
+            app:mtl_text_color="?android:textColorPrimary" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_l" />
+            android:layout_marginTop="@dimen/padding_m"
+            android:clipToPadding="false"
+            android:paddingRight="12dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="68dp"
+            android:layout_marginTop="@dimen/padding_l"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_place_white_18dp"
+                android:tint="?colorAccent" />
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:layout_gravity="bottom"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:textColor="?colorAccent" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

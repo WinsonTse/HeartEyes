@@ -1,11 +1,11 @@
 package ${packageName};
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import javax.inject.Inject;
+import android.support.annotation.Nullable;
 import ${packageName}.component.Dagger${pageName}Component;
 import ${packageName}.contract.${pageName}Contract;
 import ${packageName}.module.${pageName}Module;
@@ -27,11 +27,14 @@ public class ${pageName}Fragment extends BaseFragment implements ${pageName}Cont
     @Inject
     ${pageName}Presenter presenter;
 
-    @Nullable
     @Override
-    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.${layoutName}, container, false);
-        return rootView;
+    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.${layoutName};
     }
 
     @Override

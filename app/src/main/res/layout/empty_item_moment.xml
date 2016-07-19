@@ -45,11 +45,11 @@
 
     <LinearLayout
         android:id="@+id/ll_content"
+        android:layout_alignRight="@id/divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="@dimen/padding_l"
         android:layout_marginTop="@dimen/padding_l"
         android:layout_toRightOf="@id/view0"
         android:orientation="vertical"

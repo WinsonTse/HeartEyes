@@ -2,12 +2,11 @@ package io.github.winsontse.hearteyes.page.account;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
+import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.component.DaggerAccountComponent;
 import io.github.winsontse.hearteyes.page.account.contract.AccountContract;
@@ -15,7 +14,6 @@ import io.github.winsontse.hearteyes.page.account.module.AccountModule;
 import io.github.winsontse.hearteyes.page.account.presenter.AccountPresenter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
-import io.github.winsontse.hearteyes.R;
 
 public class AccountFragment extends BaseFragment implements AccountContract.View {
 
@@ -31,9 +29,12 @@ public class AccountFragment extends BaseFragment implements AccountContract.Vie
 
     @Nullable
     @Override
-    public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_account, container, false);
-        return rootView;
+    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_account;
     }
 
     @Override

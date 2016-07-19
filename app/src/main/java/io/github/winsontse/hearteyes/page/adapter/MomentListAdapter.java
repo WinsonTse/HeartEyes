@@ -2,6 +2,7 @@ package io.github.winsontse.hearteyes.page.adapter;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,9 +21,7 @@ import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
-import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.util.ImageLoader;
-import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.widget.CircleImageView;
 import io.github.winsontse.hearteyes.widget.MoreTextView;
@@ -35,21 +34,19 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     public static final int TAG_HEADER_INVISIBLE = 2;
     public static final int TAG_HEADER_FIRST_POSITION = 3;
 
-    private MomentListContract.View view;
-    private OnDateLongClickListener onDateLongClickListener;
+    private OnMomentClickListener onMomentClickListener;
 
-    public void setOnDateLongClickListener(OnDateLongClickListener onDateLongClickListener) {
-        this.onDateLongClickListener = onDateLongClickListener;
+    public void setOnMomentClickListener(OnMomentClickListener onMomentClickListener) {
+        this.onMomentClickListener = onMomentClickListener;
     }
 
-    public MomentListAdapter(MomentListContract.View view) {
-        this.view = view;
+    public MomentListAdapter() {
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ItemViewHolder itemViewHolder = new ItemViewHolder(data, parent).view(this.view);
-        itemViewHolder.setOnDateLongClickListener(onDateLongClickListener);
+        ItemViewHolder itemViewHolder = new ItemViewHolder(data, parent);
+        itemViewHolder.setOnMomentClickListener(onMomentClickListener);
         return itemViewHolder;
     }
 
@@ -78,10 +75,13 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
         TextView tvWeek;
         @BindView(R.id.tv_time)
         TextView tvTime;
+        @BindView(R.id.tv_address)
+        TextView tvAddress;
+        @BindView(R.id.ll_address)
+        LinearLayout llAddress;
 
         private ThumbnailListAdapter thumbnailListAdapter;
-        private MomentListContract.View view;
-        private OnDateLongClickListener onDateLongClickListener;
+        private OnMomentClickListener onMomentClickListener;
 
         public ItemViewHolder(final List<AVObject> data, ViewGroup parent) {
             super(data, parent, R.layout.list_item_moment);
@@ -104,34 +104,55 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
             tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    int position = getAdapterPosition();
-                    view.goToEditPage(position, data.get(position));
+
+                    if (onMomentClickListener != null) {
+                        int position = getAdapterPosition();
+                        onMomentClickListener.onContentLongClick(position, data.get(position));
+                    }
                     return true;
                 }
             });
             thumbnailListAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public void onItemLongClick(int imagePosition) {
-                    int position = getAdapterPosition();
-                    view.showDeleteImageDialog(position, data.get(position), imagePosition);
 
+                    if (onMomentClickListener != null) {
+                        int position = getAdapterPosition();
+                        onMomentClickListener.onThumbnailLongClick(position, data.get(position), imagePosition);
+                    }
                 }
             });
+
+            thumbnailListAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(int imagePosition) {
+                    if (onMomentClickListener != null) {
+                        int position = getAdapterPosition();
+                        onMomentClickListener.onThumbnailClick(position, data.get(position), imagePosition);
+                    }
+                }
+            });
+
             llTime.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (onDateLongClickListener != null) {
+                    if (onMomentClickListener != null) {
                         int position = getAdapterPosition();
-                        onDateLongClickListener.onDateLongClick(position, data.get(position));
+                        onMomentClickListener.onDateLongClick(position, data.get(position));
                     }
                     return true;
                 }
             });
-        }
 
-        public ItemViewHolder view(MomentListContract.View view) {
-            this.view = view;
-            return this;
+            llAddress.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onMomentClickListener != null) {
+                        int position = getAdapterPosition();
+                        onMomentClickListener.onAddressClick(position, data.get(position));
+                    }
+                }
+            });
         }
 
         @Override
@@ -173,14 +194,27 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 List<AVFile> avFiles = list;
                 thumbnailListAdapter.setItems(avFiles);
             }
+
+            String address = avObject.getString(MomentContract.ADDRESS);
+            llAddress.setVisibility(TextUtils.isEmpty(address) ? View.GONE : View.VISIBLE);
+            tvAddress.setText(address);
         }
 
-        public void setOnDateLongClickListener(OnDateLongClickListener onDateLongClickListener) {
-            this.onDateLongClickListener = onDateLongClickListener;
+        void setOnMomentClickListener(OnMomentClickListener onDateLongClickListener) {
+            this.onMomentClickListener = onDateLongClickListener;
         }
     }
 
-    public interface OnDateLongClickListener {
+    public interface OnMomentClickListener {
         void onDateLongClick(int position, AVObject avObject);
+
+        void onContentLongClick(int position, AVObject avObject);
+
+        void onThumbnailClick(int position, AVObject avObject, int imagePosition);
+
+        void onThumbnailLongClick(int position, AVObject avObject, int imagePosition);
+
+        void onAddressClick(int position, AVObject avObject);
+
     }
 }
