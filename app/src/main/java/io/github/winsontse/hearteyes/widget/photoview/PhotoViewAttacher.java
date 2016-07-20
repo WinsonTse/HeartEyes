@@ -35,6 +35,7 @@ import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import java.io.DataInputStream;
 import java.lang.ref.WeakReference;
 
 import io.github.winsontse.hearteyes.widget.photoview.gestures.OnGestureListener;
@@ -953,8 +954,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         final int drawableHeight = d.getIntrinsicHeight();
 
         float aspectRatio = (float) drawableHeight / drawableWidth;
-        if (((drawableWidth > viewWidth && drawableHeight <= viewHeight) || (drawableHeight > viewHeight && drawableWidth <= viewWidth))
-                && (aspectRatio > 2 || aspectRatio < 1 / 2.0f)) {
+//        if (((drawableWidth > viewWidth && drawableHeight <= viewHeight) || (drawableHeight > viewHeight && drawableWidth <= viewWidth))
+        if (aspectRatio >= 16 / 9.0f || aspectRatio <= 9/16.0f) {
             mScaleType = ScaleType.CENTER_CROP;
         } else {
             mScaleType = ScaleType.CENTER;

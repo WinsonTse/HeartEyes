@@ -105,7 +105,6 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
 
     @Override
     public void onAttach(Context context) {
-        LogUtil.e("执行到onAttach");
 
         super.onAttach(context);
         Bundle args = getArguments();
@@ -118,7 +117,6 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtil.e("执行到fragment onCreate");
 
         colorPrimaryDark = getColorById(R.color.colorPrimaryDark);
         colorBlack = getColorById(R.color.md_black);
@@ -131,7 +129,6 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
 
     @Override
     public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LogUtil.e("执行到initView");
 
         final GalleryPagerAdapter galleryPagerAdapter = new GalleryPagerAdapter(getChildFragmentManager(), images);
 

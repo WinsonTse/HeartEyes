@@ -1,10 +1,12 @@
 package io.github.winsontse.hearteyes.app;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
+import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.util.scope.ApplicationScope;
 
 /**
@@ -29,5 +31,11 @@ public class AppModule {
     @ApplicationScope
     public Resources provideResources() {
         return context.getResources();
+    }
+
+    @Provides
+    @ApplicationScope
+    public SharedPreferences provideSharedPreferences() {
+        return context.getSharedPreferences(SecretConstant.SP_NAME, Context.MODE_PRIVATE);
     }
 }

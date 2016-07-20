@@ -145,4 +145,21 @@ public class ImageEntity implements Parcelable {
             return new ImageEntity[size];
         }
     };
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ImageEntity entity = (ImageEntity) o;
+
+        return data != null ? data.equals(entity.data) : entity.data == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return data != null ? data.hashCode() : 0;
+    }
 }

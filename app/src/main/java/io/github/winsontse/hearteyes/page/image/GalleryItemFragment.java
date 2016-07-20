@@ -19,7 +19,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.data.model.ImageEntity;
-import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.widget.photoview.PhotoView;
 import io.github.winsontse.hearteyes.widget.photoview.PhotoViewAttacher;
@@ -109,7 +108,6 @@ public class GalleryItemFragment extends Fragment {
         into = Glide.with(getActivity()).load(url).placeholder(R.color.md_black).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                LogUtil.e("大图加载出错:" + e.getMessage());
                 ivThumb.setVisibility(View.GONE);
                 pb.setVisibility(View.GONE);
                 bnRetry.setVisibility(View.VISIBLE);

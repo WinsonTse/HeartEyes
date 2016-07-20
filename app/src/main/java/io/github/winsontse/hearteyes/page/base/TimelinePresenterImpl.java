@@ -37,12 +37,10 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             @Override
                             public void handleError(Throwable e) {
                                 timelineView.setLoadingCompleted();
-                                LogUtil.e("请求出错:" + e.getMessage());
                             }
 
                             @Override
                             public void onNext(List<T> data) {
-                                LogUtil.e("请求结果:" + data.size());
 
                                 timelineView.onLoadMoreCompleted(data);
 
@@ -57,7 +55,6 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             @Override
                             public void onStart() {
                                 super.onStart();
-                                LogUtil.e("开始请求");
                                 timelineView.showLoadingView();
                             }
                         });
@@ -76,12 +73,10 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             @Override
                             public void handleError(Throwable e) {
                                 timelineView.setLoadingCompleted();
-                                LogUtil.e("请求出错");
                             }
 
                             @Override
                             public void onNext(List<T> data) {
-                                LogUtil.e("请求结果:" + data.size());
                                 currentPage = 0;
                                 timelineView.onRefreshCompleted(data);
 
@@ -97,7 +92,6 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             public void onStart() {
                                 super.onStart();
                                 timelineView.showRefreshView();
-                                LogUtil.e("开始请求");
                             }
                         });
         addSubscription(listSubscribe);

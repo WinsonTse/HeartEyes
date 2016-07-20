@@ -24,6 +24,8 @@ public interface MomentEditContract {
         void publishMoment(String content, List<ImageEntity> images);
 
         void initLocationClient(AMapLocationClient mLocationClient);
+
+        void saveContent(String content);
     }
 
 }

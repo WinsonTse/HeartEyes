@@ -5,7 +5,6 @@
     <string name="nickname">昵称</string>
     <string name="register">注册</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="error_qrcode">二维码是无效的</string>
     <string name="tips_let_him_scan">让Ta扫一扫你</string>

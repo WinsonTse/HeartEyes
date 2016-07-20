@@ -141,6 +141,9 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(momentListAdapter.getItemCount() <= 1) {
+                    return;
+                }
                 int currentPos = layoutManager.findFirstVisibleItemPosition();
                 AVObject currentAvObject = momentListAdapter.getData().get(currentPos);
                 time = currentAvObject.getLong(MomentContract.CREATEAD_TIME);

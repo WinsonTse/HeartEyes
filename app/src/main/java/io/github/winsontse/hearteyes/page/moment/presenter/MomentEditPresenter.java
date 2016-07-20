@@ -1,5 +1,6 @@
 package io.github.winsontse.hearteyes.page.moment.presenter;
 
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.amap.api.location.AMapLocation;
@@ -26,6 +27,7 @@ import io.github.winsontse.hearteyes.page.moment.contract.MomentEditContract;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.ImageUtil;
 import io.github.winsontse.hearteyes.util.LogUtil;
+import io.github.winsontse.hearteyes.util.constant.Preference;
 import io.github.winsontse.hearteyes.util.rxbus.RxBus;
 import io.github.winsontse.hearteyes.util.rxbus.event.MomentEvent;
 import rx.Observable;
@@ -41,10 +43,11 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
     private String address;
 
     private static final int LOCATION_INTERVAL = 30 * 1000;
-
+    private SharedPreferences sp;
     @Inject
-    public MomentEditPresenter(MomentEditContract.View view) {
+    public MomentEditPresenter(MomentEditContract.View view, SharedPreferences sp) {
         this.view = view;
+        this.sp = sp;
     }
 
     public void init(AVObject currentMoment, int itemPosition) {
@@ -53,6 +56,10 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
             this.currentMoment = currentMoment;
             this.itemPosition = itemPosition;
             view.updateEditContent(currentMoment.getString(MomentContract.CONTENT));
+        }
+
+        if(isCreateMoment && sp.contains(Preference.MOMENT_CONTENT)) {
+            view.updateEditContent(sp.getString(Preference.MOMENT_CONTENT, ""));
         }
 
     }
@@ -72,19 +79,18 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
                     if (isCreateMoment) {
                         currentMoment = AVObject.create(MomentContract.KEY);
                         //只有新建时添加地理位置信息
-//                        if (!TextUtils.isEmpty(address) && longitude != 0 && latitude != 0) {
-//                            currentMoment.put(MomentContract.ADDRESS, address);
-//                            currentMoment.put(MomentContract.LONGITUDE, longitude);
-//                            currentMoment.put(MomentContract.LATITUDE, latitude);
-//                        }
+                        if (!TextUtils.isEmpty(address) && longitude != 0 && latitude != 0) {
+                            currentMoment.put(MomentContract.ADDRESS, address);
+                            currentMoment.put(MomentContract.LONGITUDE, longitude);
+                            currentMoment.put(MomentContract.LATITUDE, latitude);
+                        }
                     }
 
-                    //TODO 只有新建时添加地理位置信息
-                    if (!TextUtils.isEmpty(address) && longitude != 0 && latitude != 0) {
-                        currentMoment.put(MomentContract.ADDRESS, address);
-                        currentMoment.put(MomentContract.LONGITUDE, longitude);
-                        currentMoment.put(MomentContract.LATITUDE, latitude);
-                    }
+//                    if (!TextUtils.isEmpty(address) && longitude != 0 && latitude != 0) {
+//                        currentMoment.put(MomentContract.ADDRESS, address);
+//                        currentMoment.put(MomentContract.LONGITUDE, longitude);
+//                        currentMoment.put(MomentContract.LATITUDE, latitude);
+//                    }
 
                     currentMoment.put(MomentContract.CONTENT, content);
 
@@ -157,6 +163,8 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
                 } else {
                     RxBus.getInstance().post(new MomentEvent(MomentEvent.UPDATE_MOMENT_LIST_ITEM, itemPosition, avObject));
                 }
+                sp.edit().remove(Preference.MOMENT_CONTENT).apply();
+                view.updateEditContent("");
                 view.hideProgressDialog();
                 view.closePage();
                 LogUtil.i("发送动态成功:" + avObject.toString());
@@ -233,7 +241,8 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
                         //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
                         LogUtil.e("location Error, ErrCode:"
                                 + aMapLocation.getErrorCode() + ", errInfo:"
-                                + aMapLocation.getErrorInfo());
+                                + aMapLocation.getErrorInfo() + "  "
+                                + aMapLocation.getLocationDetail());
                     }
                 }
 
@@ -241,6 +250,14 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
 
             }
         });
+    }
+
+    @Override
+    public void saveContent(String content) {
+        if(!isCreateMoment ||  TextUtils.isEmpty(content)) {
+            return;
+        }
+        sp.edit().putString(Preference.MOMENT_CONTENT, content).apply();
     }
 
 }

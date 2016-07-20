@@ -2,7 +2,6 @@ package io.github.winsontse.hearteyes.page.base;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,7 +16,6 @@ import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.app.HeartEyesApplication;
 import io.github.winsontse.hearteyes.page.main.MainActivity;
-import io.github.winsontse.hearteyes.util.LogUtil;
 
 /**
  * Created by hao.xie on 16/5/10.
@@ -154,7 +152,6 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
     @Override
     public int getColorById(int colorId) {
-        LogUtil.e("当前activity:" + getActivity() + "  " + mainActivity);
         return mainActivity.getColorById(colorId);
     }
 

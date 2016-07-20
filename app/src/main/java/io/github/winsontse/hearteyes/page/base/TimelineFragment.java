@@ -74,6 +74,10 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
+                    if(adapter.getItemCount() == 0) {
+                        return;
+                    }
+
                     if (onRecyclerViewScrollListener != null) {
                         onRecyclerViewScrollListener.onScrolled(recyclerView, dx, dy);
                     }
@@ -84,7 +88,6 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                     int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                     if (loadMoreEnable && !isLoading && adapter.getItemCount() > 0 && lastVisibleItemPosition == adapter.getItemCount() - 1) {
                         isLoading = true;
-                        LogUtil.e("正在加载更多...");
                         timelinePresenter.loadMore();
                     }
                 }

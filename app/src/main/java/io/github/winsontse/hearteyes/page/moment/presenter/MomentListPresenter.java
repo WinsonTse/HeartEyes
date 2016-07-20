@@ -63,7 +63,6 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
                     List<AVObject> avObjects = query.find();
                     subscriber.onNext(avObjects);
                 } catch (Exception e) {
-                    LogUtil.e("moment list error: " + e.getMessage());
                     subscriber.onError(e);
                 }
             }

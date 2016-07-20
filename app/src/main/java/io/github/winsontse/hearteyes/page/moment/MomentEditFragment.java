@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
@@ -219,8 +220,8 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
 
     @Override
     public void updateEditContent(String content) {
-        if (content != null && content.length() > 0) {
-            etContent.setText(content);
+        etContent.setText(content);
+        if (!TextUtils.isEmpty(content)) {
             fabSend.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -228,7 +229,12 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
                 }
             }, AnimatorUtil.ANIMATOR_TIME);
         }
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        presenter.saveContent(etContent.getText().toString());
     }
 
     @Override

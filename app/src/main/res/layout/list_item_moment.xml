@@ -24,7 +24,7 @@
             android:layout_marginRight="@dimen/padding_l"
             android:layout_marginTop="@dimen/padding_m"
             android:clickable="true"
-            android:src="?colorPrimary"
+            android:src="@color/md_pink_200"
             app:civ_border_color="@color/md_grey_300"
             app:civ_border_width="@dimen/divider_s" />
 

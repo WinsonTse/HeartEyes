@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.app;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import dagger.Component;
@@ -23,4 +24,5 @@ public interface AppComponent {
 
     Resources getResources();
 
+    SharedPreferences getSharedPreferences();
 }

@@ -21,7 +21,6 @@ public class HeartEyesApplication extends Application {
 
     @Override
     public void onCreate() {
-        LogUtil.e("进入application");
         super.onCreate();
 
         appComponent = DaggerAppComponent
