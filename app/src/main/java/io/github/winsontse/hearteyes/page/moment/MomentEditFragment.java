@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.page.moment;
 
 import android.Manifest;
+import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -153,7 +154,6 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
 

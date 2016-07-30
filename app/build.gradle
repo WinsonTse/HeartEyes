@@ -84,4 +84,6 @@ dependencies {
     compile 'cn.leancloud.android:Java-WebSocket:1.2.0-leancloud'
     testCompile 'junit:junit:4.12'
     provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    compile "me.henrytao:smooth-app-bar-layout:24.1.0.+"
 }

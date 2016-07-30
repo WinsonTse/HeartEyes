@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
@@ -42,6 +43,7 @@ import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
+import io.github.winsontse.hearteyes.util.UIUtil;
 
 public class MomentListFragment extends TimelineFragment<AVObject> implements MomentListContract.View, MomentListAdapter.OnMomentClickListener {
 
@@ -69,6 +71,8 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     CoordinatorLayout cl;
     @BindView(R.id.pb_loading)
     ProgressBar pbLoading;
+    @BindView(R.id.ctl)
+    CollapsingToolbarLayout ctl;
 
     private LinearLayoutManager layoutManager;
     private MomentListAdapter momentListAdapter;
@@ -141,10 +145,14 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(momentListAdapter.getItemCount() <= 1) {
+                int currentPos = layoutManager.findFirstVisibleItemPosition() - momentListAdapter.getHeaderCount();
+                if (currentPos < 0) {
+                    llTime.setVisibility(View.INVISIBLE);
+                    appBar.setElevation(0);
                     return;
                 }
-                int currentPos = layoutManager.findFirstVisibleItemPosition();
+                appBar.setElevation(UIUtil.dpToPx(recyclerView.getContext(), 8));
+
                 AVObject currentAvObject = momentListAdapter.getData().get(currentPos);
                 time = currentAvObject.getLong(MomentContract.CREATEAD_TIME);
                 calendar.setTimeInMillis(time);

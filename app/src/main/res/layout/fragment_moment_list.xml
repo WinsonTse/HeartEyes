@@ -1,90 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/md_white"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/cl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:translationY="-56dp">
+        android:layout_height="match_parent"
+        android:background="@color/md_white"
+        android:orientation="vertical">
 
-        <include layout="@layout/toolbar" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/srl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <FrameLayout
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:translationY="-56dp">
 
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv"
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/ctl"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingBottom="?actionBarSize" />
-
-            <include layout="@layout/container_time" />
-
-            <android.support.v4.widget.NestedScrollView
-                android:id="@+id/v_empty"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/md_white">
-
-                <LinearLayout
+                android:layout_height="240dp"
+                android:minHeight="?attr/actionBarSize"
+                app:expandedTitleMarginEnd="164dp"
+                app:expandedTitleMarginStart="148dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                <ImageView
+                    android:id="@+id/header"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:src="@color/md_lightBlue_500"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax" />
 
-                    <include layout="@layout/empty_item_moment" />
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    app:layout_collapseMode="pin"
+                    android:layout_height="?actionBarSize"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
 
-                    <include layout="@layout/empty_item_moment" />
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                    <include layout="@layout/empty_item_moment" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                    <include layout="@layout/empty_item_moment" />
 
-                    <include layout="@layout/empty_item_moment" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="?actionBarSize" />
 
-                    <include layout="@layout/empty_item_moment" />
+                <include layout="@layout/container_time" />
 
-                </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
-        </FrameLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/v_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/md_white">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="?actionBarSize"
-        android:clickable="true"
-        android:src="@drawable/ic_edit"
-        android:visibility="gone"
-        app:layout_anchor="@id/rv"
-        app:layout_anchorGravity="right|bottom"
-        app:layout_behavior="io.github.winsontse.hearteyes.behavior.ScrollAwareFABBehavior"
-        app:useCompatPadding="true" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/pb_loading"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:indeterminate="true"
-        android:indeterminateBehavior="repeat"
-        android:visibility="invisible" />
-</android.support.design.widget.CoordinatorLayout>
+                        <include layout="@layout/empty_item_moment" />
+
+                        <include layout="@layout/empty_item_moment" />
+
+                        <include layout="@layout/empty_item_moment" />
+
+                        <include layout="@layout/empty_item_moment" />
+
+                        <include layout="@layout/empty_item_moment" />
+
+                        <include layout="@layout/empty_item_moment" />
+
+                    </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
+            </FrameLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="?actionBarSize"
+            android:clickable="true"
+            android:src="@drawable/ic_edit"
+            android:visibility="gone"
+            app:layout_anchor="@id/rv"
+            app:layout_anchorGravity="right|bottom"
+            app:layout_behavior="io.github.winsontse.hearteyes.behavior.ScrollAwareFABBehavior"
+            app:useCompatPadding="true" />
+
+        <ProgressBar
+            android:id="@+id/pb_loading"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:indeterminate="true"
+            android:indeterminateBehavior="repeat"
+            android:visibility="invisible" />
+    </android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

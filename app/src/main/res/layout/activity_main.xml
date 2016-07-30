@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+    </android.support.v4.widget.DrawerLayout>
+
     <io.github.winsontse.hearteyes.widget.BottomBar
         android:id="@+id/bottom_bar"
-        android:translationY="?actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
         android:background="?colorPrimary"
+        android:translationY="?actionBarSize"
         app:tabBackground="?selectableItemBackgroundBorderless"
         app:tabIndicatorHeight="0dp"
         app:tabSelectedTextColor="?colorPrimary"

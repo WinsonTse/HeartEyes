@@ -34,6 +34,9 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     public static final int TAG_HEADER_INVISIBLE = 2;
     public static final int TAG_HEADER_FIRST_POSITION = 3;
 
+    public static final int VIEW_TYPE_HEADER = 101;
+    public static final int VIEW_TYPE_ITEM = 102;
+
     private OnMomentClickListener onMomentClickListener;
 
     public void setOnMomentClickListener(OnMomentClickListener onMomentClickListener) {
@@ -45,14 +48,54 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ItemViewHolder itemViewHolder = new ItemViewHolder(data, parent);
-        itemViewHolder.setOnMomentClickListener(onMomentClickListener);
-        return itemViewHolder;
+        switch (viewType) {
+            case VIEW_TYPE_HEADER:
+                HeaderViewHolder headerViewHolder = new HeaderViewHolder(parent);
+                return headerViewHolder;
+            case VIEW_TYPE_ITEM:
+            default:
+                ItemViewHolder itemViewHolder = new ItemViewHolder(data, parent);
+                itemViewHolder.setOnMomentClickListener(onMomentClickListener);
+                itemViewHolder.setHeaderCount(getHeaderCount());
+                return itemViewHolder;
+        }
+
+    }
+
+    @Override
+    public int getHeaderCount() {
+        return 1;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ItemViewHolder) (holder)).bind(data.get(position));
+        if (position != 0) {
+            ((ItemViewHolder) (holder)).bind(data.get(position - getHeaderCount()));
+        } else {
+            ((HeaderViewHolder) (holder)).bind(null);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        switch (position) {
+            case 0:
+                return VIEW_TYPE_HEADER;
+            default:
+                return VIEW_TYPE_ITEM;
+        }
+    }
+
+    static final class HeaderViewHolder extends BaseViewHolder {
+
+        public HeaderViewHolder(ViewGroup parent) {
+            super(parent, R.layout.list_header_moment);
+        }
+
+        @Override
+        public void bind(Object o) {
+
+        }
     }
 
     static final class ItemViewHolder extends BaseViewHolder<AVObject> {
@@ -106,7 +149,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 public boolean onLongClick(View v) {
 
                     if (onMomentClickListener != null) {
-                        int position = getAdapterPosition();
+                        int position = getCorrectPosition();
                         onMomentClickListener.onContentLongClick(position, data.get(position));
                     }
                     return true;
@@ -117,7 +160,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 public void onItemLongClick(int imagePosition) {
 
                     if (onMomentClickListener != null) {
-                        int position = getAdapterPosition();
+                        int position = getCorrectPosition();
                         onMomentClickListener.onThumbnailLongClick(position, data.get(position), imagePosition);
                     }
                 }
@@ -127,7 +170,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 @Override
                 public void onItemClick(int imagePosition) {
                     if (onMomentClickListener != null) {
-                        int position = getAdapterPosition();
+                        int position = getCorrectPosition();
                         onMomentClickListener.onThumbnailClick(position, data.get(position), imagePosition);
                     }
                 }
@@ -137,7 +180,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 @Override
                 public boolean onLongClick(View v) {
                     if (onMomentClickListener != null) {
-                        int position = getAdapterPosition();
+                        int position = getCorrectPosition();
                         onMomentClickListener.onDateLongClick(position, data.get(position));
                     }
                     return true;
@@ -148,7 +191,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
                 @Override
                 public void onClick(View v) {
                     if (onMomentClickListener != null) {
-                        int position = getAdapterPosition();
+                        int position = getCorrectPosition();
                         onMomentClickListener.onAddressClick(position, data.get(position));
                     }
                 }
@@ -157,7 +200,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
 
         @Override
         public void bind(AVObject avObject) {
-            int currentPos = getAdapterPosition();
+            int currentPos = getCorrectPosition();
             int lastPos = currentPos - 1;
             String content = avObject.getString(MomentContract.CONTENT);
             tvContent.setContent(content);
@@ -203,6 +246,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
         void setOnMomentClickListener(OnMomentClickListener onDateLongClickListener) {
             this.onMomentClickListener = onDateLongClickListener;
         }
+
     }
 
     public interface OnMomentClickListener {
