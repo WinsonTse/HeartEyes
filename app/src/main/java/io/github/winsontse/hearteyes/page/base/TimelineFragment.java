@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,6 +13,9 @@ import android.view.ViewParent;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.List;
 
@@ -74,7 +78,7 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if(adapter.getItemCount() == 0) {
+                    if (adapter.getItemCount() == 0) {
                         return;
                     }
 
@@ -107,6 +111,7 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
 
                 }
             });
+            rv.setItemAnimator(new DefaultItemAnimator());
         }
 
         timelinePresenter.refresh();
@@ -125,7 +130,7 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     public void onRefreshCompleted(List<T> data) {
         if (adapter != null) {
             adapter.setItems(data);
-            rv.scrollToPosition(0);
+            rv.smoothScrollToPosition(0);
         }
         setLoadingCompleted();
 

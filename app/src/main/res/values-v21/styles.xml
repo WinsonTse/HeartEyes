@@ -1,7 +1,7 @@
 <resources>
     <!--theme-->
     <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-
+        <item name="android:statusBarColor">#4000</item>
     </style>
 
     <style name="BaseEditTextStyle" parent="Base.V7.Widget.AppCompat.EditText"></style>

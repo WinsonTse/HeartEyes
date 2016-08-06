@@ -85,5 +85,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
-    compile "me.henrytao:smooth-app-bar-layout:24.1.0.+"
+    compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
+
 }

@@ -37,6 +37,15 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupComponent(HeartEyesApplication.get(getActivity()).getAppComponent());
+        setStatusBarViewVisible(isStatusBarViewVisible());
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            setStatusBarViewVisible(isStatusBarViewVisible());
+        }
     }
 
     @Nullable
@@ -68,6 +77,10 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     }
 
     protected boolean isSupportBackNavigation() {
+        return true;
+    }
+
+    protected boolean isStatusBarViewVisible() {
         return true;
     }
 
@@ -163,5 +176,10 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     @Override
     public void hideKeyboard() {
         mainActivity.hideKeyboard();
+    }
+
+    @Override
+    public void setStatusBarViewVisible(boolean isVisible) {
+        mainActivity.setStatusBarViewVisible(isVisible);
     }
 }

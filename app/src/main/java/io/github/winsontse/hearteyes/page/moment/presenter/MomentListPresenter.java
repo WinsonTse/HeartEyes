@@ -16,7 +16,6 @@ import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.base.TimelinePresenterImpl;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
-import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.rxbus.event.MomentEvent;
 import rx.Observable;
 import rx.Subscriber;
@@ -110,7 +109,7 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
     }
 
     @Override
-    public void updateCreateTime(final int position, final long originalTime, final long timeInMillis, final AVObject avObject) {
+    public void updateCreateTime(final long originalTime, final long timeInMillis, final AVObject avObject) {
         addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
             @Override
             public void call(Subscriber<? super AVObject> subscriber) {
@@ -126,7 +125,7 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
         }), new HeartEyesSubscriber<AVObject>(view) {
             @Override
             public void handleError(Throwable e) {
-                view.showDatePickerDialog(position, originalTime, timeInMillis, avObject);
+                view.showDatePickerDialog(originalTime, timeInMillis, avObject);
             }
 
             @Override

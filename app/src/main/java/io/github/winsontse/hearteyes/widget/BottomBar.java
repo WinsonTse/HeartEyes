@@ -15,12 +15,17 @@ import io.github.winsontse.hearteyes.R;
 /**
  * Created by winson on 16/6/5.
  */
-public class BottomBar extends TabLayout {
+public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListener {
     private static final float ALPHA_SELECTED = 1.0f;
     private static final float ALPHA_UNSELECTED = 0.5f;
     private static final int TEXT_SIZE_UNSELECTED = 12;
     private static final int TEXT_SIZE_SELECTED = 14;
     private LayoutInflater inflater;
+    private OnTabChangeListener onTabChangeListener;
+
+    public void setOnTabChangeListener(OnTabChangeListener onTabChangeListener) {
+        this.onTabChangeListener = onTabChangeListener;
+    }
 
     public BottomBar(Context context) {
         super(context);
@@ -52,38 +57,51 @@ public class BottomBar extends TabLayout {
             tab.setCustomView(customView);
             iv.setImageResource(icons.get(i));
             tv.setText(titles.get(i));
-            if(i != 0) {
+            if (i != 0) {
                 iv.setAlpha(ALPHA_UNSELECTED);
                 tv.setAlpha(ALPHA_UNSELECTED);
-            }
-            else {
+            } else {
                 tv.setTextSize(TEXT_SIZE_SELECTED);
             }
 
             addTab(tab);
         }
-        addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                setTabAppearance(tab, true);
-            }
+        addOnTabSelectedListener(this);
+    }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                setTabAppearance(tab, false);
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        removeOnTabSelectedListener(this);
+        onTabChangeListener = null;
+    }
 
-            }
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        setTabAppearance(tab, true);
+        if (onTabChangeListener != null) {
+            onTabChangeListener.onTabChanged(tab);
+        }
+    }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+        setTabAppearance(tab, false);
 
-            }
-        });
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
+    public interface OnTabChangeListener {
+        void onTabChanged(TabLayout.Tab tab);
     }
 
     private void setTabAppearance(Tab tab, boolean isSelected) {
         View customView = tab.getCustomView();
-        if(customView!= null) {
+        if (customView != null) {
             ImageView iv = (ImageView) customView.findViewById(R.id.iv);
             TextView tv = (TextView) customView.findViewById(R.id.tv);
             iv.setAlpha(isSelected ? ALPHA_SELECTED : ALPHA_UNSELECTED);

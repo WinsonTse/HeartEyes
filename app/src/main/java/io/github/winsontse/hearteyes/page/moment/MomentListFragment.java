@@ -5,9 +5,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.percent.PercentFrameLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,11 +15,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.avos.avoscloud.AVObject;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.Calendar;
 
@@ -42,21 +45,24 @@ import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
+import io.github.winsontse.hearteyes.util.LogUtil;
+import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.util.UIUtil;
 
-public class MomentListFragment extends TimelineFragment<AVObject> implements MomentListContract.View, MomentListAdapter.OnMomentClickListener {
+public class MomentListFragment extends TimelineFragment<AVObject>
+        implements MomentListContract.View,
+        MomentListAdapter.OnMomentClickListener,
+        ObservableScrollViewCallbacks {
 
     @Inject
     MomentListPresenter presenter;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv)
-    RecyclerView rv;
+    ObservableRecyclerView rv;
     @BindView(R.id.fab_edit)
     FloatingActionButton fabEdit;
-    @BindView(R.id.app_bar)
-    AppBarLayout appBar;
     @BindView(R.id.tv_date)
     TextView tvDate;
     @BindView(R.id.ll_time)
@@ -67,12 +73,16 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     TextView tvWeek;
     @BindView(R.id.v_empty)
     NestedScrollView vEmpty;
-    @BindView(R.id.cl)
-    CoordinatorLayout cl;
     @BindView(R.id.pb_loading)
     ProgressBar pbLoading;
-    @BindView(R.id.ctl)
-    CollapsingToolbarLayout ctl;
+    @BindView(R.id.header)
+    PercentFrameLayout header;
+    @BindView(R.id.app_bar)
+    AppBarLayout appBar;
+    @BindView(R.id.fl_time)
+    FrameLayout flTime;
+    @BindView(R.id.v_moment_list_status)
+    View vMomentListStatus;
 
     private LinearLayoutManager layoutManager;
     private MomentListAdapter momentListAdapter;
@@ -84,8 +94,16 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        AnimatorUtil.translationToCorrect(appBar).start();
+        flTime.setPadding(0, ScreenUtil.statusBarHeight + ScreenUtil.toolbarHeight, 0, 0);
+        vMomentListStatus.getLayoutParams().height = ScreenUtil.statusBarHeight;
+        vMomentListStatus.requestLayout();
+
         calendar = TimeUtil.getCalendar();
         fabEdit.postDelayed(new Runnable() {
             @Override
@@ -123,19 +141,27 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     }
 
     @Override
+    protected boolean isStatusBarViewVisible() {
+        return false;
+    }
+
+    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            fabEdit.show();
+            setStatusBarViewVisible(false);
         }
     }
 
     private void initRecyclerView() {
+        final int llTimeOffsize = ScreenUtil.statusBarHeight + ScreenUtil.toolbarHeight;
         momentListAdapter = new MomentListAdapter();
         rv.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(momentListAdapter);
+
+        llTime.setVisibility(View.INVISIBLE);
         addOnRecyclerViewScrollListener(new OnRecyclerViewScrollListener() {
 
             @Override
@@ -145,32 +171,28 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                int currentPos = layoutManager.findFirstVisibleItemPosition() - momentListAdapter.getHeaderCount();
-                if (currentPos < 0) {
+                AVObject currentAvObject = (AVObject) recyclerView.findChildViewUnder(llTime.getMeasuredWidth(), llTimeOffsize).getTag(R.id.tag_data);
+                if (currentAvObject == null) {
                     llTime.setVisibility(View.INVISIBLE);
-                    appBar.setElevation(0);
                     return;
                 }
-                appBar.setElevation(UIUtil.dpToPx(recyclerView.getContext(), 8));
 
-                AVObject currentAvObject = momentListAdapter.getData().get(currentPos);
+                if (layoutManager.findFirstCompletelyVisibleItemPosition() == momentListAdapter.getHeaderCount()) {
+                    llTime.setVisibility(View.VISIBLE);
+                }
                 time = currentAvObject.getLong(MomentContract.CREATEAD_TIME);
                 calendar.setTimeInMillis(time);
                 tvDate.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-                llTime.setVisibility((layoutManager.findFirstCompletelyVisibleItemPosition() == 0) ? View.INVISIBLE : View.VISIBLE);
                 tvWeek.setText(TimeUtil.getWeek(time));
-
-                llTime.setTag(R.id.tag_position, currentPos);
                 llTime.setTag(R.id.tag_data, currentAvObject);
-
                 toolbar.setTitle(calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
 
-                View itemView = recyclerView.findChildViewUnder(llTime.getMeasuredWidth(), llTime.getMeasuredHeight());
+                View itemView = recyclerView.findChildViewUnder(llTime.getMeasuredWidth(), llTime.getMeasuredHeight() + llTimeOffsize);
                 if (itemView != null) {
                     int tag = (int) itemView.getTag(R.id.tag_type);
-                    int deltaY = itemView.getTop() - llTime.getMeasuredHeight();
+                    int deltaY = itemView.getTop() - llTime.getMeasuredHeight() - llTimeOffsize;
                     if (tag == MomentListAdapter.TAG_HEADER_VISIBLE) {
-                        if (itemView.getTop() > 0) {
+                        if (itemView.getTop() - llTimeOffsize > 0) {
                             llTime.setTranslationY(deltaY);
                         } else {
                             llTime.setTranslationY(0);
@@ -181,6 +203,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                 }
             }
         });
+        rv.setScrollViewCallbacks(this);
         momentListAdapter.setOnMomentClickListener(this);
 
         llTime.setOnLongClickListener(new View.OnLongClickListener() {
@@ -193,7 +216,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                     AVObject avObject = (AVObject) dataTag;
                     long time = avObject.getLong(MomentContract.CREATEAD_TIME);
 
-                    showDatePickerDialog(pos, time, time, avObject);
+                    showDatePickerDialog(time, time, avObject);
                 }
                 return true;
             }
@@ -201,7 +224,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     }
 
     @Override
-    public void showDatePickerDialog(final int position, final long originalTime, long time, final AVObject avObject) {
+    public void showDatePickerDialog(final long originalTime, long time, final AVObject avObject) {
         final Calendar calendar = TimeUtil.getCalendar();
         calendar.setTimeInMillis(time);
 
@@ -211,7 +234,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                presenter.updateCreateTime(position, originalTime, calendar.getTimeInMillis(), avObject);
+                presenter.updateCreateTime(originalTime, calendar.getTimeInMillis(), avObject);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
@@ -283,7 +306,7 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     @Override
     public void onDateLongClick(int position, AVObject avObject) {
         long time = avObject.getLong(MomentContract.CREATEAD_TIME);
-        showDatePickerDialog(position, time, time, avObject);
+        showDatePickerDialog(time, time, avObject);
     }
 
     @Override
@@ -306,5 +329,60 @@ public class MomentListFragment extends TimelineFragment<AVObject> implements Mo
     @Override
     public void onAddressClick(int position, AVObject avObject) {
         goToShowLocationPage(avObject);
+    }
+
+    /**
+     * Called when the scroll change events occurred.
+     * This won't be called just after the view is laid out, so if you'd like to
+     * initialize the position of your views with this method, you should call this manually
+     * or invoke scroll as appropriate.
+     *
+     * @param scrollY     scroll position in Y axis
+     * @param firstScroll true when this is called for the first time in the consecutive motion events
+     * @param dragging    true when the view is dragged and false when the view is scrolled in the inertia
+     */
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+        LogUtil.e("onScrollChanged===> " + " scrollY:" + scrollY + " firstScroll:" + firstScroll + " dragging" + dragging);
+        int headerHeight = header.getHeight();
+        if (scrollY <= headerHeight - ScreenUtil.toolbarHeight - ScreenUtil.statusBarHeight) {
+            int deltaY = -scrollY / 2;
+            header.setTranslationY(deltaY);
+            appBar.setAlpha(((float) scrollY) / headerHeight);
+        } else {
+            if (appBar.getAlpha() < 1) {
+                appBar.setAlpha(1);
+            }
+        }
+    }
+
+    /**
+     * Called when the down motion event occurred.
+     */
+    @Override
+    public void onDownMotionEvent() {
+//        LogUtil.e("onDownMotionEvent");
+    }
+
+    /**
+     * Called when the dragging ended or canceled.
+     *
+     * @param scrollState state to indicate the scroll direction
+     */
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+//        LogUtil.e("onUpOrCancelMotionEvent===> " + scrollState);
+        if (scrollState == ScrollState.DOWN) {
+            if (fabEdit.getVisibility() == View.GONE) {
+                fabEdit.show();
+                AnimatorUtil.translationToCorrect(getActivity().findViewById(R.id.bottom_bar));
+
+            }
+        } else if (scrollState == ScrollState.UP) {
+            if (fabEdit.getVisibility() == View.VISIBLE) {
+                fabEdit.hide();
+                AnimatorUtil.translationToHideBottomBar(getActivity().findViewById(R.id.bottom_bar));
+            }
+        }
     }
 }

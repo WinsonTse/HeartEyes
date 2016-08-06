@@ -15,4 +15,9 @@
         <attr name="mtl_expanding_text" format="string" />
 
     </declare-styleable>
+
+    <declare-styleable name="ScrimInsetsFrameLayout">
+        <attr name="insetForeground" format="color|reference" />
+    </declare-styleable>
+
 </resources>

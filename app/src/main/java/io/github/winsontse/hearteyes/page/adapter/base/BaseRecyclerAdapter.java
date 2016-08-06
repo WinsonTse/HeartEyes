@@ -1,7 +1,6 @@
 package io.github.winsontse.hearteyes.page.adapter.base;
 
 import android.support.v7.widget.RecyclerView;
-import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +26,15 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
         }
         int size = data.size();
         data.addAll(items);
-        notifyItemRangeInserted(size, items.size());
+        notifyItemRangeInserted(getHeaderCount() + size, items.size());
     }
 
     public void addItem(int position, T t) {
         if (t == null) {
             return;
         }
-        data.add(position, t);
-        notifyItemInserted(position);
+        data.add(getHeaderCount() + position, t);
+        notifyItemInserted(getHeaderCount() + position);
     }
 
     public void setItems(List<T> items) {
@@ -62,8 +61,9 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
     }
 
     public void replaceItem(int position, T t) {
-        data.set(position, t);
-        notifyItemChanged(position);
+        int correctPos = getHeaderCount() + position;
+        data.set(correctPos, t);
+        notifyItemChanged(correctPos);
     }
 
 

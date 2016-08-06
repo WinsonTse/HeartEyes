@@ -36,7 +36,6 @@ import io.github.winsontse.hearteyes.page.image.component.DaggerGalleryComponent
 import io.github.winsontse.hearteyes.page.image.contract.GalleryContract;
 import io.github.winsontse.hearteyes.page.image.module.GalleryModule;
 import io.github.winsontse.hearteyes.page.image.presenter.GalleryPresenter;
-import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.widget.HackyProblematicViewPager;
@@ -105,13 +104,17 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
 
     @Override
     public void onAttach(Context context) {
-
         super.onAttach(context);
         Bundle args = getArguments();
         images = args.getParcelableArrayList(Extra.IMAGES);
         position = args.getInt(Extra.ITEM_POSITION);
         createTime = args.getLong(Extra.TIME);
         content = args.getString(Extra.CONTENT);
+    }
+
+    @Override
+    protected boolean isStatusBarViewVisible() {
+        return false;
     }
 
     @Override
@@ -123,8 +126,15 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
         colorBottomSheet = getColorById(R.color.md_grey_500);
 
         Window window = getActivity().getWindow();
-        window.setStatusBarColor(colorBlack);
         window.setNavigationBarColor(colorBlack);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            setStatusBarViewVisible(false);
+        }
     }
 
     @Override
@@ -199,9 +209,7 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
     public void onDestroyView() {
         super.onDestroyView();
         Window window = getActivity().getWindow();
-        window.setStatusBarColor(colorPrimaryDark);
         window.setNavigationBarColor(colorPrimaryDark);
-
     }
 
     @Override

@@ -223,6 +223,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
             if (currentPos == 0) {
                 itemView.setTag(R.id.tag_type, TAG_HEADER_VISIBLE);
             }
+            itemView.setTag(R.id.tag_data, avObject                                                                                );
             tvTime.setText(TimeUtil.getFormatTime(currentTime, "HH:mm"));
 
             tvDate.setText(String.valueOf(currentDay));

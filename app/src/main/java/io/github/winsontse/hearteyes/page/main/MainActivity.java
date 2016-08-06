@@ -1,13 +1,17 @@
 package io.github.winsontse.hearteyes.page.main;
 
 import android.content.Intent;
-import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.avos.avoscloud.PushService;
 import com.bumptech.glide.manager.SupportRequestManagerFragment;
@@ -32,17 +36,26 @@ import io.github.winsontse.hearteyes.page.main.module.MainModule;
 import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
+import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.widget.BottomBar;
 
-public class MainActivity extends BaseActivity implements MainContract.View, FragmentManager.OnBackStackChangedListener {
+public class MainActivity extends BaseActivity implements MainContract.View,
+        FragmentManager.OnBackStackChangedListener,
+        BottomBar.OnTabChangeListener {
     @Inject
     MainPresenter presenter;
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
     @BindView(R.id.bottom_bar)
     BottomBar bottomBar;
+    @BindView(R.id.main_content_container)
+    LinearLayout mainContentContainer;
+    @BindView(R.id.dl)
+    DrawerLayout dl;
+    @BindView(R.id.v_status)
+    View vStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +63,27 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        initStatusBar();
         initBottomBar();
         initPage();
         openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+    }
+
+    private void initStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            vStatus.getLayoutParams().height = ScreenUtil.statusBarHeight;
+            vStatus.requestLayout();
+        }
+    }
+
+    @Override
+    public void setStatusBarViewVisible(boolean isVisible) {
+        if (vStatus != null) {
+            vStatus.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
     }
 
     /**
@@ -83,6 +112,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        bottomBar.setOnTabChangeListener(null);
         getSupportFragmentManager().removeOnBackStackChangedListener(this);
     }
 
@@ -98,6 +128,7 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
         icons.add(R.drawable.ic_face);
 
         bottomBar.setTitlesAndIcons(titles, icons);
+        bottomBar.setOnTabChangeListener(this);
     }
 
 
@@ -218,5 +249,12 @@ public class MainActivity extends BaseActivity implements MainContract.View, Fra
             loginFragment.onActivityResult(requestCode, resultCode, data);
         }
         presenter.handleActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onTabChanged(TabLayout.Tab tab) {
+        if (tab.getPosition() == 0) {
+        } else {
+        }
     }
 }
