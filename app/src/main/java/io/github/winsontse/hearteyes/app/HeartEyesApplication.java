@@ -2,6 +2,7 @@ package io.github.winsontse.hearteyes.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.StrictMode;
 
 import com.avos.avoscloud.AVOSCloud;
 

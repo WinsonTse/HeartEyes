@@ -68,23 +68,25 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                 public void onRefresh() {
                     isLoading = true;
                     timelinePresenter.refresh();
+                    onRefreshStart();
                 }
             });
         }
         if (rv != null) {
-            final RequestManager requestManager = Glide.with(getActivity());
             rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
+                    if (onRecyclerViewScrollListener != null) {
+                        onRecyclerViewScrollListener.onScrolled(recyclerView, dx, dy);
+                    }
+
+
                     if (adapter.getItemCount() == 0) {
                         return;
                     }
 
-                    if (onRecyclerViewScrollListener != null) {
-                        onRecyclerViewScrollListener.onScrolled(recyclerView, dx, dy);
-                    }
 
                     if (layoutManager == null) {
                         layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -100,11 +102,6 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                     super.onScrollStateChanged(recyclerView, newState);
 
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        requestManager.resumeRequests();
-                    } else {
-                        requestManager.pauseRequests();
-                    }
                     if (onRecyclerViewScrollListener != null) {
                         onRecyclerViewScrollListener.onScrollStateChanged(recyclerView, newState);
                     }
@@ -127,10 +124,15 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     }
 
     @Override
+    public void onRefreshStart() {
+
+    }
+
+    @Override
     public void onRefreshCompleted(List<T> data) {
         if (adapter != null) {
             adapter.setItems(data);
-            rv.smoothScrollToPosition(0);
+//            rv.smoothScrollToPosition(0);
         }
         setLoadingCompleted();
 

@@ -20,13 +20,23 @@ public interface MomentListContract {
 
         void showDeleteImageDialog(int position, AVObject avObject, int imagePosition);
 
-        void showDatePickerDialog(long originalTime, long time, final AVObject avObject);
+        void showMomentDatePickerDialog(long originalTime, long time, AVObject avObject);
 
+        void showLoveDayPickerDialog(long originalTime, long timeInMillis, AVObject avCircle);
+
+        void updateHeaderView(AVObject avCircle);
+
+        void showUpdateCoverRetryDialog(AVObject avCircle, String path);
     }
 
     interface Presenter extends TimelinePresenter<AVObject> {
-        void updateCreateTime(long originalTime, long timeInMillis, AVObject avObject);
+        void updateMomentCreateTime(long originalTime, long timeInMillis, AVObject avObject);
 
+        void updateLoveDay(long originalTime, long timeInMillis, AVObject avCircle);
+
+        void loadCircle();
+
+        void updateCircleCover(AVObject avCircle, String path);
     }
 
 }

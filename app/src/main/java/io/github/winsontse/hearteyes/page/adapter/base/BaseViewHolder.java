@@ -2,6 +2,7 @@ package io.github.winsontse.hearteyes.page.adapter.base;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import io.github.winsontse.hearteyes.util.LogUtil;
 
 /**
  * Created by winson on 16/6/20.
@@ -24,7 +26,7 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
         this.headerCount = headerCount;
     }
 
-    public int getHeaderCount(){
+    public int getHeaderCount() {
         return headerCount;
     }
 
@@ -57,25 +59,25 @@ public abstract class BaseViewHolder<T> extends RecyclerView.ViewHolder {
     public abstract void bind(T t);
 
     private void initListener() {
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onItemClickListener != null) {
+        if (onItemClickListener != null) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     onItemClickListener.onItemClick(getAdapterPosition());
                 }
-            }
-        });
+            });
+        }
 
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (onItemLongClickListener != null) {
+        if (onItemLongClickListener != null) {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
                     onItemLongClickListener.onItemLongClick(getAdapterPosition());
                     return true;
                 }
-                return false;
-            }
-        });
+            });
+        }
+
     }
 
 }

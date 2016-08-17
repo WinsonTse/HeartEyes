@@ -11,4 +11,5 @@ public interface CircleContract {
     String CREATOR = "creator";
     String INVITEE = "invitee";
     String COVER = "cover";
+    String LOVE_DAY = "loveDay";
 }

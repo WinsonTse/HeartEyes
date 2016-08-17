@@ -14,8 +14,10 @@ import java.io.IOException;
 public class FileUtil {
 
     private static File cacheDir;
+    private static File internalCacheDir;
     private static File externalCacheDir;
     private static File imageCacheDir;
+    private static File internalImageCacheDir;
 
     private static final String PATH_IMAGE_DIR = "images";
     private static final String PATH_HEART_EYES = "HeartEyes";
@@ -25,6 +27,14 @@ public class FileUtil {
             cacheDir = context.getCacheDir();
         }
         return cacheDir;
+    }
+
+
+    public static File getInternalCacheDir(Context context) {
+        if (internalCacheDir == null) {
+            internalCacheDir = context.getCacheDir();
+        }
+        return internalCacheDir;
     }
 
     public static File getExternalCacheDir(Context context) {
@@ -50,7 +60,24 @@ public class FileUtil {
         return imageCacheDir;
     }
 
-    public static File createTempImageFile(Context context, String fileName) {
+
+    public static File getInternalImageCacheDir(Context context) {
+        if (internalImageCacheDir == null) {
+            internalImageCacheDir = new File(getInternalCacheDir(context).getAbsolutePath() + File.separator + PATH_IMAGE_DIR);
+            if (!internalImageCacheDir.exists()) {
+                if (!internalImageCacheDir.mkdirs()) {
+                    return null;
+                }
+            }
+        }
+        return internalImageCacheDir;
+    }
+
+    public static File createTempExternalImageFile(Context context, String fileName) {
         return new File(getExternalImageCacheDir(context), fileName);
+    }
+
+    public static File createTempInternalImageFile(Context context, String fileName) {
+        return new File(getInternalImageCacheDir(context), fileName);
     }
 }

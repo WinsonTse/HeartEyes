@@ -1,11 +1,13 @@
 package io.github.winsontse.hearteyes.page.base;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,7 @@ import io.github.winsontse.hearteyes.page.main.MainActivity;
 /**
  * Created by hao.xie on 16/5/10.
  */
-public abstract class BaseFragment extends Fragment implements BaseView {
+public abstract class BaseFragment extends DialogFragment implements BaseView {
 
     private MainActivity mainActivity;
     private View rootView;
@@ -30,6 +32,7 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         super.onAttach(context);
         if (context instanceof BaseActivity) {
             mainActivity = (MainActivity) context;
+            setStatusBarViewVisible(isStatusBarViewVisible());
         }
     }
 
@@ -149,6 +152,11 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     }
 
     @Override
+    public void showDatePicker(int year, int month, int day, DatePickerDialog.OnDateSetListener onDateSetListener) {
+        mainActivity.showDatePicker(year, month, day, onDateSetListener);
+    }
+
+    @Override
     public Drawable getDrawableById(int drawableId) {
         return mainActivity.getDrawableById(drawableId);
     }
@@ -169,12 +177,18 @@ public abstract class BaseFragment extends Fragment implements BaseView {
     }
 
     @Override
-    public void showKeyboard(View view) {
-        mainActivity.showKeyboard(view);
+    public void showKeyboard(Activity activity, View contentView) {
+        mainActivity.showKeyboard(activity, contentView);
     }
 
     @Override
     public void hideKeyboard() {
+        mainActivity.hideKeyboard();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
         mainActivity.hideKeyboard();
     }
 

@@ -4,13 +4,17 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVUser;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.base.TimelinePresenterImpl;
@@ -109,7 +113,7 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
     }
 
     @Override
-    public void updateCreateTime(final long originalTime, final long timeInMillis, final AVObject avObject) {
+    public void updateMomentCreateTime(final long originalTime, final long timeInMillis, final AVObject avObject) {
         addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
             @Override
             public void call(Subscriber<? super AVObject> subscriber) {
@@ -125,7 +129,7 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
         }), new HeartEyesSubscriber<AVObject>(view) {
             @Override
             public void handleError(Throwable e) {
-                view.showDatePickerDialog(originalTime, timeInMillis, avObject);
+                view.showMomentDatePickerDialog(originalTime, timeInMillis, avObject);
             }
 
             @Override
@@ -135,8 +139,111 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
         });
     }
 
+    @Override
+    public void updateLoveDay(final long originalTime, final long timeInMillis, final AVObject avCircle) {
+        addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
+            @Override
+            public void call(Subscriber<? super AVObject> subscriber) {
 
-//    @Override
+                try {
+                    avCircle.put(CircleContract.LOVE_DAY, timeInMillis);
+                    avCircle.save();
+                    subscriber.onNext(avCircle);
+                } catch (AVException e) {
+                    avCircle.put(CircleContract.LOVE_DAY, originalTime);
+                    subscriber.onError(e);
+                }
+
+                avCircle.put(MomentContract.CREATEAD_TIME, timeInMillis);
+                try {
+                    avCircle.save();
+                    subscriber.onNext(avCircle);
+                } catch (AVException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }), new HeartEyesSubscriber<AVObject>(view) {
+            @Override
+            public void handleError(Throwable e) {
+                view.showLoveDayPickerDialog(originalTime, timeInMillis, avCircle);
+            }
+
+            @Override
+            public void onNext(AVObject avCircle) {
+                loadCircle();
+            }
+        });
+
+    }
+
+    @Override
+    public void loadCircle() {
+        addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
+            @Override
+            public void call(Subscriber<? super AVObject> subscriber) {
+                AVQuery<AVObject> query = new AVQuery<>(CircleContract.KEY);
+                query.whereEqualTo(CircleContract.CID, getCurrentUser().getString(UserContract.CIRCLE_ID));
+                query.include(CircleContract.CREATOR);
+                query.include(CircleContract.INVITEE);
+                try {
+                    List<AVObject> avObjects = query.find();
+                    subscriber.onNext(avObjects.get(0));
+                } catch (AVException e) {
+                    subscriber.onError(e);
+                }
+            }
+        }), new HeartEyesSubscriber<AVObject>(view) {
+            @Override
+            public void handleError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(AVObject avObject) {
+                view.updateHeaderView(avObject);
+            }
+        });
+
+    }
+
+    @Override
+    public void updateCircleCover(final AVObject avCircle, final String path) {
+        addSubscription(Observable.create(new Observable.OnSubscribe<AVObject>() {
+            @Override
+            public void call(Subscriber<? super AVObject> subscriber) {
+                try {
+                    File file = new File(path);
+                    AVFile avFile = AVFile.withFile(file.getName(), file);
+                    avCircle.put(CircleContract.COVER, avFile);
+                    avCircle.save();
+                    subscriber.onNext(avCircle);
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        }), new HeartEyesSubscriber<AVObject>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                view.showProgressDialog(false, view.getStringById(R.string.tips_updating_cover));
+            }
+
+            @Override
+            public void handleError(Throwable e) {
+                view.hideProgressDialog();
+                view.showUpdateCoverRetryDialog(avCircle, path);
+            }
+
+            @Override
+            public void onNext(AVObject avCircle) {
+                view.hideProgressDialog();
+                view.updateHeaderView(avCircle);
+            }
+        });
+    }
+
+    //    @Override
 //    public Observable<List<AVObject>> requestRemoteData(int start, int end) {
 //        return Observable.create(new Observable.OnSubscribe<List<AVObject>>() {
 //            @Override

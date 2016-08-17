@@ -1,5 +1,7 @@
 package io.github.winsontse.hearteyes.page.base;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.DialogTitle;
@@ -20,13 +22,15 @@ public interface BaseView {
 
     void showToast(String msg);
 
-    void showKeyboard(View view);
+    void showKeyboard(Activity activity, View contentView);
 
     void hideKeyboard();
 
     void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener);
 
     void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener, String cancelTitle, DialogInterface.OnClickListener onCancelClickListener);
+
+    void showDatePicker(int year, int month, int day, DatePickerDialog.OnDateSetListener onDateSetListener);
 
     String getStringById(int stringId);
 

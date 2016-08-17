@@ -13,7 +13,7 @@ import android.view.ViewPropertyAnimator;
  */
 public class AnimatorUtil {
 
-    public static final int ANIMATOR_TIME = 300;
+    public static final int ANIMATOR_TIME = 400;
 
     /**
      * 创建一个圆形动画

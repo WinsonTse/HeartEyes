@@ -4,22 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.percent.PercentFrameLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/md_orange_500"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher"
-            app:layout_aspectRatio="178%"
-            app:layout_collapseMode="parallax"
-            app:layout_widthPercent="100%" />
-
-    </android.support.percent.PercentFrameLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srl"
@@ -59,17 +44,17 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <include layout="@layout/empty_item_moment" />
+                    <!--<include layout="@layout/empty_item_moment" />-->
 
-                    <include layout="@layout/empty_item_moment" />
+                    <!--<include layout="@layout/empty_item_moment" />-->
 
-                    <include layout="@layout/empty_item_moment" />
+                    <!--<include layout="@layout/empty_item_moment" />-->
 
-                    <include layout="@layout/empty_item_moment" />
+                    <!--<include layout="@layout/empty_item_moment" />-->
 
-                    <include layout="@layout/empty_item_moment" />
+                    <!--<include layout="@layout/empty_item_moment" />-->
 
-                    <include layout="@layout/empty_item_moment" />
+                    <!--<include layout="@layout/empty_item_moment" />-->
 
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
@@ -91,7 +76,8 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:alpha="0">
 
         <View
             android:id="@+id/v_moment_list_status"

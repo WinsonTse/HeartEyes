@@ -16,6 +16,8 @@ import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 
 public interface TimelineView<T> extends BaseView {
 
+    void onRefreshStart();
+
     void onRefreshCompleted(List<T> data);
 
     void onLoadMoreCompleted(List<T> data);

@@ -97,4 +97,5 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
         addSubscription(listSubscribe);
     }
 
+
 }

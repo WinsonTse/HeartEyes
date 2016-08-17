@@ -72,12 +72,36 @@ public class TimeUtil {
         }
     }
 
+    public static String getLoveDay(long time) {
+        String result = "";
+        Calendar calendar = getCalendar();
+        calendar.setTimeInMillis(time);
+
+        int loveDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int loveMonth = calendar.get(Calendar.MONTH);
+        int loveYear = calendar.get(Calendar.YEAR);
+
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+        if (loveDay == calendar.get(Calendar.DAY_OF_MONTH)) {
+            result = ((calendar.get(Calendar.YEAR) - loveYear) * 12 + (calendar.get(Calendar.MONTH) - loveMonth)) + " 个月";
+        } else {
+            long diff = (calendar.getTimeInMillis() - time) / 1000 / 60 / 60 / 24;
+            result = diff + " 天";
+        }
+        return result;
+    }
+
     public static int getDay(long time) {
         Calendar calendar = getCalendar();
         calendar.setTimeInMillis(time);
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
-
 
     public static String getWeek(long currentTime) {
         calendar.setTimeInMillis(currentTime);

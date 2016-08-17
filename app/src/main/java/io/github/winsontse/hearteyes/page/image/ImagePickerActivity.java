@@ -63,7 +63,7 @@ public class ImagePickerActivity extends AppCompatActivity {
     private static final String ORDER = "DESC";
     private static final int PADDING = 4;
     public static final int DEFUALT_MAX_COUNT = 15;
-    private static final int REQUEST_PICKER_IMAGE = 1034;
+    public static final int REQUEST_PICKER_IMAGE = 1034;
     private static final int REQUEST_CAMERA = 1035;
     private File currentTempImageFile;
 
@@ -326,7 +326,7 @@ public class ImagePickerActivity extends AppCompatActivity {
                     public void call(Boolean granted) {
                         if (granted) {
                             if (currentTempImageFile == null) {
-                                currentTempImageFile = FileUtil.createTempImageFile(ImagePickerActivity.this, "hearteyes_" + TimeUtil.getFormatTime(System.currentTimeMillis(), "yyyyMMdd_HH_mm_ss_SSS") + ".jpg");
+                                currentTempImageFile = FileUtil.createTempExternalImageFile(ImagePickerActivity.this, "hearteyes_" + TimeUtil.getFormatTime(System.currentTimeMillis(), "yyyyMMdd_HH_mm_ss_SSS") + ".jpg");
                             }
                             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentTempImageFile));

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
+import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
@@ -38,6 +40,16 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     public static final int VIEW_TYPE_ITEM = 102;
 
     private OnMomentClickListener onMomentClickListener;
+    private AVObject avCircle;
+
+    public AVObject getAvCircle() {
+        return avCircle;
+    }
+
+    public void setAvCircle(AVObject avCircle) {
+        this.avCircle = avCircle;
+        notifyItemChanged(0);
+    }
 
     public void setOnMomentClickListener(OnMomentClickListener onMomentClickListener) {
         this.onMomentClickListener = onMomentClickListener;
@@ -50,8 +62,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEW_TYPE_HEADER:
-                HeaderViewHolder headerViewHolder = new HeaderViewHolder(parent);
-                return headerViewHolder;
+                return new HeaderViewHolder(parent, onMomentClickListener);
             case VIEW_TYPE_ITEM:
             default:
                 ItemViewHolder itemViewHolder = new ItemViewHolder(data, parent);
@@ -72,7 +83,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
         if (position != 0) {
             ((ItemViewHolder) (holder)).bind(data.get(position - getHeaderCount()));
         } else {
-            ((HeaderViewHolder) (holder)).bind(null);
+            ((HeaderViewHolder) (holder)).bind(avCircle);
         }
     }
 
@@ -86,15 +97,58 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
         }
     }
 
-    static final class HeaderViewHolder extends BaseViewHolder {
+    static final class HeaderViewHolder extends BaseViewHolder<AVObject> {
 
-        public HeaderViewHolder(ViewGroup parent) {
+        @BindView(R.id.iv_cover)
+        ImageView ivCover;
+        @BindView(R.id.tv_love_day)
+        TextView tvLoveDay;
+        private OnMomentClickListener onMomentClickListener;
+        private AVObject avCircle;
+
+        public HeaderViewHolder(ViewGroup parent, final OnMomentClickListener onMomentClickListener) {
             super(parent, R.layout.list_header_moment);
+            itemView.setTag(R.id.tag_type, VIEW_TYPE_HEADER);
+            this.onMomentClickListener = onMomentClickListener;
+
+            ivCover.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onMomentClickListener != null) {
+                        onMomentClickListener.onCoverLongClick(avCircle);
+                    }
+                    return true;
+                }
+            });
+
+            tvLoveDay.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onMomentClickListener != null && avCircle != null) {
+                        onMomentClickListener.onLoveDayLongClick(avCircle);
+                    }
+                    return true;
+                }
+            });
+
         }
 
         @Override
-        public void bind(Object o) {
-
+        public void bind(AVObject avCircle) {
+            this.avCircle = avCircle;
+            if (avCircle != null) {
+                long loveDay = avCircle.getLong(CircleContract.LOVE_DAY);
+                if (loveDay == 0) {
+                    tvLoveDay.setText(R.string.tips_set_love_day);
+                } else {
+                    tvLoveDay.setText(TimeUtil.getLoveDay(loveDay));
+                }
+                AVFile avFile = avCircle.getAVFile(CircleContract.COVER);
+                if (avFile != null) {
+                    ImageLoader.getInstance().displayImage(context, avFile.getUrl(), R.color.colorPrimary, ivCover);
+                }
+            }
+            ivCover.setTranslationY(0);
         }
     }
 
@@ -223,7 +277,7 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
             if (currentPos == 0) {
                 itemView.setTag(R.id.tag_type, TAG_HEADER_VISIBLE);
             }
-            itemView.setTag(R.id.tag_data, avObject                                                                                );
+            itemView.setTag(R.id.tag_data, avObject);
             tvTime.setText(TimeUtil.getFormatTime(currentTime, "HH:mm"));
 
             tvDate.setText(String.valueOf(currentDay));
@@ -251,6 +305,10 @@ public class MomentListAdapter extends BaseRecyclerAdapter<AVObject> {
     }
 
     public interface OnMomentClickListener {
+        void onLoveDayLongClick(AVObject avCircle);
+
+        void onCoverLongClick(AVObject avCircle);
+
         void onDateLongClick(int position, AVObject avObject);
 
         void onContentLongClick(int position, AVObject avObject);

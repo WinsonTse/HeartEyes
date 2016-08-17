@@ -1,7 +1,6 @@
 package io.github.winsontse.hearteyes.page.moment;
 
 import android.Manifest;
-import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +15,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -64,14 +64,21 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     TextView tvRecordCount;
     @BindView(R.id.ll_bottom)
     LinearLayout llBottom;
+    @BindView(R.id.ll)
+    LinearLayout ll;
+    @BindView(R.id.ll_content)
+    LinearLayout llContent;
 
     private static final int MAX_IMAGES_COUNT = 30;
-
+    @BindView(R.id.iv_keyboard)
+    ImageView ivKeyboard;
     private SelectedImagesAdapter selectedImagesAdapter;
     private AVObject currentMoment;
     private int itemPosition;
     //声明AMapLocationClient类对象
     private AMapLocationClient mLocationClient;
+
+    private boolean isKeyboardOpending = false;
 
 
     public static MomentEditFragment newInstance(int itemPosition, AVObject avObject) {
@@ -105,9 +112,9 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
         }
         initRecyclerView();
         bindListener();
-        AnimatorUtil.translationToCorrect(llBottom).setStartDelay(AnimatorUtil.ANIMATOR_TIME).start();
-//        showKeyboard(etContent);
         requestLocationPermission();
+        toggleKeyBoard();
+
     }
 
     @Override
@@ -180,6 +187,20 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
             }
         });
 
+        llContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleKeyBoard();
+            }
+        });
+
+        ivKeyboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleKeyBoard();
+            }
+        });
+
     }
 
     private void initRecyclerView() {
@@ -211,6 +232,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
             selectedImagesAdapter.setItems(imageEntities);
             tvImageCount.setText(String.valueOf(imageEntities.size()));
         }
+        setKeyBoardInvisible();
     }
 
     @Override
@@ -245,5 +267,22 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
             mLocationClient.stopLocation();
             mLocationClient.onDestroy();
         }
+    }
+
+    private void toggleKeyBoard() {
+        if (isKeyboardOpending) {
+            setKeyBoardInvisible();
+        } else {
+            showKeyboard(getActivity(), ll);
+            etContent.requestFocus();
+            ivKeyboard.setImageResource(R.drawable.ic_keyboard_hide);
+            isKeyboardOpending = !isKeyboardOpending;
+        }
+    }
+
+    private void setKeyBoardInvisible() {
+        this.isKeyboardOpending = false;
+        ivKeyboard.setImageResource(R.drawable.ic_keyboard);
+        hideKeyboard();
     }
 }

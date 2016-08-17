@@ -130,10 +130,10 @@ public class MoreTextView extends TextView {
         setMaxLines(maxLines);
         setText(correctContent);
 
-        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        post(new Runnable() {
             @Override
-            public boolean onPreDraw() {
-                    currentLines = getLineCount();
+            public void run() {
+                currentLines = getLineCount();
                 if (currentLines >= maxLines) {
                     Layout layout = getLayout();
                     int end = layout.getLineEnd(maxLines - 2);
@@ -157,9 +157,8 @@ public class MoreTextView extends TextView {
                 } else {
                     hasMoreText = false;
                 }
-                getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
             }
         });
+
     }
 }

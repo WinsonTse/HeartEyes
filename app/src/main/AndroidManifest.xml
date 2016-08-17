@@ -40,18 +40,26 @@
 
         <activity
             android:name=".page.main.MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <!--crop image-->
+        <activity
+            android:name="io.github.winsontse.hearteyes.widget.crop.CropImageActivity"
+            android:configChanges="orientation"
+            android:theme="@style/AppTheme.CyanStatusBar" />
 
         <service
             android:name="com.avos.avoscloud.PushService"
@@ -78,9 +86,10 @@
 
         <activity
             android:name=".page.image.ImagePickerActivity"
-            android:label="@string/pick_image" />
+            android:label="@string/pick_image"
+            android:theme="@style/AppTheme.CyanStatusBar" />
         <!--高德地图-->
-        <service android:name="com.amap.api.location.APSService"/>
+        <service android:name="com.amap.api.location.APSService" />
     </application>
 
 </manifest>

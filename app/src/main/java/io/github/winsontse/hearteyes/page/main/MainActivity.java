@@ -57,6 +57,8 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     @BindView(R.id.v_status)
     View vStatus;
 
+    private boolean isShowStatusView = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,9 @@ public class MainActivity extends BaseActivity implements MainContract.View,
         openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
+
+        //重建时会先恢复fragment再恢复activity
+        setStatusBarViewVisible(isShowStatusView);
     }
 
     private void initStatusBar() {
@@ -81,6 +86,7 @@ public class MainActivity extends BaseActivity implements MainContract.View,
 
     @Override
     public void setStatusBarViewVisible(boolean isVisible) {
+        isShowStatusView = isVisible;
         if (vStatus != null) {
             vStatus.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         }

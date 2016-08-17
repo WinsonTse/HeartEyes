@@ -1,12 +1,14 @@
 package io.github.winsontse.hearteyes.page.moment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.percent.PercentFrameLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,13 +27,17 @@ import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
+import io.github.winsontse.hearteyes.data.model.ImageEntity;
+import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.MomentListAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
@@ -39,16 +45,18 @@ import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListe
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.TimelineFragment;
 import io.github.winsontse.hearteyes.page.image.GalleryFragment;
+import io.github.winsontse.hearteyes.page.image.ImagePickerActivity;
 import io.github.winsontse.hearteyes.page.map.AddressFragment;
 import io.github.winsontse.hearteyes.page.moment.component.DaggerMomentListComponent;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
+import io.github.winsontse.hearteyes.util.FileUtil;
 import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
-import io.github.winsontse.hearteyes.util.UIUtil;
+import io.github.winsontse.hearteyes.widget.crop.Crop;
 
 public class MomentListFragment extends TimelineFragment<AVObject>
         implements MomentListContract.View,
@@ -75,8 +83,6 @@ public class MomentListFragment extends TimelineFragment<AVObject>
     NestedScrollView vEmpty;
     @BindView(R.id.pb_loading)
     ProgressBar pbLoading;
-    @BindView(R.id.header)
-    PercentFrameLayout header;
     @BindView(R.id.app_bar)
     AppBarLayout appBar;
     @BindView(R.id.fl_time)
@@ -88,6 +94,8 @@ public class MomentListFragment extends TimelineFragment<AVObject>
     private MomentListAdapter momentListAdapter;
     private long time;
     private Calendar calendar;
+    private Uri cropOutUri;
+
 
     public static MomentListFragment newInstance() {
         return new MomentListFragment();
@@ -113,6 +121,11 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         }, AnimatorUtil.ANIMATOR_TIME);
         bindListener();
         initRecyclerView();
+        initSwipeRefreshLayout();
+    }
+
+    private void initSwipeRefreshLayout() {
+        srl.setProgressViewOffset(false, ScreenUtil.statusBarHeight, ScreenUtil.statusBarHeight * 2 + ScreenUtil.toolbarHeight);
     }
 
     @Override
@@ -133,6 +146,7 @@ public class MomentListFragment extends TimelineFragment<AVObject>
                 });
             }
         });
+
     }
 
     @Override
@@ -149,6 +163,7 @@ public class MomentListFragment extends TimelineFragment<AVObject>
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            fabEdit.show();
             setStatusBarViewVisible(false);
         }
     }
@@ -171,7 +186,11 @@ public class MomentListFragment extends TimelineFragment<AVObject>
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                AVObject currentAvObject = (AVObject) recyclerView.findChildViewUnder(llTime.getMeasuredWidth(), llTimeOffsize).getTag(R.id.tag_data);
+                View childViewUnder = recyclerView.findChildViewUnder(llTime.getMeasuredWidth(), llTimeOffsize);
+                if (childViewUnder == null) {
+                    return;
+                }
+                AVObject currentAvObject = (AVObject) childViewUnder.getTag(R.id.tag_data);
                 if (currentAvObject == null) {
                     llTime.setVisibility(View.INVISIBLE);
                     return;
@@ -205,7 +224,6 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         });
         rv.setScrollViewCallbacks(this);
         momentListAdapter.setOnMomentClickListener(this);
-
         llTime.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -216,27 +234,62 @@ public class MomentListFragment extends TimelineFragment<AVObject>
                     AVObject avObject = (AVObject) dataTag;
                     long time = avObject.getLong(MomentContract.CREATEAD_TIME);
 
-                    showDatePickerDialog(time, time, avObject);
+                    showMomentDatePickerDialog(time, time, avObject);
                 }
                 return true;
             }
         });
+
+        presenter.loadCircle();
     }
 
     @Override
-    public void showDatePickerDialog(final long originalTime, long time, final AVObject avObject) {
-        final Calendar calendar = TimeUtil.getCalendar();
+    public void showMomentDatePickerDialog(final long originalTime, long time, final AVObject avObject) {
         calendar.setTimeInMillis(time);
-
-        new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+        showDatePicker(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 calendar.set(Calendar.YEAR, year);
                 calendar.set(Calendar.MONTH, monthOfYear);
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                presenter.updateCreateTime(originalTime, calendar.getTimeInMillis(), avObject);
+                presenter.updateMomentCreateTime(originalTime, calendar.getTimeInMillis(), avObject);
             }
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+    }
+
+    @Override
+    public void showLoveDayPickerDialog(final long originalTime, long timeInMillis, final AVObject avCircle) {
+        calendar.setTimeInMillis(timeInMillis);
+        showDatePicker(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.set(Calendar.HOUR, 0);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+                presenter.updateLoveDay(originalTime, calendar.getTimeInMillis(), avCircle);
+            }
+        });
+    }
+
+    @Override
+    public void updateHeaderView(AVObject avCircle) {
+        momentListAdapter.setAvCircle(avCircle);
+    }
+
+    @Override
+    public void showUpdateCoverRetryDialog(final AVObject avCircle, final String path) {
+        showDialog("失败", "上传失败,是否重试", getStringById(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                presenter.updateCircleCover(avCircle, path);
+            }
+        }, getStringById(R.string.cancel), null);
     }
 
     @Override
@@ -304,9 +357,21 @@ public class MomentListFragment extends TimelineFragment<AVObject>
     }
 
     @Override
+    public void onLoveDayLongClick(final AVObject avCircle) {
+        final long originalTime = avCircle.getLong(CircleContract.LOVE_DAY);
+        showLoveDayPickerDialog(originalTime, originalTime, avCircle);
+
+    }
+
+    @Override
+    public void onCoverLongClick(AVObject avCircle) {
+        ImagePickerActivity.startImagePicker(this, 1, null);
+    }
+
+    @Override
     public void onDateLongClick(int position, AVObject avObject) {
         long time = avObject.getLong(MomentContract.CREATEAD_TIME);
-        showDatePickerDialog(time, time, avObject);
+        showMomentDatePickerDialog(time, time, avObject);
     }
 
     @Override
@@ -343,17 +408,34 @@ public class MomentListFragment extends TimelineFragment<AVObject>
      */
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-        LogUtil.e("onScrollChanged===> " + " scrollY:" + scrollY + " firstScroll:" + firstScroll + " dragging" + dragging);
-        int headerHeight = header.getHeight();
-        if (scrollY <= headerHeight - ScreenUtil.toolbarHeight - ScreenUtil.statusBarHeight) {
-            int deltaY = -scrollY / 2;
-            header.setTranslationY(deltaY);
-            appBar.setAlpha(((float) scrollY) / headerHeight);
-        } else {
-            if (appBar.getAlpha() < 1) {
-                appBar.setAlpha(1);
+        View chidView = rv.getChildAt(0);
+        if (chidView != null) {
+            Object tag = chidView.getTag(R.id.tag_type);
+            if (tag != null && (int) tag == MomentListAdapter.VIEW_TYPE_HEADER) {
+                int headerHeight = chidView.getHeight() - ScreenUtil.toolbarHeight - ScreenUtil.statusBarHeight;
+                if (scrollY <= headerHeight) {
+                    int deltaY = -scrollY / 2;
+                    View vCover = chidView.findViewById(R.id.iv_cover);
+                    if (vCover != null) {
+                        vCover.setTranslationY(-deltaY);
+                    }
+                    appBar.setAlpha(((float) scrollY) / headerHeight);
+                } else {
+                    if (appBar.getAlpha() < 1) {
+                        appBar.setAlpha(1);
+                    }
+                    View vCover = chidView.findViewById(R.id.iv_cover);
+                    if (vCover != null) {
+                        vCover.setTranslationY(0);
+                    }
+                }
+            } else {
+                if (appBar.getAlpha() < 1) {
+                    appBar.setAlpha(1);
+                }
             }
         }
+
     }
 
     /**
@@ -371,7 +453,6 @@ public class MomentListFragment extends TimelineFragment<AVObject>
      */
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-//        LogUtil.e("onUpOrCancelMotionEvent===> " + scrollState);
         if (scrollState == ScrollState.DOWN) {
             if (fabEdit.getVisibility() == View.GONE) {
                 fabEdit.show();
@@ -382,6 +463,32 @@ public class MomentListFragment extends TimelineFragment<AVObject>
             if (fabEdit.getVisibility() == View.VISIBLE) {
                 fabEdit.hide();
                 AnimatorUtil.translationToHideBottomBar(getActivity().findViewById(R.id.bottom_bar));
+            }
+        }
+    }
+
+    @Override
+    public void onRefreshStart() {
+        super.onRefreshStart();
+        presenter.loadCircle();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case ImagePickerActivity.REQUEST_PICKER_IMAGE:
+                    List<ImageEntity> imageEntities = ImagePickerActivity.handleSelectedImageResult(resultCode, data);
+                    if (imageEntities == null || imageEntities.size() == 0) {
+                        return;
+                    }
+                    cropOutUri = Uri.fromFile(FileUtil.createTempInternalImageFile(getActivity(), presenter.getCurrentUser().getObjectId() + System.currentTimeMillis() + ".jpg"));
+                    Crop.of(Uri.fromFile(new File(imageEntities.get(0).getData())), cropOutUri).withAspect(16, 9).start(getActivity(), this);
+                    break;
+                case Crop.REQUEST_CROP:
+                    presenter.updateCircleCover(momentListAdapter.getAvCircle(), cropOutUri.getPath());
+                    break;
             }
         }
     }

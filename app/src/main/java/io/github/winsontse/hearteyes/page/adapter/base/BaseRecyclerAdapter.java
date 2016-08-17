@@ -56,8 +56,10 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
     }
 
     public void clearItems() {
-        data.clear();
-        notifyDataSetChanged();
+        if (data.size() > 0) {
+            data.clear();
+            notifyDataSetChanged();
+        }
     }
 
     public void replaceItem(int position, T t) {
