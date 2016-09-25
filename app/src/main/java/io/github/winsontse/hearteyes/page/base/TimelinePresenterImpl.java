@@ -1,11 +1,8 @@
 package io.github.winsontse.hearteyes.page.base;
 
-import com.avos.avoscloud.AVObject;
-
 import java.util.List;
 
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
-import io.github.winsontse.hearteyes.util.LogUtil;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -96,6 +93,4 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                         });
         addSubscription(listSubscribe);
     }
-
-
 }

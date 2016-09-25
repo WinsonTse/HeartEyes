@@ -50,8 +50,6 @@ public class MainPresenter extends BasePresenterImpl implements MainContract.Pre
     }
 
     public void validateUserStatus() {
-        Log.d("winson", "验证用户");
-
         AVUser currentUser = AVUser.getCurrentUser();
         if (currentUser == null || TextUtils.isEmpty(currentUser.getString(UserContract.NICKNAME))) {
             view.goToLoginPage();

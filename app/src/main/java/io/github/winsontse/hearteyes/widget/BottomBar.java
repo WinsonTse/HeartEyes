@@ -1,6 +1,8 @@
 package io.github.winsontse.hearteyes.widget;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TabLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.winsontse.hearteyes.R;
@@ -22,6 +25,8 @@ public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListe
     private static final int TEXT_SIZE_SELECTED = 14;
     private LayoutInflater inflater;
     private OnTabChangeListener onTabChangeListener;
+    private List<Item> items = new ArrayList<>();
+    private List<String> fragmentTags = new ArrayList<>();
 
     public void setOnTabChangeListener(OnTabChangeListener onTabChangeListener) {
         this.onTabChangeListener = onTabChangeListener;
@@ -48,15 +53,21 @@ public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListe
     }
 
 
-    public void setTitlesAndIcons(List<String> titles, List<Integer> icons) {
-        for (int i = 0; i < titles.size(); i++) {
+    public void setItems(List<Item> items) {
+        if (items == null || items.size() == 0) {
+            return;
+        }
+        this.items.addAll(items);
+        this.fragmentTags.clear();
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
             TabLayout.Tab tab = newTab();
             View customView = inflater.inflate(R.layout.item_tab, this, false);
             ImageView iv = (ImageView) customView.findViewById(R.id.iv);
             TextView tv = (TextView) customView.findViewById(R.id.tv);
             tab.setCustomView(customView);
-            iv.setImageResource(icons.get(i));
-            tv.setText(titles.get(i));
+            iv.setImageResource(item.getIcon());
+            tv.setText(item.getTitle());
             if (i != 0) {
                 iv.setAlpha(ALPHA_UNSELECTED);
                 tv.setAlpha(ALPHA_UNSELECTED);
@@ -65,8 +76,13 @@ public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListe
             }
 
             addTab(tab);
+            fragmentTags.add(item.getFragmentTag());
         }
         addOnTabSelectedListener(this);
+    }
+
+    public boolean isTabTag(String tag) {
+        return fragmentTags.contains(tag);
     }
 
     @Override
@@ -80,7 +96,7 @@ public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListe
     public void onTabSelected(TabLayout.Tab tab) {
         setTabAppearance(tab, true);
         if (onTabChangeListener != null) {
-            onTabChangeListener.onTabChanged(tab);
+            onTabChangeListener.onTabChanged(items.get(tab.getPosition()));
         }
     }
 
@@ -96,7 +112,7 @@ public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListe
     }
 
     public interface OnTabChangeListener {
-        void onTabChanged(TabLayout.Tab tab);
+        void onTabChanged(Item tab);
     }
 
     private void setTabAppearance(Tab tab, boolean isSelected) {
@@ -110,5 +126,45 @@ public class BottomBar extends TabLayout implements TabLayout.OnTabSelectedListe
         }
     }
 
+    public static class Item {
+        @StringRes
+        private int title;
+        @DrawableRes
+        private int icon;
+        private String fragmentTag;
+
+        public Item(int title, int icon, String fragmentTag) {
+            this.title = title;
+            this.icon = icon;
+            this.fragmentTag = fragmentTag;
+        }
+
+        public int getTitle() {
+            return title;
+        }
+
+        public Item setTitle(int title) {
+            this.title = title;
+            return this;
+        }
+
+        public int getIcon() {
+            return icon;
+        }
+
+        public Item setIcon(int icon) {
+            this.icon = icon;
+            return this;
+        }
+
+        public String getFragmentTag() {
+            return fragmentTag;
+        }
+
+        public Item setFragmentTag(String fragmentTag) {
+            this.fragmentTag = fragmentTag;
+            return this;
+        }
+    }
 
 }

@@ -47,5 +47,8 @@
 
     <string name="crop__done">完成</string>
     <string name="crop__cancel">取消</string>
+    <string name="title_moment">动态</string>
+    <string name="title_todo">备忘</string>
+    <string name="title_me">我</string>
 
 </resources>

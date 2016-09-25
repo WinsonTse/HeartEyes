@@ -3,7 +3,6 @@ package io.github.winsontse.hearteyes.page.main;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,13 +27,14 @@ import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.page.account.AssociationFragment;
 import io.github.winsontse.hearteyes.page.account.LoginFragment;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
-import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.main.component.DaggerMainComponent;
 import io.github.winsontse.hearteyes.page.main.contract.MainContract;
 import io.github.winsontse.hearteyes.page.main.module.MainModule;
 import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
+import io.github.winsontse.hearteyes.page.todo.TodoListFragment;
+import io.github.winsontse.hearteyes.page.user.UserFragment;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
@@ -56,13 +56,17 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     DrawerLayout dl;
     @BindView(R.id.v_status)
     View vStatus;
+    @BindView(R.id.bottom_container)
+    LinearLayout bottomContainer;
 
     private boolean isShowStatusView = true;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
         ButterKnife.bind(this);
 
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -71,7 +75,7 @@ public class MainActivity extends BaseActivity implements MainContract.View,
         initPage();
         openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
 
-        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        fragmentManager.addOnBackStackChangedListener(this);
 
         //重建时会先恢复fragment再恢复activity
         setStatusBarViewVisible(isShowStatusView);
@@ -97,43 +101,39 @@ public class MainActivity extends BaseActivity implements MainContract.View,
      */
     @Override
     public void onBackStackChanged() {
-        List<Fragment> backStackFragments = getSupportFragmentManager().getFragments();
+        List<Fragment> backStackFragments = fragmentManager.getFragments();
         List<Fragment> fragments = new ArrayList<>();
         for (Fragment fragment : backStackFragments) {
             if (fragment != null && !(fragment instanceof SupportRequestManagerFragment)) {
                 fragments.add(fragment);
             }
         }
-        if (fragments.size() == 1 && TextUtils.equals(fragments.get(0).getTag(), MomentListFragment.class.getName())) {
+        if (fragmentManager.getBackStackEntryCount() == 0 && bottomBar.isTabTag(fragments.get(0).getTag())) {
             showBottomBar();
         } else {
-            AnimatorUtil.translationToHideBottomBar(bottomBar).start();
+            AnimatorUtil.translationToHideBottomBar(bottomContainer).start();
         }
     }
 
     private void showBottomBar() {
-        AnimatorUtil.translationToCorrect(bottomBar).start();
+        AnimatorUtil.translationToCorrect(bottomContainer).start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         bottomBar.setOnTabChangeListener(null);
-        getSupportFragmentManager().removeOnBackStackChangedListener(this);
+        fragmentManager.removeOnBackStackChangedListener(this);
     }
 
     private void initBottomBar() {
-        List<String> titles = new ArrayList<>();
-        titles.add("动态");
-        titles.add("备忘");
-        titles.add("我");
 
-        List<Integer> icons = new ArrayList<>();
-        icons.add(R.drawable.ic_moment);
-        icons.add(R.drawable.ic_av_timer);
-        icons.add(R.drawable.ic_face);
+        List<BottomBar.Item> items = new ArrayList<>();
+        items.add(new BottomBar.Item(R.string.title_moment, R.drawable.ic_moment, MomentListFragment.class.getName()));
+        items.add(new BottomBar.Item(R.string.title_todo, R.drawable.ic_av_timer, TodoListFragment.class.getName()));
+        items.add(new BottomBar.Item(R.string.title_me, R.drawable.ic_face, UserFragment.class.getName()));
 
-        bottomBar.setTitlesAndIcons(titles, icons);
+        bottomBar.setItems(items);
         bottomBar.setOnTabChangeListener(this);
     }
 
@@ -172,9 +172,9 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     }
 
 
-    public void openPage(BaseFragment oldFragment, BaseFragment newFragment, boolean isAddToBackStack) {
+    public void openPage(Fragment oldFragment, Fragment newFragment, boolean isAddToBackStack) {
         String tag = newFragment.getClass().getName();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .hide(oldFragment)
                 .add(R.id.fragment_container, newFragment, tag);
         if (isAddToBackStack) {
@@ -186,7 +186,7 @@ public class MainActivity extends BaseActivity implements MainContract.View,
 
     public void replacePage(Fragment fragment, boolean isAddToBackStack) {
         String tag = fragment.getClass().getName();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, fragment, tag);
 
         if (isAddToBackStack) {
@@ -197,7 +197,7 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     }
 
     public Fragment findFragmentByClass(Class cls) {
-        return getSupportFragmentManager().findFragmentByTag(cls.getName());
+        return fragmentManager.findFragmentByTag(cls.getName());
     }
 
 
@@ -208,19 +208,19 @@ public class MainActivity extends BaseActivity implements MainContract.View,
             replacePage(MomentListFragment.newInstance(), false);
         }
 
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+        if (fragmentManager.getBackStackEntryCount() == 0) {
             showBottomBar();
         }
 
 
 //        Fragment loginFragment = findFragmentByClass(LoginFragment.class);
 //        if(loginFragment != null) {
-//            getSupportFragmentManager().beginTransaction().remove(loginFragment).commitAllowingStateLoss();
+//            fragmentManager.beginTransaction().remove(loginFragment).commitAllowingStateLoss();
 //        }
 //
 //        Fragment assosiationFragment = findFragmentByClass(AssociationFragment.class);
 //        if(assosiationFragment != null) {
-//            getSupportFragmentManager().beginTransaction().remove(assosiationFragment).commitAllowingStateLoss();
+//            fragmentManager.beginTransaction().remove(assosiationFragment).commitAllowingStateLoss();
 //        }
 //        bottomBar.setVisibility(View.VISIBLE);
     }
@@ -258,9 +258,50 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     }
 
     @Override
-    public void onTabChanged(TabLayout.Tab tab) {
-        if (tab.getPosition() == 0) {
+    public void onTabChanged(BottomBar.Item item) {
+        Fragment newFragment;
+        boolean isExistNewFragment = true;
+        String currentTag = item.getFragmentTag();
+        newFragment = fragmentManager.findFragmentByTag(currentTag);
+        if (newFragment == null) {
+            newFragment = newTabFragmentInstance(currentTag);
+            isExistNewFragment = false;
+        }
+
+        if (newFragment == null) {
+            return;
+        }
+
+        List<Fragment> fragments = fragmentManager.getFragments();
+        List<Fragment> oldFragments = new ArrayList<>();
+        for (Fragment fragment : fragments) {
+            if (fragment != null && !TextUtils.equals(currentTag, fragment.getTag())
+                    && bottomBar.isTabTag(fragment.getTag())) {
+                oldFragments.add(fragment);
+            }
+        }
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        for (Fragment oldFragment : oldFragments) {
+            transaction.hide(oldFragment);
+        }
+        if (isExistNewFragment) {
+            transaction.show(newFragment);
         } else {
+            transaction.add(R.id.fragment_container, newFragment, currentTag);
+        }
+        transaction.commitAllowingStateLoss();
+    }
+
+    private Fragment newTabFragmentInstance(String tag) {
+        if (TextUtils.equals(tag, MomentListFragment.class.getName())) {
+            return MomentListFragment.newInstance();
+        } else if (TextUtils.equals(tag, TodoListFragment.class.getName())) {
+            return TodoListFragment.newInstance();
+        } else if (TextUtils.equals(tag, UserFragment.class.getName())) {
+            return UserFragment.newInstance();
+        } else {
+            return null;
         }
     }
 }

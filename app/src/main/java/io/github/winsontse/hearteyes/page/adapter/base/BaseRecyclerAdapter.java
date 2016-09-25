@@ -2,6 +2,8 @@ package io.github.winsontse.hearteyes.page.adapter.base;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.avos.avoscloud.AVObject;
+
 import java.util.ArrayList;
 import java.util.List;
 

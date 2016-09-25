@@ -177,8 +177,8 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
     }
 
     @Override
-    public void showKeyboard(Activity activity, View contentView) {
-        mainActivity.showKeyboard(activity, contentView);
+    public void toggleKeyboard(Activity activity, View contentView) {
+        mainActivity.toggleKeyboard(activity, contentView);
     }
 
     @Override

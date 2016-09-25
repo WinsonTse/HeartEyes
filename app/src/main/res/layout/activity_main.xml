@@ -16,7 +16,7 @@
             android:id="@+id/v_status"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="?colorPrimary"/>
+            android:background="?colorPrimary" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -28,17 +28,26 @@
                 android:layout_height="match_parent"
                 android:gravity="center" />
 
-            <io.github.winsontse.hearteyes.widget.BottomBar
-                android:id="@+id/bottom_bar"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
+            <LinearLayout
+                android:id="@+id/bottom_container"
                 android:layout_gravity="bottom"
-                android:background="?colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:translationY="?actionBarSize"
-                app:tabBackground="?selectableItemBackgroundBorderless"
-                app:tabIndicatorHeight="0dp"
-                app:tabSelectedTextColor="?colorPrimary"
-                app:tabTextColor="?android:textColorHint" />
+                android:orientation="vertical">
+
+                <io.github.winsontse.hearteyes.widget.BottomBar
+                    android:id="@+id/bottom_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:background="?colorPrimary"
+                    app:tabBackground="?selectableItemBackgroundBorderless"
+                    app:tabIndicatorHeight="0dp"
+                    android:elevation="8dp"
+                    app:tabSelectedTextColor="?colorPrimary"
+                    app:tabTextColor="?android:textColorHint" />
+            </LinearLayout>
+
         </FrameLayout>
 
     </LinearLayout>

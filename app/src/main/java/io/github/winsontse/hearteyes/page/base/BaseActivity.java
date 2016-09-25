@@ -177,7 +177,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     }
 
     @Override
-    public void showKeyboard(Activity activity, View contentView) {
+    public void toggleKeyboard(Activity activity, View contentView) {
         keyboardUtil = new KeyboardUtil(activity, contentView);
         keyboardUtil.enable();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

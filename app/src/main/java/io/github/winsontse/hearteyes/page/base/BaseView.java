@@ -22,7 +22,7 @@ public interface BaseView {
 
     void showToast(String msg);
 
-    void showKeyboard(Activity activity, View contentView);
+    void toggleKeyboard(Activity activity, View contentView);
 
     void hideKeyboard();
 

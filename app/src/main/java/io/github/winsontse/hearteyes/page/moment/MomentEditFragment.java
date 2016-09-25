@@ -78,9 +78,6 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     //声明AMapLocationClient类对象
     private AMapLocationClient mLocationClient;
 
-    private boolean isKeyboardOpending = false;
-
-
     public static MomentEditFragment newInstance(int itemPosition, AVObject avObject) {
         MomentEditFragment fragment = new MomentEditFragment();
         if (avObject != null) {
@@ -113,7 +110,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
         initRecyclerView();
         bindListener();
         requestLocationPermission();
-        toggleKeyBoard();
+        toggleKeyboard(getActivity(), ll);
 
     }
 
@@ -139,6 +136,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
     }
 
     private void bindListener() {
+        etContent.requestFocus();
         etContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -190,14 +188,14 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
         llContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleKeyBoard();
+                toggleKeyboard(getActivity(), ll);
             }
         });
 
         ivKeyboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleKeyBoard();
+                toggleKeyboard(getActivity(), ll);
             }
         });
 
@@ -232,7 +230,7 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
             selectedImagesAdapter.setItems(imageEntities);
             tvImageCount.setText(String.valueOf(imageEntities.size()));
         }
-        setKeyBoardInvisible();
+        hideKeyboard();
     }
 
     @Override
@@ -269,20 +267,4 @@ public class MomentEditFragment extends BaseFragment implements MomentEditContra
         }
     }
 
-    private void toggleKeyBoard() {
-        if (isKeyboardOpending) {
-            setKeyBoardInvisible();
-        } else {
-            showKeyboard(getActivity(), ll);
-            etContent.requestFocus();
-            ivKeyboard.setImageResource(R.drawable.ic_keyboard_hide);
-            isKeyboardOpending = !isKeyboardOpending;
-        }
-    }
-
-    private void setKeyBoardInvisible() {
-        this.isKeyboardOpending = false;
-        ivKeyboard.setImageResource(R.drawable.ic_keyboard);
-        hideKeyboard();
-    }
 }

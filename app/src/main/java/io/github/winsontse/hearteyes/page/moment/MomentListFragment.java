@@ -42,6 +42,7 @@ import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.MomentListAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
+import io.github.winsontse.hearteyes.page.adapter.diff.MomentListDiffCallback;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.TimelineFragment;
 import io.github.winsontse.hearteyes.page.image.GalleryFragment;
@@ -165,6 +166,8 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         if (!hidden) {
             fabEdit.show();
             setStatusBarViewVisible(false);
+        } else {
+//            fabEdit.hide();
         }
     }
 
@@ -456,13 +459,13 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         if (scrollState == ScrollState.DOWN) {
             if (fabEdit.getVisibility() == View.GONE) {
                 fabEdit.show();
-                AnimatorUtil.translationToCorrect(getActivity().findViewById(R.id.bottom_bar));
+                AnimatorUtil.translationToCorrect(getActivity().findViewById(R.id.bottom_container));
 
             }
         } else if (scrollState == ScrollState.UP) {
             if (fabEdit.getVisibility() == View.VISIBLE) {
                 fabEdit.hide();
-                AnimatorUtil.translationToHideBottomBar(getActivity().findViewById(R.id.bottom_bar));
+                AnimatorUtil.translationToHideBottomBar(getActivity().findViewById(R.id.bottom_container));
             }
         }
     }
@@ -491,5 +494,10 @@ public class MomentListFragment extends TimelineFragment<AVObject>
                     break;
             }
         }
+    }
+
+    @Override
+    public MomentListDiffCallback getMomentListDiffCallback() {
+        return new MomentListDiffCallback();
     }
 }

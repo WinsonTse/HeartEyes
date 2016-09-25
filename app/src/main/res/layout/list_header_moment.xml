@@ -19,7 +19,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="长按选择时间"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse" />
+        android:shadowColor="@color/md_grey_700"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="5"
+        android:text="标题"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="?android:textColorPrimaryInverse" />
 
 </android.support.percent.PercentFrameLayout>

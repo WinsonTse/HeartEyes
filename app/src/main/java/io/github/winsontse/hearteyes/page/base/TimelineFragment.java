@@ -11,19 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
+import io.github.winsontse.hearteyes.page.adapter.diff.base.BaseListDiffCallback;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
-import io.github.winsontse.hearteyes.util.LogUtil;
 
 /**
  * Created by winson on 16/6/29.
@@ -92,7 +87,7 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                         layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                     }
                     int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                    if (loadMoreEnable && !isLoading && adapter.getItemCount() > 0 && lastVisibleItemPosition == adapter.getItemCount() - 1) {
+                    if (loadMoreEnable && !isLoading && adapter.getItemCount() - adapter.getHeaderCount() > 0 && lastVisibleItemPosition == adapter.getItemCount() - 1) {
                         isLoading = true;
                         timelinePresenter.loadMore();
                     }
@@ -137,33 +132,36 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
         setLoadingCompleted();
 
         if (vEmpty != null && vEmpty.getVisibility() == View.VISIBLE) {
-            vEmpty.animate().alpha(0).setDuration(AnimatorUtil.ANIMATOR_TIME).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animator) {
-                    rv.setAlpha(0);
-                }
+            vEmpty.animate()
+                    .alpha(0)
+                    .setDuration(AnimatorUtil.ANIMATOR_TIME)
+                    .setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animator) {
+                            rv.setAlpha(0);
+                        }
 
-                @Override
-                public void onAnimationEnd(Animator animator) {
-                    ViewParent parent = vEmpty.getParent();
-                    if (parent != null) {
-                        ViewGroup viewGroup = (ViewGroup) parent;
-                        viewGroup.removeView(vEmpty);
-                    }
-                    vEmpty.setVisibility(View.GONE);
-                    rv.animate().alpha(1).setDuration(AnimatorUtil.ANIMATOR_TIME).start();
-                }
+                        @Override
+                        public void onAnimationEnd(Animator animator) {
+                            ViewParent parent = vEmpty.getParent();
+                            if (parent != null) {
+                                ViewGroup viewGroup = (ViewGroup) parent;
+                                viewGroup.removeView(vEmpty);
+                            }
+                            vEmpty.setVisibility(View.GONE);
+                            rv.animate().alpha(1).setDuration(AnimatorUtil.ANIMATOR_TIME).start();
+                        }
 
-                @Override
-                public void onAnimationCancel(Animator animator) {
+                        @Override
+                        public void onAnimationCancel(Animator animator) {
 
-                }
+                        }
 
-                @Override
-                public void onAnimationRepeat(Animator animator) {
+                        @Override
+                        public void onAnimationRepeat(Animator animator) {
 
-                }
-            }).start();
+                        }
+                    }).start();
         }
 
     }
@@ -171,9 +169,25 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     @Override
     public void onLoadMoreCompleted(List<T> data) {
         if (adapter != null) {
+            List<T> oldData = new ArrayList<>();
+            oldData.addAll(adapter.getData());
+
+
+//            if (getMomentListDiffCallback() != null) {
+//                adapter.getData().addAll(data);
+//
+//                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(getMomentListDiffCallback().oldData(oldData).newData(adapter.getData()), true);
+//                diffResult.dispatchUpdatesTo(adapter);
+//            }
+//            else {
             adapter.addItems(data);
+//            }
         }
         setLoadingCompleted();
+    }
+
+    public BaseListDiffCallback getMomentListDiffCallback() {
+        return null;
     }
 
     @Override
