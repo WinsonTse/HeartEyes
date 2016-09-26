@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.page.image;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -329,7 +330,11 @@ public class ImagePickerActivity extends AppCompatActivity {
                                 currentTempImageFile = FileUtil.createTempExternalImageFile(ImagePickerActivity.this, "hearteyes_" + TimeUtil.getFormatTime(System.currentTimeMillis(), "yyyyMMdd_HH_mm_ss_SSS") + ".jpg");
                             }
                             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentTempImageFile));
+                            ContentValues contentValues = new ContentValues(1);
+                            contentValues.put(MediaStore.Images.Media.DATA, currentTempImageFile.getAbsolutePath());
+                            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
+                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                             cameraIntent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
                             startActivityForResult(cameraIntent, REQUEST_CAMERA);
 

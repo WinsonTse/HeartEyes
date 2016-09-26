@@ -23,6 +23,7 @@ import io.github.winsontse.hearteyes.page.account.module.AssociationModule;
 import io.github.winsontse.hearteyes.page.account.presenter.AssociationPresenter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
+import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.page.qrcode.ScannerFragment;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 
@@ -125,7 +126,9 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        openPage(AssociationFragment.this, ScannerFragment.newInstance());
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).openPage(AssociationFragment.this, ScannerFragment.newInstance(), true);
+                        }
                     }
                 });
     }

@@ -17,21 +17,20 @@ import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
 import io.github.winsontse.hearteyes.app.HeartEyesApplication;
-import io.github.winsontse.hearteyes.page.main.MainActivity;
 
 /**
  * Created by hao.xie on 16/5/10.
  */
 public abstract class BaseFragment extends DialogFragment implements BaseView {
 
-    private MainActivity mainActivity;
+    private BaseActivity baseActivity;
     private View rootView;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof BaseActivity) {
-            mainActivity = (MainActivity) context;
+            baseActivity = (BaseActivity) context;
             setStatusBarViewVisible(isStatusBarViewVisible());
         }
     }
@@ -106,94 +105,86 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
 
     @Override
     public void showProgressDialog(boolean cancelable, String msg) {
-        if (mainActivity != null && isVisible()) {
-            mainActivity.showProgressDialog(cancelable, msg);
+        if (baseActivity != null && isVisible()) {
+            baseActivity.showProgressDialog(cancelable, msg);
         }
     }
 
     @Override
     public void hideProgressDialog() {
-        if (mainActivity != null && isVisible()) {
-            mainActivity.hideProgressDialog();
+        if (baseActivity != null && isVisible()) {
+            baseActivity.hideProgressDialog();
         }
     }
 
     @Override
     public void closePage() {
         hideKeyboard();
-        if (mainActivity != null) {
+        if (baseActivity != null) {
             getFragmentManager().popBackStack();
         }
     }
 
     @Override
     public void showToast(String msg) {
-        if (mainActivity != null && isVisible()) {
-            mainActivity.showToast(msg);
+        if (baseActivity != null && isVisible()) {
+            baseActivity.showToast(msg);
         }
-    }
-
-    protected void openPage(BaseFragment oldFragment, BaseFragment newFragment) {
-        mainActivity.openPage(oldFragment, newFragment, true);
-    }
-
-    protected void replacePage(BaseFragment fragment) {
-        mainActivity.replacePage(fragment, false);
     }
 
     @Override
     public void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener) {
-        mainActivity.showDialog(title, msg, okTitle, onOkClickListener);
+        baseActivity.showDialog(title, msg, okTitle, onOkClickListener);
     }
 
     @Override
     public void showDialog(String title, String msg, String okTitle, DialogInterface.OnClickListener onOkClickListener, String cancelTitle, DialogInterface.OnClickListener onCancelClickListener) {
-        mainActivity.showDialog(title, msg, okTitle, onOkClickListener, cancelTitle, onCancelClickListener);
+        baseActivity.showDialog(title, msg, okTitle, onOkClickListener, cancelTitle, onCancelClickListener);
     }
 
     @Override
     public void showDatePicker(int year, int month, int day, DatePickerDialog.OnDateSetListener onDateSetListener) {
-        mainActivity.showDatePicker(year, month, day, onDateSetListener);
+        baseActivity.showDatePicker(year, month, day, onDateSetListener);
     }
 
     @Override
     public Drawable getDrawableById(int drawableId) {
-        return mainActivity.getDrawableById(drawableId);
+        return baseActivity.getDrawableById(drawableId);
     }
 
     @Override
     public String getStringById(int stringId) {
-        return mainActivity.getStringById(stringId);
+        return baseActivity.getStringById(stringId);
     }
 
     @Override
     public String[] getStringArrayById(int arrayId) {
-        return mainActivity.getStringArrayById(arrayId);
+        return baseActivity.getStringArrayById(arrayId);
     }
 
     @Override
     public int getColorById(int colorId) {
-        return mainActivity.getColorById(colorId);
+        return baseActivity.getColorById(colorId);
     }
 
     @Override
     public void toggleKeyboard(Activity activity, View contentView) {
-        mainActivity.toggleKeyboard(activity, contentView);
+        baseActivity.toggleKeyboard(activity, contentView);
     }
 
     @Override
     public void hideKeyboard() {
-        mainActivity.hideKeyboard();
+        baseActivity.hideKeyboard();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mainActivity.hideKeyboard();
+        baseActivity.hideKeyboard();
     }
 
     @Override
     public void setStatusBarViewVisible(boolean isVisible) {
-        mainActivity.setStatusBarViewVisible(isVisible);
+        baseActivity.setStatusBarViewVisible(isVisible);
     }
 }

@@ -8,10 +8,10 @@ import com.avos.avoscloud.AVUser;
 import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.page.qrcode.contract.ScannerContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
-import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
+import io.github.winsontse.hearteyes.page.qrcode.contract.ScannerContract;
 import io.github.winsontse.hearteyes.util.HeartEyesException;
+import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.RxUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.util.rxbus.RxBus;

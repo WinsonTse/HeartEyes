@@ -47,6 +47,7 @@ import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.TimelineFragment;
 import io.github.winsontse.hearteyes.page.image.GalleryFragment;
 import io.github.winsontse.hearteyes.page.image.ImagePickerActivity;
+import io.github.winsontse.hearteyes.page.main.MainActivity;
 import io.github.winsontse.hearteyes.page.map.AddressFragment;
 import io.github.winsontse.hearteyes.page.moment.component.DaggerMomentListComponent;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
@@ -336,21 +337,28 @@ public class MomentListFragment extends TimelineFragment<AVObject>
 
     @Override
     public void goToEditPage() {
-        openPage(this, MomentEditFragment.newInstance(0, null));
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).openPage(this, MomentEditFragment.newInstance(0, null), true);
+        }
     }
 
     @Override
     public void goToShowLocationPage(AVObject avObject) {
-        openPage(this, AddressFragment.newInstance(avObject));
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).openPage(this, AddressFragment.newInstance(avObject), true);
+        }
     }
 
     @Override
     public void goToEditPage(int position, AVObject avObject) {
-        openPage(this, MomentEditFragment.newInstance(position, avObject));
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).openPage(this, MomentEditFragment.newInstance(position, avObject), true);
+        }
     }
 
     @Override
-    public void showDeleteImageDialog(final int position, final AVObject avObject, final int imagePosition) {
+    public void showDeleteImageDialog(final int position, final AVObject avObject,
+                                      final int imagePosition) {
         showDialog(getString(R.string.delete), getString(R.string.tips_delete_image), getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -385,7 +393,9 @@ public class MomentListFragment extends TimelineFragment<AVObject>
 
     @Override
     public void onThumbnailClick(int position, AVObject avObject, int imagePosition) {
-        openPage(this, GalleryFragment.newInstance(avObject, imagePosition));
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).openPage(this, GalleryFragment.newInstance(avObject, imagePosition), true);
+        }
     }
 
     @Override
