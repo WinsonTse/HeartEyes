@@ -34,7 +34,7 @@ public class ScannerFragment extends BaseFragment implements ScannerContract.Vie
     }
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
 
     }
 
@@ -67,7 +67,7 @@ public class ScannerFragment extends BaseFragment implements ScannerContract.Vie
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

@@ -148,6 +148,7 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
                                             try {
                                                 AVObject.saveAll(Arrays.asList(circle, me, circleMemberMe, circleMemberOther));
                                                 subscriber.onNext(me);
+                                                subscriber.onCompleted();
                                             } catch (Exception e) {
                                                 me.put(UserContract.FRIEND, null);
                                                 me.put(UserContract.CIRCLE_ID, null);

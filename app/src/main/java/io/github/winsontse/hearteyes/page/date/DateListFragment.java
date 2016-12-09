@@ -28,7 +28,7 @@ public class DateListFragment extends BaseFragment implements DateListContract.V
         return fragment;
     }
 
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DateListFragment extends BaseFragment implements DateListContract.V
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

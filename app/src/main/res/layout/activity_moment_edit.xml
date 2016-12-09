@@ -125,8 +125,8 @@
         android:layout_gravity="right|top"
         android:layout_marginBottom="?actionBarSize"
         android:clickable="true"
+        android:transitionName="fab_send"
         android:src="@drawable/ic_send"
-        android:visibility="visible"
         app:fabSize="normal"
         app:useCompatPadding="true" />
 

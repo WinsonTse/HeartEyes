@@ -1,8 +1,6 @@
-package io.github.winsontse.hearteyes.page.base;
+package io.github.winsontse.hearteyes.page.base.timeline;
 
 import android.animation.Animator;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,21 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
-import io.github.winsontse.hearteyes.page.adapter.diff.base.BaseListDiffCallback;
+import io.github.winsontse.hearteyes.page.base.BaseView;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 
 /**
- * Created by winson on 16/6/29.
+ * Created by winson on 2016/11/3.
  */
 
-public abstract class TimelineFragment<T> extends BaseFragment implements TimelineView<T> {
+public class TimelineViewPartImpl<T> implements TimelineViewPart<T> {
 
+    private BaseView baseView;
     private SwipeRefreshLayout srl;
     private RecyclerView rv;
     private TimelinePresenter timelinePresenter;
@@ -38,26 +36,22 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     private boolean isLoading = false;
     private boolean loadMoreEnable = true;
 
-    public void addOnRecyclerViewScrollListener(OnRecyclerViewScrollListener onRecyclerViewScrollListener) {
-        this.onRecyclerViewScrollListener = onRecyclerViewScrollListener;
+    public TimelineViewPartImpl(BaseView baseView) {
+        this.baseView = baseView;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (getPresenter() == null || !(getPresenter() instanceof TimelinePresenterImpl)) {
-            return;
-        }
-        timelinePresenter = (TimelinePresenter) getPresenter();
-        adapter = getBaseRecyclerAdapter();
-        srl = getSwipeRefreshLayout();
-        rv = getRecyclerView();
-        vLoading = getLoadingViewContainer();
-        vEmpty = getEmptyView();
+    public void installTimelineView(final RecyclerView rv, final LinearLayoutManager layoutManager, final BaseRecyclerAdapter<T> adapter, final SwipeRefreshLayout srl, final View vEmpty, final View vLoading) {
+        timelinePresenter = (TimelinePresenter) baseView.getPresenter();
+        this.srl = srl;
+        this.rv = rv;
+        this.vEmpty = vEmpty;
+        this.vLoading = vLoading;
+        this.adapter = adapter;
+        this.layoutManager = layoutManager;
 
         if (srl != null) {
-            srl.setColorSchemeColors(getColorById(R.color.md_pink_500));
+            srl.setColorSchemeColors(baseView.getColorById(R.color.md_pink_500));
             srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -68,6 +62,8 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
             });
         }
         if (rv != null) {
+            rv.setAdapter(adapter);
+            rv.setLayoutManager(layoutManager);
             rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
                 @Override
@@ -77,15 +73,10 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                         onRecyclerViewScrollListener.onScrolled(recyclerView, dx, dy);
                     }
 
-
                     if (adapter.getItemCount() == 0) {
                         return;
                     }
 
-
-                    if (layoutManager == null) {
-                        layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                    }
                     int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                     if (loadMoreEnable && !isLoading && adapter.getItemCount() - adapter.getHeaderCount() > 0 && lastVisibleItemPosition == adapter.getItemCount() - 1) {
                         isLoading = true;
@@ -109,14 +100,6 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
         timelinePresenter.refresh();
     }
 
-    @Override
-    public void setLoadingCompleted() {
-        isLoading = false;
-        if (srl.isRefreshing()) {
-            srl.setRefreshing(false);
-        }
-        hideLoadingView();
-    }
 
     @Override
     public void onRefreshStart() {
@@ -127,9 +110,8 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     public void onRefreshCompleted(List<T> data) {
         if (adapter != null) {
             adapter.setItems(data);
-//            rv.smoothScrollToPosition(0);
         }
-        setLoadingCompleted();
+        onRequestCompleted();
 
         if (vEmpty != null && vEmpty.getVisibility() == View.VISIBLE) {
             vEmpty.animate()
@@ -163,41 +145,21 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
                         }
                     }).start();
         }
-
     }
 
     @Override
     public void onLoadMoreCompleted(List<T> data) {
         if (adapter != null) {
-            List<T> oldData = new ArrayList<>();
-            oldData.addAll(adapter.getData());
-
-
-//            if (getMomentListDiffCallback() != null) {
-//                adapter.getData().addAll(data);
-//
-//                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(getMomentListDiffCallback().oldData(oldData).newData(adapter.getData()), true);
-//                diffResult.dispatchUpdatesTo(adapter);
-//            }
-//            else {
             adapter.addItems(data);
-//            }
         }
-        setLoadingCompleted();
-    }
-
-    public BaseListDiffCallback getMomentListDiffCallback() {
-        return null;
+        onRequestCompleted();
     }
 
     @Override
-    public void updateItem(int position) {
-        adapter.notifyItemChanged(position + adapter.getHeaderCount());
-    }
-
-    @Override
-    public void replaceItem(int position, T t) {
-        adapter.replaceItem(position, t);
+    public void onRequestCompleted() {
+        isLoading = false;
+        hideRefreshView();
+        hideLoadMoreView();
     }
 
     @Override
@@ -205,25 +167,15 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
         loadMoreEnable = enable;
     }
 
-    protected abstract SwipeRefreshLayout getSwipeRefreshLayout();
-
-    protected abstract RecyclerView getRecyclerView();
-
-    protected abstract BaseRecyclerAdapter<T> getBaseRecyclerAdapter();
-
-    protected abstract View getLoadingViewContainer();
-
-    protected abstract View getEmptyView();
-
     @Override
-    public void showLoadingView() {
+    public void showLoadMoreView() {
         if (vLoading != null) {
             vLoading.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
-    public void hideLoadingView() {
+    public void hideLoadMoreView() {
         if (vLoading != null) {
             vLoading.setVisibility(View.INVISIBLE);
         }
@@ -235,4 +187,29 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
             srl.setRefreshing(true);
         }
     }
+
+    @Override
+    public void hideRefreshView() {
+        if (srl != null && srl.isRefreshing()) {
+            srl.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void replaceItem(int position, T t) {
+        adapter.replaceItem(position, t);
+
+    }
+
+    @Override
+    public void updateItem(int position) {
+        adapter.notifyItemChanged(position + adapter.getHeaderCount());
+
+    }
+
+    @Override
+    public void addOnRecyclerViewScrollListener(OnRecyclerViewScrollListener onRecyclerViewScrollListener) {
+        this.onRecyclerViewScrollListener = onRecyclerViewScrollListener;
+    }
+
 }

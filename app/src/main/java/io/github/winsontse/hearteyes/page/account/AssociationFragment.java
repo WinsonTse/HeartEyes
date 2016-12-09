@@ -47,7 +47,7 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
 
     @Nullable
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
         presenter.generateQrcode(500, 500, Color.WHITE, Color.BLACK);
         fabSwipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +91,7 @@ public class AssociationFragment extends BaseFragment implements AssociationCont
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

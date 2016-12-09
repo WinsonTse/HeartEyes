@@ -1,12 +1,11 @@
 package io.github.winsontse.hearteyes.util;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.os.Build;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewPropertyAnimator;
+import android.view.animation.DecelerateInterpolator;
 
 /**
  * Created by winson on 16/5/24.
@@ -61,11 +60,11 @@ public class AnimatorUtil {
     }
 
     public static ViewPropertyAnimator translationToCorrect(View v) {
-        return v.animate().translationY(0).setDuration(ANIMATOR_TIME).setInterpolator(new FastOutSlowInInterpolator());
+        return v.animate().translationY(0).setDuration(ANIMATOR_TIME).setInterpolator(new DecelerateInterpolator());
     }
 
     public static ViewPropertyAnimator translationToHideBottomBar(View v) {
-        return v.animate().translationY(v.getHeight()).setDuration(ANIMATOR_TIME).setInterpolator(new FastOutSlowInInterpolator());
+        return v.animate().translationY(v.getHeight()).setDuration(ANIMATOR_TIME).setInterpolator(new DecelerateInterpolator());
     }
 
 }

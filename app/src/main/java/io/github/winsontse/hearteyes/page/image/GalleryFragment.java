@@ -132,13 +132,10 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden) {
-            setStatusBarViewVisible(false);
-        }
     }
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
 
         final GalleryPagerAdapter galleryPagerAdapter = new GalleryPagerAdapter(getChildFragmentManager(), images);
 
@@ -227,7 +224,7 @@ public class GalleryFragment extends BaseFragment implements GalleryContract.Vie
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

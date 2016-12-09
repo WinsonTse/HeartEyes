@@ -40,6 +40,5 @@ public interface BaseView {
 
     int getColorById(int colorId);
 
-    void setStatusBarViewVisible(boolean isVisible);
-
+    BasePresenter getPresenter();
 }

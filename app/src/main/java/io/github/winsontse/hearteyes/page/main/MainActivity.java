@@ -50,50 +50,32 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     FrameLayout fragmentContainer;
     @BindView(R.id.bottom_bar)
     BottomBar bottomBar;
-    @BindView(R.id.main_content_container)
-    LinearLayout mainContentContainer;
     @BindView(R.id.dl)
     DrawerLayout dl;
-    @BindView(R.id.v_status)
-    View vStatus;
     @BindView(R.id.bottom_container)
     LinearLayout bottomContainer;
 
-    private boolean isShowStatusView = true;
     private FragmentManager fragmentManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected void initView(Bundle savedInstanceState) {
         fragmentManager = getSupportFragmentManager();
-        ButterKnife.bind(this);
-
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        initStatusBar();
         initBottomBar();
         initPage();
         openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
 
         fragmentManager.addOnBackStackChangedListener(this);
 
-        //重建时会先恢复fragment再恢复activity
-        setStatusBarViewVisible(isShowStatusView);
-    }
-
-    private void initStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            vStatus.getLayoutParams().height = ScreenUtil.statusBarHeight;
-            vStatus.requestLayout();
-        }
     }
 
     @Override
-    public void setStatusBarViewVisible(boolean isVisible) {
-        isShowStatusView = isVisible;
-        if (vStatus != null) {
-            vStatus.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        }
+    protected boolean isSupportLayoutFullScreen() {
+        return true;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_main;
     }
 
     /**
@@ -167,7 +149,7 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

@@ -95,6 +95,7 @@ public class LoginPresenter extends BasePresenterImpl implements LoginContract.P
                                     avUser.put(UserContract.AVATAR, avFile);
                                     avUser.save();
                                     subscriber.onNext(avUser);
+                                    subscriber.onCompleted();
                                 } catch (AVException e1) {
                                     subscriber.onError(e1);
                                 }

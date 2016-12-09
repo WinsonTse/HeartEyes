@@ -4,10 +4,8 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.AVUser;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,7 @@ import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
-import io.github.winsontse.hearteyes.page.base.TimelinePresenterImpl;
+import io.github.winsontse.hearteyes.page.base.timeline.TimelinePresenterImpl;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.rxbus.event.MomentEvent;

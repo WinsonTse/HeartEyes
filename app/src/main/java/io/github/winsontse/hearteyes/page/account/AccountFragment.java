@@ -29,7 +29,7 @@ public class AccountFragment extends BaseFragment implements AccountContract.Vie
 
     @Nullable
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView(@Nullable Bundle savedInstanceState) {
     }
 
     @Override
@@ -47,7 +47,7 @@ public class AccountFragment extends BaseFragment implements AccountContract.Vie
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

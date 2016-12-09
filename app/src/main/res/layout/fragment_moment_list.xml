@@ -68,7 +68,8 @@
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="?actionBarSize"
         android:clickable="true"
-        android:src="@drawable/ic_edit"
+        android:src="@drawable/ic_send"
+        android:transitionName="fab_send"
         android:visibility="visible"
         app:fabSize="normal"
         app:useCompatPadding="true" />
@@ -82,12 +83,14 @@
         <View
             android:id="@+id/v_moment_list_status"
             android:layout_width="match_parent"
-            android:layout_height="0dp" />
+            android:layout_height="0dp"
+            android:background="?colorPrimaryDark" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
+            android:background="?colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_collapseMode="pin" />
     </android.support.design.widget.AppBarLayout>

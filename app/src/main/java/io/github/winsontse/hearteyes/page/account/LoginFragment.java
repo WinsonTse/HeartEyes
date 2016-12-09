@@ -46,7 +46,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
         ssoHandler = new SsoHandler(getActivity(), new AuthInfo(getActivity(), SecretConstant.WEIBO_APP_KEY, SecretConstant.WEIBO_REDIRECT_URL, SecretConstant.WEIBO_SCOPE));
         fabEnter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +72,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

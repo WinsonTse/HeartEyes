@@ -12,8 +12,6 @@ import io.github.winsontse.hearteyes.page.base.BaseView;
 public interface MomentEditContract {
 
     interface View extends BaseView {
-        void showFab();
-
         void updateEditContent(String content);
     }
 

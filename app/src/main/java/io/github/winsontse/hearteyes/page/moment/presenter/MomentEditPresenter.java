@@ -44,6 +44,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
 
     private static final int LOCATION_INTERVAL = 30 * 1000;
     private SharedPreferences sp;
+
     @Inject
     public MomentEditPresenter(MomentEditContract.View view, SharedPreferences sp) {
         this.view = view;
@@ -58,7 +59,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
             view.updateEditContent(currentMoment.getString(MomentContract.CONTENT));
         }
 
-        if(isCreateMoment && sp.contains(Preference.MOMENT_CONTENT)) {
+        if (isCreateMoment && sp.contains(Preference.MOMENT_CONTENT)) {
             view.updateEditContent(sp.getString(Preference.MOMENT_CONTENT, ""));
         }
 
@@ -66,6 +67,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
 
     @Override
     public void publishMoment(final String content, final List<ImageEntity> images) {
+        view.hideKeyboard();
         if (TextUtils.isEmpty(content)) {
             view.showToast(view.getStringById(R.string.tips_moment_content_not_empty));
             return;
@@ -153,7 +155,6 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
             @Override
             public void handleError(Throwable e) {
                 view.hideProgressDialog();
-                view.showFab();
             }
 
             @Override
@@ -254,7 +255,7 @@ public class MomentEditPresenter extends BasePresenterImpl implements MomentEdit
 
     @Override
     public void saveContent(String content) {
-        if(!isCreateMoment ||  TextUtils.isEmpty(content)) {
+        if (!isCreateMoment || TextUtils.isEmpty(content)) {
             return;
         }
         sp.edit().putString(Preference.MOMENT_CONTENT, content).apply();

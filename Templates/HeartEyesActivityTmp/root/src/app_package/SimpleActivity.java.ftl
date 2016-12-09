@@ -21,13 +21,13 @@ public class ${pageName}Activity extends BaseActivity implements ${pageName}Cont
     ${pageName}Presenter presenter;
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView(Bundle savedInstanceState) {
 
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.${layoutName};
+        return R.layout.activity_student;
     }
 
     @Override

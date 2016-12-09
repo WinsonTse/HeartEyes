@@ -28,7 +28,7 @@ public class ${pageName}Fragment extends BaseFragment implements ${pageName}Cont
     ${pageName}Presenter presenter;
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView(@Nullable Bundle savedInstanceState) {
 
     }
 

@@ -1,6 +1,7 @@
 package io.github.winsontse.hearteyes.page.image;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -12,6 +13,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +22,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,9 +109,25 @@ public class ImagePickerActivity extends AppCompatActivity {
         fragment.startActivityForResult(intent, REQUEST_PICKER_IMAGE);
     }
 
+    public static void startImagePicker(Activity activity, int count, List<ImageEntity> selectedList) {
+        Intent intent = new Intent(activity, ImagePickerActivity.class);
+        intent.putExtra(EXTRA_MAX_COUNT, count);
+        if (selectedList != null) {
+            intent.putParcelableArrayListExtra(EXTRA_SELECTED_IMAGE_LIST, (ArrayList<ImageEntity>) selectedList);
+        }
+        View view = activity.findViewById(R.id.tv_image_count);
+        ActivityCompat.startActivityForResult(activity, intent, REQUEST_PICKER_IMAGE,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle());
+//        activity.startActivityForResult(intent, REQUEST_PICKER_IMAGE);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setEnterTransition(new Slide(Gravity.BOTTOM));
+        getWindow().setExitTransition(null);
+
         setContentView(R.layout.activity_image_picker);
         ButterKnife.bind(this);
 

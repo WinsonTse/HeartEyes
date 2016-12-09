@@ -29,4 +29,7 @@
 
     <dimen name="crop__bar_height">56dp</dimen>
 
+    <dimen name="translation_y_toolbar">56dp</dimen>
+    <dimen name="translation_y_toolbar_inverse">-56dp</dimen>
+
 </resources>

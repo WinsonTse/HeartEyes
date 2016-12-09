@@ -110,6 +110,7 @@ public class MainPresenter extends BasePresenterImpl implements MainContract.Pre
                                 currentUser.put(UserContract.CIRCLE_ID, circleMember.getString(CircleMemberContract.CIRCLE_ID));
                                 currentUser.save();
                                 subscriber.onNext(true);
+                                subscriber.onCompleted();
                             }
 
                         } catch (AVException e) {

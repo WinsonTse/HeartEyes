@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -40,11 +39,9 @@ import io.github.winsontse.hearteyes.data.model.ImageEntity;
 import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.MomentListAdapter;
-import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
-import io.github.winsontse.hearteyes.page.adapter.diff.MomentListDiffCallback;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
-import io.github.winsontse.hearteyes.page.base.TimelineFragment;
+import io.github.winsontse.hearteyes.page.base.timeline.TimelineFragment;
 import io.github.winsontse.hearteyes.page.image.GalleryFragment;
 import io.github.winsontse.hearteyes.page.image.ImagePickerActivity;
 import io.github.winsontse.hearteyes.page.main.MainActivity;
@@ -55,7 +52,6 @@ import io.github.winsontse.hearteyes.page.moment.module.MomentListModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentListPresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.FileUtil;
-import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.TimeUtil;
 import io.github.winsontse.hearteyes.widget.crop.Crop;
@@ -109,7 +105,7 @@ public class MomentListFragment extends TimelineFragment<AVObject>
     }
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView(@Nullable Bundle savedInstanceState) {
         flTime.setPadding(0, ScreenUtil.statusBarHeight + ScreenUtil.toolbarHeight, 0, 0);
         vMomentListStatus.getLayoutParams().height = ScreenUtil.statusBarHeight;
         vMomentListStatus.requestLayout();
@@ -122,8 +118,12 @@ public class MomentListFragment extends TimelineFragment<AVObject>
             }
         }, AnimatorUtil.ANIMATOR_TIME);
         bindListener();
-        initRecyclerView();
         initSwipeRefreshLayout();
+
+        momentListAdapter = new MomentListAdapter();
+        layoutManager = new LinearLayoutManager(getActivity());
+        initRecyclerView();
+        installTimelineView(rv, layoutManager, momentListAdapter, srl, vEmpty, pbLoading);
     }
 
     private void initSwipeRefreshLayout() {
@@ -139,13 +139,7 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         fabEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fabEdit.hide(new FloatingActionButton.OnVisibilityChangedListener() {
-                    @Override
-                    public void onHidden(FloatingActionButton fab) {
-                        super.onHidden(fab);
-                        goToEditPage();
-                    }
-                });
+                goToEditPage();
             }
         });
 
@@ -166,7 +160,6 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         super.onHiddenChanged(hidden);
         if (!hidden) {
             fabEdit.show();
-            setStatusBarViewVisible(false);
         } else {
 //            fabEdit.hide();
         }
@@ -174,12 +167,6 @@ public class MomentListFragment extends TimelineFragment<AVObject>
 
     private void initRecyclerView() {
         final int llTimeOffsize = ScreenUtil.statusBarHeight + ScreenUtil.toolbarHeight;
-        momentListAdapter = new MomentListAdapter();
-        rv.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getActivity());
-        rv.setLayoutManager(layoutManager);
-        rv.setAdapter(momentListAdapter);
-
         llTime.setVisibility(View.INVISIBLE);
         addOnRecyclerViewScrollListener(new OnRecyclerViewScrollListener() {
 
@@ -306,40 +293,14 @@ public class MomentListFragment extends TimelineFragment<AVObject>
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 
     @Override
-    public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return srl;
-    }
-
-    @Override
-    public RecyclerView getRecyclerView() {
-        return rv;
-    }
-
-    @Override
-    public BaseRecyclerAdapter<AVObject> getBaseRecyclerAdapter() {
-        return momentListAdapter;
-    }
-
-    @Override
-    public View getLoadingViewContainer() {
-        return pbLoading;
-    }
-
-    @Override
-    protected View getEmptyView() {
-        return vEmpty;
-    }
-
-    @Override
     public void goToEditPage() {
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).openPage(this, MomentEditFragment.newInstance(0, null), true);
-        }
+        rv.stopScroll();
+        MomentEditActivity.start(getActivity(), fabEdit, 0, null);
     }
 
     @Override
@@ -351,9 +312,7 @@ public class MomentListFragment extends TimelineFragment<AVObject>
 
     @Override
     public void goToEditPage(int position, AVObject avObject) {
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).openPage(this, MomentEditFragment.newInstance(position, avObject), true);
-        }
+        MomentEditActivity.start(getActivity(), fabEdit, position, avObject);
     }
 
     @Override
@@ -506,8 +465,4 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         }
     }
 
-    @Override
-    public MomentListDiffCallback getMomentListDiffCallback() {
-        return new MomentListDiffCallback();
-    }
 }

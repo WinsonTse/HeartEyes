@@ -1,7 +1,8 @@
-package io.github.winsontse.hearteyes.page.base;
+package io.github.winsontse.hearteyes.page.base.timeline;
 
 import java.util.List;
 
+import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -33,14 +34,13 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                         new HeartEyesSubscriber<List<T>>(timelineView) {
                             @Override
                             public void handleError(Throwable e) {
-                                timelineView.setLoadingCompleted();
+                                timelineView.onRequestCompleted();
                             }
 
                             @Override
                             public void onNext(List<T> data) {
 
                                 timelineView.onLoadMoreCompleted(data);
-
                                 if (data.size() < PER_PAGE_SIZE) {
                                     timelineView.setLoadMoreEnable(false);
                                 } else {
@@ -52,7 +52,7 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                             @Override
                             public void onStart() {
                                 super.onStart();
-                                timelineView.showLoadingView();
+                                timelineView.showLoadMoreView();
                             }
                         });
         addSubscription(listSubscribe);
@@ -69,7 +69,7 @@ public abstract class TimelinePresenterImpl<T> extends BasePresenterImpl impleme
                         new HeartEyesSubscriber<List<T>>(timelineView) {
                             @Override
                             public void handleError(Throwable e) {
-                                timelineView.setLoadingCompleted();
+                                timelineView.onRequestCompleted();
                             }
 
                             @Override

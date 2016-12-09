@@ -1,7 +1,8 @@
-package io.github.winsontse.hearteyes.page.base;
+package io.github.winsontse.hearteyes.page.base.timeline;
 
 import java.util.List;
 
+import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import rx.Observable;
 
 /**

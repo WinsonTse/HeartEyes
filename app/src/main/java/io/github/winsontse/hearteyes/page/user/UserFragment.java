@@ -28,7 +28,7 @@ public class UserFragment extends BaseFragment implements UserContract.View {
     }
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
     }
 
     @Override
@@ -46,7 +46,7 @@ public class UserFragment extends BaseFragment implements UserContract.View {
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 

@@ -47,7 +47,6 @@ public class ImagePickerAdaper extends BaseRecyclerAdapter<ImageEntity> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ((ItemViewHolder) holder).bind(data.get(position));
-
     }
 
     protected static final class ItemViewHolder extends BaseViewHolder<ImageEntity> {

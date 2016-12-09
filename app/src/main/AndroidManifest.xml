@@ -5,19 +5,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
@@ -33,7 +28,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="4391f0b8563f3e72e8227371ba08763e" />
@@ -48,16 +42,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!--crop image-->
+        <!-- crop image -->
         <activity
-            android:name="io.github.winsontse.hearteyes.widget.crop.CropImageActivity"
+            android:name=".widget.crop.CropImageActivity"
             android:configChanges="orientation"
             android:theme="@style/AppTheme.CyanStatusBar" />
 
@@ -88,8 +81,13 @@
             android:name=".page.image.ImagePickerActivity"
             android:label="@string/pick_image"
             android:theme="@style/AppTheme.CyanStatusBar" />
-        <!--高德地图-->
+        <!-- 高德地图 -->
         <service android:name="com.amap.api.location.APSService" />
+
+        <activity
+            android:name=".page.moment.MomentEditActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
     </application>
 
 </manifest>

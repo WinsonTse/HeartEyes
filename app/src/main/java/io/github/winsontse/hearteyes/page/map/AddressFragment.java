@@ -60,7 +60,7 @@ public class AddressFragment extends BaseFragment implements AddressContract.Vie
     }
 
     @Override
-    public void initView(@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void initView( @Nullable Bundle savedInstanceState) {
         initMap(savedInstanceState);
     }
 
@@ -119,7 +119,7 @@ public class AddressFragment extends BaseFragment implements AddressContract.Vie
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public BasePresenter getPresenter() {
         return presenter;
     }
 }

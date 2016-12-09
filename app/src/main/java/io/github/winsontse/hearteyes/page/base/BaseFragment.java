@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.Toolbar;
@@ -26,12 +27,14 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
     private BaseActivity baseActivity;
     private View rootView;
 
+    protected boolean isOnceLoad = false;
+    protected boolean isPrepared = false;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof BaseActivity) {
             baseActivity = (BaseActivity) context;
-            setStatusBarViewVisible(isStatusBarViewVisible());
         }
     }
 
@@ -39,15 +42,30 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupComponent(HeartEyesApplication.get(getActivity()).getAppComponent());
-        setStatusBarViewVisible(isStatusBarViewVisible());
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isSupportLazyLoad() && isVisibleToUser && !isOnceLoad) {
+            isOnceLoad = true;
+            load(null);
+        }
+    }
+
+    private void load(Bundle savedInstanceState) {
+        if (isPrepared && isOnceLoad || !isSupportLazyLoad()) {
+            initView(savedInstanceState);
+        }
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (!hidden) {
-            setStatusBarViewVisible(isStatusBarViewVisible());
-        }
+    }
+
+    protected boolean isSupportLazyLoad() {
+        return false;
     }
 
     @Nullable
@@ -56,8 +74,8 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
         rootView = inflater.inflate(getLayoutId(), container, false);
         ButterKnife.bind(this, rootView);
         initToolbar();
-        initView(container, savedInstanceState);
-
+        isPrepared = true;
+        load(savedInstanceState);
         return rootView;
     }
 
@@ -86,7 +104,8 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
         return true;
     }
 
-    protected abstract void initView(ViewGroup container, Bundle savedInstanceState);
+    protected abstract void initView(Bundle savedInstanceState);
+
 
     protected abstract int getLayoutId();
 
@@ -100,8 +119,6 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
             presenter.unsubscribe();
         }
     }
-
-    protected abstract BasePresenter getPresenter();
 
     @Override
     public void showProgressDialog(boolean cancelable, String msg) {
@@ -181,10 +198,5 @@ public abstract class BaseFragment extends DialogFragment implements BaseView {
     public void onDestroyView() {
         super.onDestroyView();
         baseActivity.hideKeyboard();
-    }
-
-    @Override
-    public void setStatusBarViewVisible(boolean isVisible) {
-        baseActivity.setStatusBarViewVisible(isVisible);
     }
 }

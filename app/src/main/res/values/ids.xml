@@ -3,4 +3,5 @@
     <item name="tag_position" type="id" />
     <item name="tag_data" type="id" />
     <item name="tag_type" type="id" />
+    <item name="tag_extra" type="id" />
 </resources>

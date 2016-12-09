@@ -6,51 +6,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/main_content_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <View
-            android:id="@+id/v_status"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="?colorPrimary" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <FrameLayout
+            android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center" />
 
-            <FrameLayout
-                android:id="@+id/fragment_container"
+        <LinearLayout
+            android:id="@+id/bottom_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:translationY="?actionBarSize">
+
+            <io.github.winsontse.hearteyes.widget.BottomBar
+                android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" />
+                android:layout_height="?actionBarSize"
+                android:background="?colorPrimary"
+                android:elevation="8dp"
+                app:tabBackground="?selectableItemBackgroundBorderless"
+                app:tabIndicatorHeight="0dp"
+                app:tabSelectedTextColor="?colorPrimary"
+                app:tabTextColor="?android:textColorHint" />
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/bottom_container"
-                android:layout_gravity="bottom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:translationY="?actionBarSize"
-                android:orientation="vertical">
-
-                <io.github.winsontse.hearteyes.widget.BottomBar
-                    android:id="@+id/bottom_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?actionBarSize"
-                    android:background="?colorPrimary"
-                    app:tabBackground="?selectableItemBackgroundBorderless"
-                    app:tabIndicatorHeight="0dp"
-                    android:elevation="8dp"
-                    app:tabSelectedTextColor="?colorPrimary"
-                    app:tabTextColor="?android:textColorHint" />
-            </LinearLayout>
-
-        </FrameLayout>
-
-    </LinearLayout>
+    </FrameLayout>
 
     <android.support.design.widget.NavigationView
         android:layout_width="match_parent"
