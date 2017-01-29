@@ -12,9 +12,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
-import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
-import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.CircleContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.base.timeline.TimelinePresenterImpl;
 import io.github.winsontse.hearteyes.page.moment.contract.MomentListContract;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
@@ -31,7 +31,7 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
         super(view);
         this.view = view;
 
-        registerEventReceiver(MomentEvent.class, new Action1<MomentEvent>() {
+        receiveEvent(MomentEvent.class, new Action1<MomentEvent>() {
             @Override
             public void call(MomentEvent momentEvent) {
 
@@ -56,7 +56,8 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
                 AVQuery<AVObject> query = new AVQuery<>(MomentContract.KEY);
                 query.include(MomentContract.AUTHOR);
                 query.include(MomentContract.IMAGES);
-                query.whereEqualTo(MomentContract.CIRCLE_ID, getCurrentUser().getString(UserContract.CIRCLE_ID));
+                //TODO 增加circle_id
+//                query.whereEqualTo(MomentContract.CIRCLE_ID, getCurrentUser().getString(UserContract.CIRCLE_ID));
                 query.skip(skipCount);
                 query.limit(limitCount);
                 query.orderByDescending(MomentContract.CREATEAD_TIME);
@@ -180,9 +181,9 @@ public class MomentListPresenter extends TimelinePresenterImpl<AVObject> impleme
             @Override
             public void call(Subscriber<? super AVObject> subscriber) {
                 AVQuery<AVObject> query = new AVQuery<>(CircleContract.KEY);
-                query.whereEqualTo(CircleContract.CID, getCurrentUser().getString(UserContract.CIRCLE_ID));
-                query.include(CircleContract.CREATOR);
-                query.include(CircleContract.INVITEE);
+                //TODO 增加circle_id
+
+//                query.whereEqualTo(CircleContract.CID, getCurrentUser().getString(UserContract.CIRCLE_ID));TEE);
                 try {
                     List<AVObject> avObjects = query.find();
                     subscriber.onNext(avObjects.get(0));

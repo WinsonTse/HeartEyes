@@ -1,48 +1,42 @@
 package io.github.winsontse.hearteyes.page.qrcode;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.zxing.Result;
 
 import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.page.base.BaseFragment;
+import io.github.winsontse.hearteyes.page.base.BaseActivity;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.qrcode.component.DaggerScannerComponent;
 import io.github.winsontse.hearteyes.page.qrcode.contract.ScannerContract;
 import io.github.winsontse.hearteyes.page.qrcode.module.ScannerModule;
 import io.github.winsontse.hearteyes.page.qrcode.presenter.ScannerPresenter;
+import io.github.winsontse.hearteyes.util.constant.Extra;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class ScannerFragment extends BaseFragment implements ScannerContract.View, ZXingScannerView.ResultHandler {
+public class ScannerActivity extends BaseActivity implements ScannerContract.View, ZXingScannerView.ResultHandler {
+
+    public static final int REQUEST_CODE = 0x1412;
+
+    public static void start(Activity activity) {
+        activity.startActivityForResult(new Intent(activity, ScannerActivity.class), REQUEST_CODE);
+    }
 
     @Inject
     ScannerPresenter presenter;
 
     private ZXingScannerView scannerView;
 
-    public static ScannerFragment newInstance() {
-        Bundle args = new Bundle();
-        ScannerFragment fragment = new ScannerFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
-    public void initView( @Nullable Bundle savedInstanceState) {
-
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return scannerView = new ZXingScannerView(getActivity());
-
+    public void initView(@Nullable Bundle savedInstanceState) {
+        scannerView = new ZXingScannerView(this);
+        setContentView(scannerView);
     }
 
     @Override
@@ -88,8 +82,21 @@ public class ScannerFragment extends BaseFragment implements ScannerContract.Vie
 
     @Override
     public void resumeCamera() {
-        scannerView.resumeCameraPreview(ScannerFragment.this);
+        scannerView.resumeCameraPreview(ScannerActivity.this);
 
+    }
+
+    @Override
+    public void closePage(String resultStr) {
+        Intent intent = getIntent();
+        intent.putExtra(Extra.QRCODE_RESULT, resultStr);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
     }
 
     @Override

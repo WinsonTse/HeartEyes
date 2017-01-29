@@ -18,7 +18,7 @@ import com.bumptech.glide.request.target.Target;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.ImageEntity;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.widget.photoview.PhotoView;
 import io.github.winsontse.hearteyes.widget.photoview.PhotoViewAttacher;

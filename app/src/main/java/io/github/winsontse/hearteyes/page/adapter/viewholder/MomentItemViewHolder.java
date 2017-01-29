@@ -17,8 +17,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
-import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.adapter.MomentListAdapter;
 import io.github.winsontse.hearteyes.page.adapter.ThumbnailListAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;

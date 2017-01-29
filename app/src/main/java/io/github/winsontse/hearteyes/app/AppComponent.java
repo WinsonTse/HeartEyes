@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import dagger.Component;
-import io.github.winsontse.hearteyes.data.remote.WeiboApi;
+import io.github.winsontse.hearteyes.model.remote.WeiboService;
 import io.github.winsontse.hearteyes.util.scope.ApplicationScope;
 
 /**
@@ -18,7 +18,7 @@ public interface AppComponent {
 
     Context getApplicationContext();
 
-    WeiboApi getWeiboApi();
+    WeiboService getWeiboApi();
 
     LeanCloudManager getLeanCloudManager();
 

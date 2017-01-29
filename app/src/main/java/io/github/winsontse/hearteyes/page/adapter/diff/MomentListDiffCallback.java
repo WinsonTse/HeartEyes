@@ -7,7 +7,7 @@ import com.avos.avoscloud.AVObject;
 
 import java.util.List;
 
-import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.diff.base.BaseListDiffCallback;
 
 /**

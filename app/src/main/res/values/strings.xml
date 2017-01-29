@@ -51,4 +51,6 @@
     <string name="title_todo">备忘</string>
     <string name="title_me">我</string>
 
+    <string name="not_permission_camera">请先允许相机权限</string>
+
 </resources>

@@ -35,9 +35,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.data.model.ImageEntity;
-import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
-import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
+import io.github.winsontse.hearteyes.model.entity.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.leancloud.CircleContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.MomentListAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
@@ -123,6 +123,7 @@ public class MomentListFragment extends TimelineFragment<AVObject>
         momentListAdapter = new MomentListAdapter();
         layoutManager = new LinearLayoutManager(getActivity());
         initRecyclerView();
+
         installTimelineView(rv, layoutManager, momentListAdapter, srl, vEmpty, pbLoading);
     }
 

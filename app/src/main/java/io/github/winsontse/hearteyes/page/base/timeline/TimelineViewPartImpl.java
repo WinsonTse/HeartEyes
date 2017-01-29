@@ -107,6 +107,11 @@ public class TimelineViewPartImpl<T> implements TimelineViewPart<T> {
     }
 
     @Override
+    public void onLoadMoreStart() {
+
+    }
+
+    @Override
     public void onRefreshCompleted(List<T> data) {
         if (adapter != null) {
             adapter.setItems(data);

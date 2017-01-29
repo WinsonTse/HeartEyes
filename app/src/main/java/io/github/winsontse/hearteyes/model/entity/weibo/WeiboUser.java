@@ -1,6 +1,4 @@
-package io.github.winsontse.hearteyes.data.model.weibo;
-
-import com.google.gson.annotations.SerializedName;
+package io.github.winsontse.hearteyes.model.entity.weibo;
 
 /**
  * Created by winson on 16/5/26.

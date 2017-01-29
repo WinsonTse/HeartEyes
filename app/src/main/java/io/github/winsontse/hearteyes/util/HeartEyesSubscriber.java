@@ -27,7 +27,7 @@ public abstract class HeartEyesSubscriber<T> extends Subscriber<T> {
     }
 
     @Override
-    public void onError(Throwable e) {
+    public final void onError(Throwable e) {
         LogUtil.e("RxJava错误信息:" + e);
         if (e instanceof AVException) {
             AVException avException = (AVException) e;

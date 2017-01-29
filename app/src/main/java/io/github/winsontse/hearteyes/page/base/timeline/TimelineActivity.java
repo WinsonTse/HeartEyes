@@ -8,7 +8,6 @@ import android.view.View;
 import java.util.List;
 
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
-import io.github.winsontse.hearteyes.page.adapter.base.OnRecyclerViewScrollListener;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
 
 /**
@@ -24,7 +23,7 @@ public abstract class TimelineActivity<T> extends BaseActivity implements Timeli
     }
 
     @Override
-    public final void onRequestCompleted() {
+    public void onRequestCompleted() {
         viewImpl.onRequestCompleted();
     }
 

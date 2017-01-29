@@ -1,12 +1,12 @@
 package io.github.winsontse.hearteyes.page.account;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
@@ -20,12 +20,12 @@ import io.github.winsontse.hearteyes.page.account.component.DaggerLoginComponent
 import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.account.module.LoginModule;
 import io.github.winsontse.hearteyes.page.account.presenter.LoginPresenter;
-import io.github.winsontse.hearteyes.page.base.BaseFragment;
+import io.github.winsontse.hearteyes.page.base.BaseActivity;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.util.AnimatorUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 
-public class LoginFragment extends BaseFragment implements LoginContract.View {
+public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     @Inject
     LoginPresenter presenter;
@@ -36,25 +36,40 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     private SsoHandler ssoHandler;
 
-    public static LoginFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        LoginFragment fragment = new LoginFragment();
-        fragment.setArguments(args);
-        return fragment;
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, LoginActivity.class);
+        activity.startActivity(intent);
     }
 
     @Override
-    public void initView( @Nullable Bundle savedInstanceState) {
-        ssoHandler = new SsoHandler(getActivity(), new AuthInfo(getActivity(), SecretConstant.WEIBO_APP_KEY, SecretConstant.WEIBO_REDIRECT_URL, SecretConstant.WEIBO_SCOPE));
+    public void initView(@Nullable Bundle savedInstanceState) {
+        ssoHandler = new SsoHandler(this, new AuthInfo(this, SecretConstant.WEIBO_APP_KEY, SecretConstant.WEIBO_REDIRECT_URL, SecretConstant.WEIBO_SCOPE));
         fabEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setLoadingState();
+                setLoadingStatus();
             }
         });
         showEnterFab();
+    }
+
+
+    public void setLoadingStatus() {
+        progressBar.show();
+        fabEnter.hide(new FloatingActionButton.OnVisibilityChangedListener() {
+            /**
+             * Called when a FloatingActionButton has been
+             * {@link #hide(OnVisibilityChangedListener) hidden}.
+             *
+             * @param fab the FloatingActionButton that was hidden.
+             */
+            @Override
+            public void onHidden(FloatingActionButton fab) {
+                super.onHidden(fab);
+                presenter.authirize(ssoHandler);
+
+            }
+        });
     }
 
     @Override
@@ -84,24 +99,6 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         }
     }
 
-    @Override
-    public void setLoadingState() {
-        progressBar.show();
-        fabEnter.hide(new FloatingActionButton.OnVisibilityChangedListener() {
-            /**
-             * Called when a FloatingActionButton has been
-             * {@link #hide(OnVisibilityChangedListener) hidden}.
-             *
-             * @param fab the FloatingActionButton that was hidden.
-             */
-            @Override
-            public void onHidden(FloatingActionButton fab) {
-                super.onHidden(fab);
-                presenter.authirize(ssoHandler);
-
-            }
-        });
-    }
 
     @Override
     public void showEnterFab() {

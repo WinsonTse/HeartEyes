@@ -20,6 +20,8 @@ public interface TimelineViewPart<T> {
 
     void onRefreshStart();
 
+    void onLoadMoreStart();
+
     void onRefreshCompleted(List<T> data);
 
     void onLoadMoreCompleted(List<T> data);

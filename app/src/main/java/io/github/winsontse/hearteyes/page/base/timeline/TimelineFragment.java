@@ -30,13 +30,13 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     }
 
     @Override
-    public final void onRequestCompleted() {
-        viewImpl.onRequestCompleted();
+    public void onRefreshStart() {
+        viewImpl.onRefreshStart();
     }
 
     @Override
-    public void onRefreshStart() {
-        viewImpl.onRefreshStart();
+    public void onLoadMoreStart() {
+
     }
 
     @Override
@@ -47,6 +47,11 @@ public abstract class TimelineFragment<T> extends BaseFragment implements Timeli
     @Override
     public void onLoadMoreCompleted(List<T> data) {
         viewImpl.onLoadMoreCompleted(data);
+    }
+
+    @Override
+    public void onRequestCompleted() {
+        viewImpl.onRequestCompleted();
     }
 
     @Override

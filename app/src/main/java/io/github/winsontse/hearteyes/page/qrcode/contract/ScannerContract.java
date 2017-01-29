@@ -7,6 +7,8 @@ public interface ScannerContract {
 
     interface View extends BaseView {
         void resumeCamera();
+
+        void closePage(String resultStr);
     }
 
     interface Presenter extends BasePresenter {

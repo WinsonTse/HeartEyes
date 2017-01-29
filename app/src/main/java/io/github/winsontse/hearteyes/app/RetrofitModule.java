@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import dagger.Module;
 import dagger.Provides;
-import io.github.winsontse.hearteyes.data.remote.WeiboApi;
+import io.github.winsontse.hearteyes.model.remote.WeiboService;
 import io.github.winsontse.hearteyes.util.scope.ApplicationScope;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -22,16 +22,23 @@ public class RetrofitModule {
 
     @ApplicationScope
     @Provides
-    Retrofit provideRetrofit() {
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+    OkHttpClient provideOkHttpClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClientBuilder.addInterceptor(httpLoggingInterceptor);
+        builder.addInterceptor(httpLoggingInterceptor);
+        return builder.build();
+    }
+
+
+    @ApplicationScope
+    @Provides
+    Retrofit provideRetrofit(OkHttpClient httpClient) {
 
         return new Retrofit.Builder()
-                .client(new OkHttpClient.Builder().build())
-                .baseUrl(WeiboApi.BASE_URL)
+                .client(httpClient)
+                .baseUrl("http://www.baidu.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
@@ -39,7 +46,7 @@ public class RetrofitModule {
 
     @ApplicationScope
     @Provides
-    WeiboApi provideWeiboApi(Retrofit retrofit) {
-        return retrofit.create(WeiboApi.class);
+    WeiboService provideWeiboService(Retrofit retrofit) {
+        return retrofit.create(WeiboService.class);
     }
 }

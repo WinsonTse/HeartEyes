@@ -2,6 +2,7 @@ package io.github.winsontse.hearteyes.page.base;
 
 import com.avos.avoscloud.AVUser;
 
+import io.github.winsontse.hearteyes.util.rxbus.event.LoginOrLogoutEvent;
 import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import io.github.winsontse.hearteyes.util.rxbus.event.base.BaseEvent;
 import rx.Observable;
@@ -13,6 +14,16 @@ import rx.functions.Action1;
  * Created by hao.xie on 16/5/10.
  */
 public interface BasePresenter {
+
+    void onAttach();
+
+    void onDetach();
+
+    <T> Observable<T> rxLife(Observable<T> observable);
+
+    <T> Observable<T> rxSchedule(Observable<T> observable);
+
+    <T> Observable<T> rxLifeAndSchedule(Observable<T> observable);
 
     void addSubscription(Subscription subscription);
 
@@ -30,5 +41,7 @@ public interface BasePresenter {
 
     AVUser getCurrentUser();
 
-    <T extends BaseEvent> void registerEventReceiver(Class<T> cls, Action1<T> action1);
+    <T> void receiveEvent(Class<T> cls, Action1<T> action1);
+
+    void receiveLoginOrLogoutEvent(Action1<LoginOrLogoutEvent> action1);
 }

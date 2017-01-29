@@ -41,4 +41,5 @@ public interface BaseView {
     int getColorById(int colorId);
 
     BasePresenter getPresenter();
+
 }

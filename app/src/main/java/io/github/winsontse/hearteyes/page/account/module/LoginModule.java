@@ -15,7 +15,7 @@ public class LoginModule {
         this.view = view;
     }
 
-    @FragmentScope
+    @ActivityScope
     @Provides
     LoginContract.View provideLoginView() {
         return view;

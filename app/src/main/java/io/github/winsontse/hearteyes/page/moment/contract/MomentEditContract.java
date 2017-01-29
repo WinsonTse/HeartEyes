@@ -5,7 +5,7 @@ import com.avos.avoscloud.AVObject;
 
 import java.util.List;
 
-import io.github.winsontse.hearteyes.data.model.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.ImageEntity;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.base.BaseView;
 

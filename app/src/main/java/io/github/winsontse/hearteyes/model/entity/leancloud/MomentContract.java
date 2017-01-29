@@ -1,4 +1,4 @@
-package io.github.winsontse.hearteyes.data.model.leancloud;
+package io.github.winsontse.hearteyes.model.entity.leancloud;
 
 /**
  * Created by winson on 16/6/23.

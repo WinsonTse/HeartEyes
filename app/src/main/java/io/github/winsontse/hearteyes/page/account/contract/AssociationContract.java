@@ -10,6 +10,7 @@ public interface AssociationContract {
     interface View extends BaseView {
         void showQrcode(Bitmap bitmap);
 
+        void setResult(int resultCode);
     }
 
     interface Presenter extends BasePresenter {

@@ -3,6 +3,7 @@ package io.github.winsontse.hearteyes.page.account.module;
 import dagger.Module;
 import dagger.Provides;
 import io.github.winsontse.hearteyes.page.account.contract.AssociationContract;
+import io.github.winsontse.hearteyes.util.scope.ActivityScope;
 import io.github.winsontse.hearteyes.util.scope.FragmentScope;
 
 
@@ -14,7 +15,7 @@ public class AssociationModule {
         this.view = view;
     }
 
-    @FragmentScope
+    @ActivityScope
     @Provides
     AssociationContract.View provideAssosiationView() {
         return view;

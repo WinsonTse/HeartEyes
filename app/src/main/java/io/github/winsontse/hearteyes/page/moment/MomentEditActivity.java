@@ -1,9 +1,6 @@
 package io.github.winsontse.hearteyes.page.moment;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,8 +31,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.data.model.ImageEntity;
-import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
+import io.github.winsontse.hearteyes.model.entity.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.SelectedImagesAdapter;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
@@ -46,8 +41,6 @@ import io.github.winsontse.hearteyes.page.moment.component.DaggerMomentEditCompo
 import io.github.winsontse.hearteyes.page.moment.contract.MomentEditContract;
 import io.github.winsontse.hearteyes.page.moment.module.MomentEditModule;
 import io.github.winsontse.hearteyes.page.moment.presenter.MomentEditPresenter;
-import io.github.winsontse.hearteyes.util.AnimatorUtil;
-import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import rx.functions.Action1;
 

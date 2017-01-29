@@ -1,11 +1,14 @@
 package io.github.winsontse.hearteyes.page.account.presenter;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.signature.Base64Encoder;
 
@@ -14,22 +17,19 @@ import java.util.Arrays;
 import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
-import io.github.winsontse.hearteyes.data.model.leancloud.CircleMemberContract;
-import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
-import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.CircleContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.CircleMemberContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.account.contract.AssociationContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
-import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.HeartEyesException;
-import io.github.winsontse.hearteyes.util.RxUtil;
+import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
 import io.github.winsontse.hearteyes.util.ZxingUtil;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.util.rxbus.RxBus;
-import io.github.winsontse.hearteyes.util.rxbus.event.UidEvent;
+import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class AssociationPresenter extends BasePresenterImpl implements AssociationContract.Presenter {
@@ -38,29 +38,21 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
     @Inject
     public AssociationPresenter(final AssociationContract.View view) {
         this.view = view;
-
-        registerEventReceiver(UidEvent.class, new Action1<UidEvent>() {
-            @Override
-            public void call(UidEvent uidEvent) {
-                associate(uidEvent.getUid());
-            }
-        });
-
     }
 
 
     @Override
     public void generateQrcode(int width, int height, final int bgColor, final int fgColor) {
-        addSubscription(Observable.just(AVUser.getCurrentUser())
+        rxLifeAndSchedule(Observable.just(AVUser.getCurrentUser())
                 .map(new Func1<AVUser, Bitmap>() {
                     @Override
                     public Bitmap call(AVUser avUser) {
+//                        String str = System.currentTimeMillis() + SecretConstant.QRCODE_CONTENT_SPLIT + "584a905eac502e00691d3222";
                         String str = avUser.getCreatedAt().getTime() + SecretConstant.QRCODE_CONTENT_SPLIT + avUser.getObjectId();
                         String encodeStr = Base64Encoder.encode(str);
                         return ZxingUtil.generateQRCode(encodeStr, 500, 500, bgColor, fgColor);
                     }
-                })
-                .compose(RxUtil.rxSchedulerHelper(Bitmap.class))
+                }))
                 .subscribe(new Subscriber<Bitmap>() {
                     @Override
                     public void onCompleted() {
@@ -78,110 +70,121 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
                             view.showQrcode(bitmap);
                         }
                     }
-                })
-        );
+                });
     }
 
     @Override
-    public void associate(String uid) {
+    public void associate(String content) {
 
-        view.showProgressDialog(false, view.getStringById(R.string.tips_associating));
-        addSubscription(Observable.just(uid)
-                        .map(new Func1<String, AVUser>() {
+
+        rxLifeAndSchedule(Observable.just(content)
+                .flatMap(new Func1<String, Observable<AVUser>>() {
+                    @Override
+                    public Observable<AVUser> call(final String str) {
+                        return Observable.create(new Observable.OnSubscribe<AVUser>() {
                             @Override
-                            public AVUser call(String str) {
+                            public void call(Subscriber<? super AVUser> subscriber) {
                                 try {
-                                    return (AVUser) AVUser.createWithoutData(AVUser.class, str).fetch();
+                                    String result = new String(Base64.decode(str, Base64.DEFAULT));
+                                    if (result.contains(SecretConstant.QRCODE_CONTENT_SPLIT)) {
+                                        String[] splitArray = result.split(SecretConstant.QRCODE_CONTENT_SPLIT);
+                                        if (splitArray.length == 2 && !TextUtils.isEmpty(splitArray[1])) {
+                                            String objectId = splitArray[1];
+                                            subscriber.onNext((AVUser) AVUser.createWithoutData(AVUser.class, objectId).fetch());
+                                            subscriber.onCompleted();
+                                        } else {
+                                            subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_qrcode)));
+                                        }
+                                    } else {
+                                        subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_qrcode)));
+                                    }
+
                                 } catch (AVException e) {
-                                    e.printStackTrace();
-                                    return null;
+                                    subscriber.onError(e);
                                 }
                             }
-                        }).flatMap(new Func1<AVUser, Observable<AVObject>>() {
+                        });
+                    }
+                })
+                .flatMap(new Func1<AVUser, Observable<AVObject>>() {
+                    @Override
+                    public Observable<AVObject> call(final AVUser otherUser) {
+                        return Observable.create(new Observable.OnSubscribe<AVObject>() {
                             @Override
-                            public Observable<AVObject> call(final AVUser other) {
-                                return Observable.create(new Observable.OnSubscribe<AVObject>() {
-                                    @Override
-                                    public void call(Subscriber<? super AVObject> subscriber) {
-                                        AVUser me = AVUser.getCurrentUser();
-                                        //同一人
-                                        if (TextUtils.equals(me.getObjectId(), other.getObjectId())) {
-                                            subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_cannot_associate_self)));
-                                        } else if (me.getAVObject(UserContract.FRIEND) != null || !TextUtils.isEmpty(me.getString(UserContract.CIRCLE_ID))) {
-                                            subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_you_has_friends)));
-                                        } else if (other.getAVObject(UserContract.FRIEND) != null || !TextUtils.isEmpty(other.getString(UserContract.CIRCLE_ID))) {
-                                            subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_she_has_friends)));
-                                        } else {
+                            public void call(Subscriber<? super AVObject> subscriber) {
+                                AVUser me = AVUser.getCurrentUser();
 
-                                            //创建圈子
-                                            String cid = Base64Encoder.encode(System.currentTimeMillis() + me.getObjectId() + other.getObjectId());
-                                            AVObject circle = new AVObject(CircleContract.KEY);
-                                            circle.put(CircleContract.NAME, me.getString(UserContract.NICKNAME) + "和" + other.getString(UserContract.NICKNAME) + "的圈子");
-                                            circle.put(CircleContract.CREATOR, me);
-                                            circle.put(CircleContract.INVITEE, other);
-                                            circle.put(CircleContract.CID, cid);
+                                //同一人
+                                if (TextUtils.equals(me.getObjectId(), otherUser.getObjectId())) {
+                                    subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_cannot_associate_self)));
+                                    return;
+                                }
 
-
-                                            //为我增加圈子
-                                            me.put(UserContract.FRIEND, other);
-                                            me.put(UserContract.CIRCLE_ID, cid);
-
-                                            //为她增加圈子
-//                                    other.put(UserContract.FRIEND, me);
-//                                    other.put(UserContract.CIRCLE_ID, circle);
-
-
-                                            //把我加到圈子成员表
-                                            AVObject circleMemberMe = new AVObject(CircleMemberContract.KEY);
-                                            circleMemberMe.put(CircleMemberContract.CIRCLE_ID, cid);
-                                            circleMemberMe.put(CircleMemberContract.MEMBER, me);
-                                            circleMemberMe.put(CircleMemberContract.CREATOR, me);
-                                            circleMemberMe.put(CircleMemberContract.INVITEE, other);
-
-                                            //把我加到圈子成员表
-                                            AVObject circleMemberOther = new AVObject(CircleMemberContract.KEY);
-                                            circleMemberOther.put(CircleMemberContract.CIRCLE_ID, cid);
-                                            circleMemberOther.put(CircleMemberContract.MEMBER, other);
-                                            circleMemberOther.put(CircleMemberContract.CREATOR, me);
-                                            circleMemberOther.put(CircleMemberContract.INVITEE, other);
-
-                                            try {
-                                                AVObject.saveAll(Arrays.asList(circle, me, circleMemberMe, circleMemberOther));
-                                                subscriber.onNext(me);
-                                                subscriber.onCompleted();
-                                            } catch (Exception e) {
-                                                me.put(UserContract.FRIEND, null);
-                                                me.put(UserContract.CIRCLE_ID, null);
-                                                subscriber.onError(e);
-                                            }
-                                        }
-
+                                try {
+                                    AVQuery<AVObject> meQuery = new AVQuery<>(CircleMemberContract.KEY);
+                                    meQuery.whereEqualTo(CircleMemberContract.USER, me);
+                                    if (meQuery.count() != 0) {
+                                        subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_you_has_friends)));
+                                        return;
                                     }
-                                });
-                            }
-                        })
-                        .compose(RxUtil.rxSchedulerHelper(AVObject.class))
-                        .subscribe(new HeartEyesSubscriber<AVObject>(view) {
-                            @Override
-                            public void onCompleted() {
+
+                                    AVQuery<AVObject> otherQuery = new AVQuery<>(CircleMemberContract.KEY);
+                                    otherQuery.whereEqualTo(CircleMemberContract.USER, otherUser);
+                                    if (otherQuery.count() != 0) {
+                                        subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_she_has_friends)));
+                                        return;
+                                    }
+
+                                    //创建圈子
+                                    AVObject circle = new AVObject(CircleContract.KEY);
+                                    circle.put(CircleContract.NAME, me.getString(UserContract.NICKNAME) + "和" + otherUser.getString(UserContract.NICKNAME) + "的圈子");
+                                    circle.save();
+                                    circle.fetch();
+
+                                    //把我加到圈子成员表
+                                    AVObject circleMemberMe = new AVObject(CircleMemberContract.KEY);
+                                    circleMemberMe.put(CircleMemberContract.CIRCLE, circle);
+                                    circleMemberMe.put(CircleMemberContract.USER, me);
+
+                                    //把ta加到圈子成员表
+                                    AVObject circleMemberOther = new AVObject(CircleMemberContract.KEY);
+                                    circleMemberOther.put(CircleMemberContract.CIRCLE, circle);
+                                    circleMemberOther.put(CircleMemberContract.USER, otherUser);
+
+                                    AVObject.saveAll(Arrays.asList(circleMemberMe, circleMemberOther));
+                                    subscriber.onNext(me);
+                                    subscriber.onCompleted();
+
+                                } catch (AVException e) {
+                                    subscriber.onError(e);
+                                }
 
                             }
 
-                            @Override
-                            public void handleError(Throwable e) {
-                                view.hideProgressDialog();
-                            }
+                        });
+                    }
+                }))
+                .subscribe(new HeartEyesSubscriber<AVObject>(view) {
+                    @Override
+                    public void onCompleted() {
 
-                            @Override
-                            public void onNext(AVObject avObject) {
-                                view.hideProgressDialog();
-                                Log.d("winson", "执行");
-                                Log.d("winson", "正确:" + avObject.toString() + avObject.getString(UserContract.NICKNAME));
+                    }
 
-                                RxBus.getInstance().post(new PushEvent(PushEvent.RESTART_AND_NOTIFY_FRIEND));
-                            }
-                        })
-        );
+                    @Override
+                    public void handleError(Throwable e) {
+                        view.hideProgressDialog();
+                    }
+
+                    @Override
+                    public void onNext(AVObject avObject) {
+                        view.hideProgressDialog();
+                        Log.d("winson", "执行");
+                        Log.d("winson", "正确:" + avObject.toString() + avObject.getString(UserContract.NICKNAME));
+                        view.setResult(Activity.RESULT_OK);
+                        view.closePage();
+                        RxBus.getInstance().post(new PushEvent(PushEvent.RESTART_AND_NOTIFY_FRIEND));
+                    }
+                });
     }
 
 }

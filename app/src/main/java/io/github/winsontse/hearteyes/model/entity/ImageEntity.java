@@ -1,4 +1,4 @@
-package io.github.winsontse.hearteyes.data.model;
+package io.github.winsontse.hearteyes.model.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;

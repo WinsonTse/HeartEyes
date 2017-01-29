@@ -38,7 +38,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.ImageEntity;
 import io.github.winsontse.hearteyes.page.adapter.ImagePickerAdaper;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseRecyclerAdapter;
 import io.github.winsontse.hearteyes.util.FileUtil;

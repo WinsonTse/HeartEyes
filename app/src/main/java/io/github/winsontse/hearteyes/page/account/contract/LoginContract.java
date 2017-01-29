@@ -9,7 +9,6 @@ import io.github.winsontse.hearteyes.util.AnimatorUtil;
 public interface LoginContract {
 
     interface View extends BaseView {
-        void setLoadingState();
         void showEnterFab();
     }
 

@@ -1,7 +1,6 @@
 package io.github.winsontse.hearteyes.page.account.presenter;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVFile;
@@ -16,25 +15,24 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import io.github.winsontse.hearteyes.util.rxbus.event.PushEvent;
-import io.github.winsontse.hearteyes.data.model.leancloud.UserContract;
-import io.github.winsontse.hearteyes.data.model.weibo.WeiboUser;
-import io.github.winsontse.hearteyes.data.remote.WeiboApi;
+import io.github.winsontse.hearteyes.model.entity.leancloud.UserContract;
+import io.github.winsontse.hearteyes.model.entity.weibo.WeiboUser;
+import io.github.winsontse.hearteyes.model.remote.WeiboService;
 import io.github.winsontse.hearteyes.page.account.contract.LoginContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
 import io.github.winsontse.hearteyes.util.HeartEyesSubscriber;
-import io.github.winsontse.hearteyes.util.RxUtil;
 import io.github.winsontse.hearteyes.util.rxbus.RxBus;
+import io.github.winsontse.hearteyes.util.rxbus.event.LoginOrLogoutEvent;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
 
 public class LoginPresenter extends BasePresenterImpl implements LoginContract.Presenter {
     private LoginContract.View view;
-    private WeiboApi weiboApi;
+    private WeiboService weiboApi;
 
     @Inject
-    public LoginPresenter(LoginContract.View view, WeiboApi weiboApi) {
+    public LoginPresenter(LoginContract.View view, WeiboService weiboApi) {
         this.view = view;
         this.weiboApi = weiboApi;
     }
@@ -81,7 +79,7 @@ public class LoginPresenter extends BasePresenterImpl implements LoginContract.P
     }
 
     private void keepWeiboUserInfo(final AVUser avUser, Oauth2AccessToken token) {
-        addSubscription(weiboApi.getUserByUid(token.getToken(), token.getUid())
+        rxLifeAndSchedule(weiboApi.getUserByUid(token.getToken(), token.getUid())
                 .flatMap(new Func1<WeiboUser, Observable<AVUser>>() {
                     @Override
                     public Observable<AVUser> call(final WeiboUser weiboUser) {
@@ -102,8 +100,7 @@ public class LoginPresenter extends BasePresenterImpl implements LoginContract.P
                             }
                         });
                     }
-                })
-                .compose(RxUtil.rxSchedulerHelper(AVUser.class))
+                }))
                 .subscribe(new HeartEyesSubscriber<AVUser>(view) {
                     @Override
                     public void onCompleted() {
@@ -112,14 +109,14 @@ public class LoginPresenter extends BasePresenterImpl implements LoginContract.P
 
                     @Override
                     public void handleError(Throwable e) {
-
+                        view.showEnterFab();
                     }
 
                     @Override
                     public void onNext(AVUser avUser) {
-                        Log.d("winson", avUser.getString(UserContract.NICKNAME) + "   " + avUser.getAVFile(UserContract.AVATAR).getName());
-                        RxBus.getInstance().post(new PushEvent(PushEvent.RESTART_INIT_PAGE));
+                        RxBus.getInstance().post(new LoginOrLogoutEvent(true));
+                        view.closePage();
                     }
-                }));
+                });
     }
 }

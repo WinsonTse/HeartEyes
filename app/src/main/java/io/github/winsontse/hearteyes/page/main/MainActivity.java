@@ -1,19 +1,16 @@
 package io.github.winsontse.hearteyes.page.main;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.avos.avoscloud.PushService;
-import com.bumptech.glide.manager.SupportRequestManagerFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +18,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.page.account.AssociationFragment;
-import io.github.winsontse.hearteyes.page.account.LoginFragment;
+import io.github.winsontse.hearteyes.page.account.AssociationActivity;
+import io.github.winsontse.hearteyes.page.account.LoginActivity;
 import io.github.winsontse.hearteyes.page.base.BaseActivity;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.main.component.DaggerMainComponent;
@@ -35,14 +31,11 @@ import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
 import io.github.winsontse.hearteyes.page.todo.TodoListFragment;
 import io.github.winsontse.hearteyes.page.user.UserFragment;
-import io.github.winsontse.hearteyes.util.AnimatorUtil;
-import io.github.winsontse.hearteyes.util.ScreenUtil;
 import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.widget.BottomBar;
 
 public class MainActivity extends BaseActivity implements MainContract.View,
-        FragmentManager.OnBackStackChangedListener,
         BottomBar.OnTabChangeListener {
     @Inject
     MainPresenter presenter;
@@ -62,10 +55,6 @@ public class MainActivity extends BaseActivity implements MainContract.View,
         fragmentManager = getSupportFragmentManager();
         initBottomBar();
         initPage();
-        openNewPage(getIntent().getIntExtra(Extra.TYPE_NEW_PAGE, 0));
-
-        fragmentManager.addOnBackStackChangedListener(this);
-
     }
 
     @Override
@@ -78,34 +67,10 @@ public class MainActivity extends BaseActivity implements MainContract.View,
         return R.layout.activity_main;
     }
 
-    /**
-     * Called whenever the contents of the back stack change.
-     */
-    @Override
-    public void onBackStackChanged() {
-        List<Fragment> backStackFragments = fragmentManager.getFragments();
-        List<Fragment> fragments = new ArrayList<>();
-        for (Fragment fragment : backStackFragments) {
-            if (fragment != null && !(fragment instanceof SupportRequestManagerFragment)) {
-                fragments.add(fragment);
-            }
-        }
-        if (fragmentManager.getBackStackEntryCount() == 0 && bottomBar.isTabTag(fragments.get(0).getTag())) {
-            showBottomBar();
-        } else {
-            AnimatorUtil.translationToHideBottomBar(bottomContainer).start();
-        }
-    }
-
-    private void showBottomBar() {
-        AnimatorUtil.translationToCorrect(bottomContainer).start();
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         bottomBar.setOnTabChangeListener(null);
-        fragmentManager.removeOnBackStackChangedListener(this);
     }
 
     private void initBottomBar() {
@@ -190,11 +155,6 @@ public class MainActivity extends BaseActivity implements MainContract.View,
             replacePage(MomentListFragment.newInstance(), false);
         }
 
-        if (fragmentManager.getBackStackEntryCount() == 0) {
-            showBottomBar();
-        }
-
-
 //        Fragment loginFragment = findFragmentByClass(LoginFragment.class);
 //        if(loginFragment != null) {
 //            fragmentManager.beginTransaction().remove(loginFragment).commitAllowingStateLoss();
@@ -209,18 +169,12 @@ public class MainActivity extends BaseActivity implements MainContract.View,
 
     @Override
     public void goToLoginPage() {
-        Fragment fragment = findFragmentByClass(LoginFragment.class);
-        if (fragment == null) {
-            replacePage(LoginFragment.newInstance(), false);
-        }
+        LoginActivity.start(this);
     }
 
     @Override
     public void goToAssosiationPage() {
-        Fragment fragment = findFragmentByClass(AssociationFragment.class);
-        if (fragment == null) {
-            replacePage(AssociationFragment.newInstance(), false);
-        }
+        AssociationActivity.start(this);
     }
 
     @Override
@@ -231,12 +185,13 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        LoginFragment loginFragment = (LoginFragment) findFragmentByClass(LoginFragment.class);
-        if (loginFragment != null) {
-            loginFragment.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AssociationActivity.RESULT_CODE) {
+            if (resultCode == RESULT_OK) {
+                presenter.validateUserStatus();
+            } else {
+                finish();
+            }
         }
-        presenter.handleActivityResult(requestCode, resultCode, data);
     }
 
     @Override

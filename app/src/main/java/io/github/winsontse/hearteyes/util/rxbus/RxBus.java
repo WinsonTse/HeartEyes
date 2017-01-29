@@ -37,7 +37,7 @@ public class RxBus {
         }
     }
 
-    public <T extends BaseEvent> Observable<T> toObserverable(Class<T> eventType) {
-        return bus.ofType(eventType);
+    public <T> Observable<T> toObserverable(Class<T> clazz) {
+        return bus.ofType(clazz);
     }
 }

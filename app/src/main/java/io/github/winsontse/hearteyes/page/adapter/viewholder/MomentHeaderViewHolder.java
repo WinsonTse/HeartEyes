@@ -10,7 +10,7 @@ import com.avos.avoscloud.AVObject;
 
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
-import io.github.winsontse.hearteyes.data.model.leancloud.CircleContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.CircleContract;
 import io.github.winsontse.hearteyes.page.adapter.MomentListAdapter;
 import io.github.winsontse.hearteyes.page.adapter.base.BaseViewHolder;
 import io.github.winsontse.hearteyes.util.ImageLoader;

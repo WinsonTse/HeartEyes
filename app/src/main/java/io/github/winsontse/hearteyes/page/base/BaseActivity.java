@@ -37,6 +37,11 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupComponent(getAppComponent());
+        BasePresenter presenter = getPresenter();
+        if (presenter != null) {
+            presenter.onAttach();
+        }
+
         setTransition();
         if (isSupportLayoutFullScreen()) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
@@ -111,7 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         hideKeyboard();
         BasePresenter presenter = getPresenter();
         if (presenter != null) {
-            presenter.unsubscribe();
+            presenter.onDetach();
         }
     }
 

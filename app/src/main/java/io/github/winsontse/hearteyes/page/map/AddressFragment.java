@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
-import android.view.ViewGroup;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
@@ -19,7 +18,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.data.model.leancloud.MomentContract;
+import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;
 import io.github.winsontse.hearteyes.page.base.BasePresenter;
 import io.github.winsontse.hearteyes.page.map.component.DaggerAddressComponent;
