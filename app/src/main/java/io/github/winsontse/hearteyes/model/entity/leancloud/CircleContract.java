@@ -8,4 +8,6 @@ public interface CircleContract {
     String NAME = "name";
     String COVER = "cover";
     String LOVE_DAY = "loveDay";
+    String CREATOR = "creator";
+    String INVITEE = "invitee";
 }

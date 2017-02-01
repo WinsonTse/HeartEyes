@@ -31,7 +31,6 @@ import io.github.winsontse.hearteyes.page.main.presenter.MainPresenter;
 import io.github.winsontse.hearteyes.page.moment.MomentListFragment;
 import io.github.winsontse.hearteyes.page.todo.TodoListFragment;
 import io.github.winsontse.hearteyes.page.user.UserFragment;
-import io.github.winsontse.hearteyes.util.constant.Extra;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.widget.BottomBar;
 
@@ -56,6 +55,15 @@ public class MainActivity extends BaseActivity implements MainContract.View,
         initBottomBar();
         initPage();
     }
+
+    public void initPage() {
+        presenter.validateUserStatus();
+        PushService.setDefaultPushCallback(this, MainActivity.class);
+        PushService.subscribe(this, SecretConstant.PUSH_CHANNEL_PRIVATE, MainActivity.class);
+        presenter.updateInstallationId();
+
+    }
+
 
     @Override
     protected boolean isSupportLayoutFullScreen() {
@@ -89,19 +97,6 @@ public class MainActivity extends BaseActivity implements MainContract.View,
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        openNewPage(intent.getIntExtra(Extra.TYPE_NEW_PAGE, 0));
-    }
-
-    public void initPage() {
-        presenter.validateUserStatus();
-        PushService.setDefaultPushCallback(this, MainActivity.class);
-        PushService.subscribe(this, SecretConstant.PUSH_CHANNEL_PRIVATE, MainActivity.class);
-        presenter.updateInstallationId();
-
-    }
-
-    private void openNewPage(int intExtra) {
-        presenter.handleNewPageEvent(intExtra);
     }
 
     @Override

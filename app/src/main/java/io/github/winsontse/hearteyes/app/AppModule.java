@@ -6,6 +6,8 @@ import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
+import io.github.winsontse.hearteyes.model.local.AccountManager;
+import io.github.winsontse.hearteyes.model.local.IAccountManager;
 import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 import io.github.winsontse.hearteyes.util.scope.ApplicationScope;
 
@@ -37,5 +39,11 @@ public class AppModule {
     @ApplicationScope
     public SharedPreferences provideSharedPreferences() {
         return context.getSharedPreferences(SecretConstant.SP_NAME, Context.MODE_PRIVATE);
+    }
+
+    @Provides
+    @ApplicationScope
+    public IAccountManager provideAccountManager() {
+        return new AccountManager();
     }
 }

@@ -6,10 +6,11 @@ buildscript {
         maven {
             url "http://mvn.leancloud.cn/nexus/content/repositories/releases"
         }
+        maven { url "https://www.jitpack.io" }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -32,11 +33,11 @@ ext {
     TARGET_SDK_VERSION = 25
     BUILD_TOOLS_VERSION = '25.0.1'
 
-    ANDROID_SUPPORT_LIBRARY_VERSION = '25.0.1'
+    ANDROID_SUPPORT_LIBRARY_VERSION = '25.1.0'
     RXJAVA_VERSION = '1.2.3'
     RXANDROID_VERSION = '1.2.1'
-    DAGGER2_VERSION = '2.2'
-    BUTTERKNIFE_VERSION = '8.0.1'
+    DAGGER2_VERSION = '2.8'
+    BUTTERKNIFE_VERSION = '8.5.1'
     RETROFIT_VERSION = '2.1.0'
     RETROFIT_LOGGING_VERSION = '3.5.0'
     GSON_VERSION = '2.6.2'
@@ -46,6 +47,8 @@ ext {
     RXPERMISSIONS_VERSION = '0.7.0@aar'
 
     GLIDE_VERSION = '3.7.0'
+
+    DBFLOW_VERSION = '4.0.0-beta5'
 }
 
 task clean(type: Delete) {

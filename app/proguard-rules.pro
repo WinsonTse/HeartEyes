@@ -117,6 +117,10 @@
 }
 # rxjava
 
+# dbflow
+-keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
+# dbflow
+
 #-------------------------------------------------------------------------
 
 #---------------------------------3.与js互相调用的类------------------------

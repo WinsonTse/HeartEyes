@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.model.entity.leancloud.CircleContract;
-import io.github.winsontse.hearteyes.model.entity.leancloud.CircleMemberContract;
 import io.github.winsontse.hearteyes.model.entity.leancloud.UserContract;
 import io.github.winsontse.hearteyes.page.account.contract.AssociationContract;
 import io.github.winsontse.hearteyes.page.base.BasePresenterImpl;
@@ -121,15 +120,17 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
                                 }
 
                                 try {
-                                    AVQuery<AVObject> meQuery = new AVQuery<>(CircleMemberContract.KEY);
-                                    meQuery.whereEqualTo(CircleMemberContract.USER, me);
+                                    AVQuery<AVObject> meQuery = AVQuery.or(Arrays.asList(new AVQuery<>(CircleContract.KEY).whereEqualTo(CircleContract.CREATOR, me),
+                                            new AVQuery<>(CircleContract.KEY).whereEqualTo(CircleContract.INVITEE, me)));
+
                                     if (meQuery.count() != 0) {
                                         subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_you_has_friends)));
                                         return;
                                     }
 
-                                    AVQuery<AVObject> otherQuery = new AVQuery<>(CircleMemberContract.KEY);
-                                    otherQuery.whereEqualTo(CircleMemberContract.USER, otherUser);
+                                    AVQuery<AVObject> otherQuery = AVQuery.or(Arrays.asList(new AVQuery<>(CircleContract.KEY).whereEqualTo(CircleContract.CREATOR, otherUser),
+                                            new AVQuery<>(CircleContract.KEY).whereEqualTo(CircleContract.INVITEE, otherUser)));
+
                                     if (otherQuery.count() != 0) {
                                         subscriber.onError(new HeartEyesException(view.getStringById(R.string.error_she_has_friends)));
                                         return;
@@ -137,22 +138,15 @@ public class AssociationPresenter extends BasePresenterImpl implements Associati
 
                                     //创建圈子
                                     AVObject circle = new AVObject(CircleContract.KEY);
-                                    circle.put(CircleContract.NAME, me.getString(UserContract.NICKNAME) + "和" + otherUser.getString(UserContract.NICKNAME) + "的圈子");
-                                    circle.save();
-                                    circle.fetch();
+                                    circle.put(CircleContract.NAME, me.getString(UserContract.NICKNAME) + " 和 " + otherUser.getString(UserContract.NICKNAME) + " 的圈子");
 
                                     //把我加到圈子成员表
-                                    AVObject circleMemberMe = new AVObject(CircleMemberContract.KEY);
-                                    circleMemberMe.put(CircleMemberContract.CIRCLE, circle);
-                                    circleMemberMe.put(CircleMemberContract.USER, me);
-
+                                    circle.put(CircleContract.CREATOR, me);
                                     //把ta加到圈子成员表
-                                    AVObject circleMemberOther = new AVObject(CircleMemberContract.KEY);
-                                    circleMemberOther.put(CircleMemberContract.CIRCLE, circle);
-                                    circleMemberOther.put(CircleMemberContract.USER, otherUser);
+                                    circle.put(CircleContract.INVITEE, otherUser);
+                                    circle.save();
 
-                                    AVObject.saveAll(Arrays.asList(circleMemberMe, circleMemberOther));
-                                    subscriber.onNext(me);
+                                    subscriber.onNext(circle);
                                     subscriber.onCompleted();
 
                                 } catch (AVException e) {

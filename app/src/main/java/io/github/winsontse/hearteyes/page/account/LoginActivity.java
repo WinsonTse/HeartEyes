@@ -57,12 +57,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     public void setLoadingStatus() {
         progressBar.show();
         fabEnter.hide(new FloatingActionButton.OnVisibilityChangedListener() {
-            /**
-             * Called when a FloatingActionButton has been
-             * {@link #hide(OnVisibilityChangedListener) hidden}.
-             *
-             * @param fab the FloatingActionButton that was hidden.
-             */
+
             @Override
             public void onHidden(FloatingActionButton fab) {
                 super.onHidden(fab);

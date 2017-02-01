@@ -2,13 +2,11 @@ package io.github.winsontse.hearteyes.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.StrictMode;
 
-import com.avos.avoscloud.AVOSCloud;
+import com.raizlabs.android.dbflow.config.FlowConfig;
+import com.raizlabs.android.dbflow.config.FlowManager;
 
-import io.github.winsontse.hearteyes.util.LogUtil;
 import io.github.winsontse.hearteyes.util.ScreenUtil;
-import io.github.winsontse.hearteyes.util.constant.SecretConstant;
 
 /**
  * Created by hao.xie on 16/5/9.
@@ -34,6 +32,8 @@ public class HeartEyesApplication extends Application {
     private void init() {
         appComponent.getLeanCloudManager().init();
         ScreenUtil.init(this);
+        FlowManager.init(new FlowConfig.Builder(this).build());
+
 
     }
 

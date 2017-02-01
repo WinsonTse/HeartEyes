@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import io.github.winsontse.hearteyes.R;
 import io.github.winsontse.hearteyes.app.AppComponent;
-import io.github.winsontse.hearteyes.model.entity.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.image.ImageEntity;
 import io.github.winsontse.hearteyes.model.entity.leancloud.MomentContract;
 import io.github.winsontse.hearteyes.page.adapter.GalleryPagerAdapter;
 import io.github.winsontse.hearteyes.page.base.BaseFragment;

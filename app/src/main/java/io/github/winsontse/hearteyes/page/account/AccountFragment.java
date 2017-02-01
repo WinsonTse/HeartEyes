@@ -2,7 +2,6 @@ package io.github.winsontse.hearteyes.page.account;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.ViewGroup;
 
 import javax.inject.Inject;
 

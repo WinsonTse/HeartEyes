@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-
 
 android {
     compileSdkVersion rootProject.ext.COMPILE_SDK_VERSION
@@ -53,11 +51,11 @@ dependencies {
 
     // dagger2
     compile "com.google.dagger:dagger:${rootProject.ext.DAGGER2_VERSION}";
-    apt "com.google.dagger:dagger-compiler:${rootProject.ext.DAGGER2_VERSION}";
+    annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.DAGGER2_VERSION}";
 
     compile "com.jakewharton:butterknife:${rootProject.ext.BUTTERKNIFE_VERSION}";
 
-    apt "com.jakewharton:butterknife-compiler:${rootProject.ext.BUTTERKNIFE_VERSION}";
+    annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.BUTTERKNIFE_VERSION}";
 
     // LeanCloud 基础包
     compile "cn.leancloud.android:avoscloud-sdk:${rootProject.ext.LEANCLOUD_VERSION}";
@@ -86,5 +84,9 @@ dependencies {
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
     compile 'com.github.ksoichiro:android-observablescrollview:1.6.0'
+
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${rootProject.ext.DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${rootProject.ext.DBFLOW_VERSION}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${rootProject.ext.DBFLOW_VERSION}"
 
 }

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-import io.github.winsontse.hearteyes.model.entity.ImageEntity;
+import io.github.winsontse.hearteyes.model.entity.image.ImageEntity;
 import io.github.winsontse.hearteyes.page.image.GalleryItemFragment;
 
 /**
